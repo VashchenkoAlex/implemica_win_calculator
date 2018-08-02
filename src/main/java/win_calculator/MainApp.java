@@ -4,13 +4,12 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javafx.stage.StageStyle;
 
 public class MainApp extends Application {
 
-    private static final Logger log = LoggerFactory.getLogger(MainApp.class);
 
     public static void main(String[] args) throws Exception {
         launch(args);
@@ -18,19 +17,33 @@ public class MainApp extends Application {
 
     public void start(Stage stage) throws Exception {
 
-        log.info("Starting Hello JavaFX and Maven demonstration application");
-
-        String fxmlFile = "/fxml/hello.fxml";
-        log.debug("Loading FXML for main view from: {}", fxmlFile);
+        String fxmlFile = "/fxml/calculator.fxml";
         FXMLLoader loader = new FXMLLoader();
-        Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
+        Parent rootNode = loader.load(getClass().getResourceAsStream(fxmlFile));
 
-        log.debug("Showing JFX scene");
-        Scene scene = new Scene(rootNode, 400, 200);
+        Scene scene = new Scene(rootNode, 320, 470);
         scene.getStylesheets().add("/styles/styles.css");
 
-        stage.setTitle("Hello JavaFX and Maven");
+        stage.setTitle("Calculator");
         stage.setScene(scene);
+        stage.setMinHeight(470);
+        stage.setMinWidth(320);
+        //stage.initStyle(StageStyle.TRANSPARENT);
+        stage.setOpacity(0.99F);
+        stage.getIcons().add(new Image("/images/icon.jpg"));
+
+        //System.out.println("\uE700" + " Dropdown menu");
+        //System.out.println("\uE947" + " Calculator multiply");
+        //System.out.println("\uE948" + " Calculator addition");
+        //System.out.println("\uE949" + " Calculator subtract");
+        //System.out.println("\uE94A" + " Calculator Divide");
+        //System.out.println("\uE94B" + " Calculator Squareroot");
+        //System.out.println("\uE94C" + " Calculator percent");
+        //System.out.println("\uE94D" + " Calculator negate");
+        //System.out.println("\uE94E" + " Calculator equalTo");
+        //System.out.println("\uE94F" + " Calculator Backspace");
+        //System.out.println("\uE81C" + " Calculator History");
+
         stage.show();
     }
 }

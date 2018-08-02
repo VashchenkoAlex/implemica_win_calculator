@@ -1,0 +1,178 @@
+/* Application wide styles */
+
+#mainTable {
+    -fx-background-color: #ececec;
+    -fx-border-width: 0;
+    -fx-border-color: black;
+}
+
+#mainMessage {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 24;
+    -fx-min-width: 180;
+    -fx-max-width: 180;
+    -fx-padding: 10px;
+}
+
+#buttonFractionOne {
+    -fx-font-size: 18;
+    -fx-font-family: "Segoe UI";
+}
+#buttonSqr {
+    -fx-font-size: 18;
+    -fx-font-family: "Segoe UI";
+}
+
+.historyText {
+    -fx-alignment: CENTER-RIGHT;
+    -fx-pref-width: 320px;
+    -fx-padding-top: 15px;
+    -fx-min-height: 20px;
+    -fx-max-height: 20px;
+    -fx-font-size: 16px;
+}
+
+.menu {
+    -fx-font-family: "Segoe MDL2 Assets";
+    -fx-font-size: 19;
+    -fx-min-width: 50.0;
+    -fx-max-width: 50.0;
+    -fx-min-height: 50.0;
+    -fx-max-height: 50.0;
+    -fx-border-color: #ececec;
+    -fx-border-width: 1px;
+    -fx-background-radius: 0;
+    -fx-background-color: #ececec;
+
+}
+.menu:hover {
+    -fx-background-color: #d3d3d3;
+    -fx-border-color: #a5a5a5;
+}
+
+.historyButton {
+    -fx-font-family: "Segoe MDL2 Assets";
+    -fx-font-size: 16;
+    -fx-min-width: 48.0;
+    -fx-max-width: 48.0;
+    -fx-min-height: 48.0;
+    -fx-max-height: 48.0;
+    -fx-border-color: #ececec;
+    -fx-border-width: 2px;
+    -fx-background-radius: 0;
+    -fx-background-color: #ececec;
+}
+
+.historyButton:hover {
+    -fx-background-color: #d3d3d3;
+    -fx-border-color: #a5a5a5;
+}
+
+.display {
+    -fx-padding: 10px;
+    -fx-min-width: 200px;
+    -fx-min-height: 68px;
+    -fx-background-color: #ececec;
+    -fx-background-radius: 0;
+    -fx-font-family: "Segoe UI Semibold";
+    -fx-font-size: 47;
+    -fx-alignment: CENTER-RIGHT;
+}
+
+.memoryButtonsGrid {
+    -fx-padding: 2px;
+
+}
+
+.mainButtonsGrid {
+    -fx-padding: 4px;
+}
+
+.actionButton {
+    -fx-min-width: 50px;
+    -fx-min-height: 20;
+    -fx-background-color: #f3f3f3;
+    -fx-text-fill: black;
+    -fx-font-family: "Segoe MDL2 Assets";
+    -fx-font-size: 16;
+    -fx-border-width: 2px;
+    -fx-background-radius: 0;
+    -fx-padding: 5;
+
+    /*-fx-font-weight: bold;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );*/
+}
+
+.actionButton:hover{
+    -fx-background-color: #dadada;
+    -fx-border-color: #a7a7a7;
+}
+
+.mainActionButton {
+    -fx-min-width: 50;
+    -fx-min-height: 20;
+    -fx-border-radius: 0;
+    -fx-border-width: 2px;
+    -fx-background-radius: 0;
+    -fx-background-color: #f3f3f3;
+    -fx-text-fill: black;
+    -fx-font-family: "Segoe MDL2 Assets";
+    -fx-font-size: 16;
+    -fx-margin:5px;
+
+    /*-fx-font-weight: bold;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );*/
+}
+
+.mainActionButton:hover{
+    -fx-text-fill: white;
+    -fx-background-color: #3393df;
+    -fx-border-color: #2673b1;
+}
+
+.numberButton {
+    -fx-min-width: 50;
+    -fx-min-height: 20;
+    -fx-background-radius: 0;
+    -fx-background-color: #fbfbfb;
+    -fx-text-fill: black;
+    -fx-font-family:"Segoe UI Semibold";
+    -fx-font-size: 25;
+    -fx-padding: 5;
+    -fx-font-weight: bold;
+    -fx-border-radius: 0;
+    -fx-border-width: 2px;
+    -fx-margin:5px;
+
+}
+
+.numberButton:hover {
+    /*-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );*/
+    -fx-background-color: #dbdbdb;
+    -fx-border-color: #a5a5a5;
+
+}
+
+.memoryButton {
+    -fx-font-weight: bold;
+    -fx-background-radius: 0;
+    -fx-background-color: #ebebeb;
+    -fx-min-height: 28px;
+    -fx-pref-height: 28px;
+    -fx-border-width: 2px;
+    -fx-margin:5px;
+}
+.memoryButton:hover {
+    -fx-background-color: #dbdbdb;
+    -fx-border-color: #a5a5a5;
+}
+/* Component specific styles */
+
+
+.main-panel {
+    -fx-font-family: "Segoe UI";
+    -fx-background-color: #ebebeb;
+    -fx-end-margin: 10px;
+}
+
+
