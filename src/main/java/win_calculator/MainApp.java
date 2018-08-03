@@ -6,7 +6,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 public class MainApp extends Application {
 
@@ -15,7 +14,7 @@ public class MainApp extends Application {
         launch(args);
     }
 
-    public void start(Stage stage) throws Exception {
+    public void start(final Stage primaryStage) throws Exception {
 
         String fxmlFile = "/fxml/calculator.fxml";
         FXMLLoader loader = new FXMLLoader();
@@ -24,13 +23,13 @@ public class MainApp extends Application {
         Scene scene = new Scene(rootNode, 320, 470);
         scene.getStylesheets().add("/styles/styles.css");
 
-        stage.setTitle("Calculator");
-        stage.setScene(scene);
-        stage.setMinHeight(470);
-        stage.setMinWidth(320);
-        //stage.initStyle(StageStyle.TRANSPARENT);
-        stage.setOpacity(0.99F);
-        stage.getIcons().add(new Image("/images/icon.jpg"));
+        primaryStage.setTitle("Calculator");
+        primaryStage.setScene(scene);
+        //primaryStage.initStyle(StageStyle.UNDECORATED);
+        primaryStage.setMinHeight(470);
+        primaryStage.setMinWidth(320);
+        primaryStage.setOpacity(0.99F);
+        primaryStage.getIcons().add(new Image("/images/icon.jpg"));
 
         //System.out.println("\uE700" + " Dropdown menu");
         //System.out.println("\uE947" + " Calculator multiply");
@@ -44,6 +43,7 @@ public class MainApp extends Application {
         //System.out.println("\uE94F" + " Calculator Backspace");
         //System.out.println("\uE81C" + " Calculator History");
 
-        stage.show();
+        primaryStage.show();
+
     }
 }

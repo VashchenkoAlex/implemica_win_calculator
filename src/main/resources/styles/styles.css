@@ -24,12 +24,13 @@
 }
 
 .historyText {
+    -fx-font-family: "Segoe MDL2 Assets";
     -fx-alignment: CENTER-RIGHT;
-    -fx-pref-width: 320px;
+    -fx-min-width: 200px;
     -fx-padding-top: 15px;
     -fx-min-height: 20px;
     -fx-max-height: 20px;
-    -fx-font-size: 16px;
+    -fx-font-size: 15px;
 }
 
 .menu {
@@ -68,7 +69,7 @@
     -fx-border-color: #a5a5a5;
 }
 
-.display {
+.displayText {
     -fx-padding: 10px;
     -fx-min-width: 200px;
     -fx-min-height: 68px;

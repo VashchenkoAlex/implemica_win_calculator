@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import win_calculator.WindowTextField?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -11,18 +10,25 @@
 <AnchorPane id="rootPane" styleClass="main-panel"
             xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/2.2"
-            fx:controller="win_calculator.Controller"
+            fx:controller="win_calculator.MainController"
             minWidth="320.0" minHeight="470.0">
     <children>
+        <ToolBar fx:id="WindowToolBar">
+            <Button fx:id="closeBtn" styleClass="closeBtn" text="X"/>
+        </ToolBar>
         <FlowPane styleClass="flowPane" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <Button fx:id="menu" styleClass="menu" text="" />
+            <Button fx:id="menu" styleClass="menu" text="" onAction="#buttonMenuClick"/>
             <Label fx:id="mainMessage" text="Standard"/>
         </FlowPane>
-        <Button fx:id="historyButton" styleClass="historyButton" text="" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="4.0"/>
+        <Button fx:id="historyButton" styleClass="historyButton" text="" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="4.0" onAction="#buttonHistoryClick"/>
         <GridPane fx:id="mainTable" AnchorPane.topAnchor="52.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0">
             <children>
-                <Label fx:id="history" styleClass="historyText" text="99999999999999999" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <TextField fx:id="display" styleClass="display" text="99999999999999999" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                <Label fx:id="historyText" styleClass="historyText" GridPane.columnIndex="0" GridPane.rowIndex="0" maxWidth="Infinity">
+                    <GridPane.margin>
+                        <Insets right="20.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="display" text="0" styleClass="displayText" GridPane.columnIndex="0" GridPane.rowIndex="1">
                         <GridPane.margin>
                             <Insets bottom="8.0"/>
                         </GridPane.margin>
@@ -215,7 +221,7 @@
                 <ColumnConstraints minWidth="220.0" hgrow="ALWAYS"/>
             </columnConstraints>
               <rowConstraints>
-                  <RowConstraints vgrow="ALWAYS"/>
+                  <RowConstraints prefHeight="20.0" vgrow="ALWAYS"/>
                   <RowConstraints prefHeight="68.0" vgrow="ALWAYS"/>
                   <RowConstraints prefHeight="30.0" vgrow="ALWAYS"/>
                   <RowConstraints prefHeight="295.0" vgrow="ALWAYS"/>
