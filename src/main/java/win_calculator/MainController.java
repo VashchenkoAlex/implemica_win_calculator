@@ -202,7 +202,8 @@ public class MainController
 
     public void buttonEnterClick(){
 
-
+        finalizeCalc(MINUS);
+        display.setText(getResultString());
         setWasNotAction(false);
     }
 

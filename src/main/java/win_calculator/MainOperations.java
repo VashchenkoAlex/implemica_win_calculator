@@ -53,4 +53,8 @@ abstract class MainOperations {
     static void setEmptyVariables(){
         variables = new BigDecimal[3];
     }
+
+    static void finalizeCalc(MainOperation operation){
+
+    }
 }
