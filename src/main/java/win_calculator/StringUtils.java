@@ -3,6 +3,7 @@ package win_calculator;
 abstract class StringUtils {
 
     private static final String COMA = ",";
+    private static final int DIGIT = 3;
 
     static String replaceComaToDot(String string){
         return string.replace(",",".");
@@ -15,21 +16,26 @@ abstract class StringUtils {
     static String addSpaces(String currentStr,int count){
 
         String[] stringParts = splitByComa(currentStr);
-        int firstPartIndex = (stringParts[0].length()%3)+count;
-        String firstWholePart = stringParts[0].substring(0,firstPartIndex);
-        String secondPart = stringParts[0].substring(firstWholePart.length());
-        String[] subStr = secondPart.split("(?<=\\G.{3})");
         String result = "";
-        for (String str : subStr) {
-            result +=" "+str;
+        if (stringParts[0].length()>DIGIT){
+            int firstPartIndex = (stringParts[0].length()%DIGIT)+count;
+            String firstWholePart = stringParts[0].substring(0,firstPartIndex);
+            String secondPart = stringParts[0].substring(firstWholePart.length());
+            String[] subStr = secondPart.split("(?<=\\G.{"+DIGIT+"})");
+            for (String str : subStr) {
+                result +=" "+str;
+            }
+            if (stringParts.length>1){
+                result += ","+stringParts[1];
+            }
+            result = firstWholePart+result;
+        }else {
+            result = currentStr;
         }
-        if (stringParts.length>1){
-            result += ","+stringParts[1];
-        }
-        return firstWholePart+result;
+        return result;
     }
 
-    static String[] splitByComa(String string){
+    private static String[] splitByComa(String string){
         String[] result;
         if (string.contains(",")){
             result = string.split("[,]");

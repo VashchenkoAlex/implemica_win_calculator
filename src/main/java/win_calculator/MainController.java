@@ -89,64 +89,70 @@ public class MainController
 
     public void buttonOneClick(){
 
-        setTextForDisplay("1");
+        addNumberToDisplay("1");
         setWasNotAction(true);
     }
 
     public void buttonTwoClick(){
 
-        setTextForDisplay("2");
+        addNumberToDisplay("2");
         setWasNotAction(true);
     }
 
     public void buttonThreeClick(){
 
-        setTextForDisplay("3");
+        addNumberToDisplay("3");
         setWasNotAction(true);
     }
 
     public void buttonFourClick(){
 
-        setTextForDisplay("4");
+        addNumberToDisplay("4");
         setWasNotAction(true);
     }
 
     public void buttonFiveClick(){
 
-        setTextForDisplay("5");
+        addNumberToDisplay("5");
         setWasNotAction(true);
     }
 
     public void buttonSixClick(){
 
-        setTextForDisplay("6");
+        addNumberToDisplay("6");
         setWasNotAction(true);
     }
 
     public void buttonSevenClick(){
 
-        setTextForDisplay("7");
+        addNumberToDisplay("7");
         setWasNotAction(true);
     }
 
     public void buttonEightClick(){
 
-        setTextForDisplay("8");
+        addNumberToDisplay("8");
         setWasNotAction(true);
     }
 
     public void buttonNineClick(){
 
-        setTextForDisplay("9");
+        addNumberToDisplay("9");
         setWasNotAction(true);
     }
 
     public void buttonZeroClick(){
 
-        if (isZeroValidPosition()){
-            setTextForDisplay(ZERO);
+        if (isZeroNotFirst()){
+            putZeroToDisplay();
             setWasNotAction(true);
         }
+    }
+
+    public void buttonComaClick(){
+
+        putComaToDisplay();
+        setWasNotAction(true);
     }
 
     public void buttonDivideClick(){
@@ -162,8 +168,9 @@ public class MainController
     public void buttonMinusClick(){
 
         if (wasNotAction){
-            String varStr = removeSpaces(display.getText());
-            //doPlus(varStr);
+            String displayValue = removeSpaces(display.getText());
+            setHistoryText(displayValue+MINUS.getValue());
+            doMinus(displayValue);
             if (isResult()){
                 display.setText(getResultString());
             }
@@ -193,16 +200,10 @@ public class MainController
         setWasNotAction(true);
     }
 
-    public void buttonComaClick(){
-
-        if (isComaAbsent(display.getText())){
-            setTextForDisplay(COMA);
-            setWasNotAction(true);
-        }
-    }
-
     public void buttonEnterClick(){
 
+
+        setWasNotAction(false);
     }
 
     public void buttonClearAllMemoryClick(){
@@ -229,17 +230,10 @@ public class MainController
 
     }
 
-    private void setTextForDisplay(String value){
-        String currentStr;
-        if (wasNotAction){
-            currentStr = display.getText();
-            if (ZERO.equals(currentStr)){
-                if (COMA.equals(value)){
-                    display.setText(ZERO+COMA);
-                }
-                display.setText(value);
-                return;
-            }
+    private void addNumberToDisplay(String value){
+
+        if (wasNotAction && isZeroNotFirst()){
+            String currentStr = display.getText();
             if (currentStr.length()<21){
                 if (currentStr.length()>2 && isComaAbsent(currentStr) && !COMA.equals(value)) {
                     currentStr = removeSpaces(currentStr);
@@ -252,18 +246,43 @@ public class MainController
         }
     }
 
+    private void putZeroToDisplay(){
+
+        if (wasNotAction){
+            String currentStr = display.getText();
+            if (!ZERO.equals(currentStr)){
+                display.setText(currentStr+ZERO);
+            }
+        }else {
+            display.setText(ZERO);
+        }
+
+    }
+
+    private void putComaToDisplay(){
+
+        String currentStr = display.getText();
+        if (!ZERO.equals(currentStr)){
+            if (isComaAbsent(currentStr)){
+                display.setText(currentStr+COMA);
+                return;
+            }
+        }
+        display.setText(ZERO+COMA);
+    }
+
     private void setWasNotAction(boolean val){
         wasNotAction = val;
     }
 
-    private boolean isZeroValidPosition(){
+    private boolean isZeroNotFirst(){
 
         return !display.getText().matches(ZERO_REGEX);
     }
 
     private void setDisplayZero(){
 
-        display.setText("0");
+        display.setText(ZERO);
     }
 
     private void setHistoryText(String string){
