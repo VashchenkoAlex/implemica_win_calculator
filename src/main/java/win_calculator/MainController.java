@@ -157,20 +157,38 @@ public class MainController
 
     public void buttonDivideClick(){
 
-        setWasNotAction(false);
+        if (wasNotAction){
+            String numberStr = removeSpaces(display.getText());
+            addNumber(numberStr);
+            setHistoryText(numberStr+DIVIDE.getValue());
+            doDivide();
+        }
+
+        if (isResult()){
+            getResultString();
+            setWasNotAction(false);
+        }
     }
 
     public void buttonMultiplyClick(){
 
+        if (wasNotAction){
+            String numberStr = removeSpaces(display.getText());
+            addNumber(numberStr);
+            setHistoryText(numberStr+MULTIPLY.getValue());
+        }else {
+            changeOperationAtHistory(MULTIPLY);
+        }
         setWasNotAction(false);
     }
 
     public void buttonMinusClick(){
 
         if (wasNotAction){
-            String displayValue = removeSpaces(display.getText());
-            setHistoryText(displayValue+MINUS.getValue());
-            doMinus(displayValue);
+            String numberStr = removeSpaces(display.getText());
+            addNumber(numberStr);
+            setHistoryText(numberStr+MINUS.getValue());
+            doMinus();
             if (isResult()){
                 display.setText(getResultString());
             }
@@ -185,7 +203,7 @@ public class MainController
         if (wasNotAction){
             String displayValue = removeSpaces(display.getText());
             setHistoryText(displayValue+PLUS.getValue());
-            doPlus(displayValue);
+            doPlus();
             if (isResult()){
                 display.setText(getResultString());
             }
@@ -293,5 +311,26 @@ public class MainController
     private void changeOperationAtHistory(MainOperation operation){
         String historyString = historyText.getText();
         historyText.setText(historyString.substring(0,historyString.length()-3)+operation.getValue());
+    }
+
+    private void doOperation(MainOperation operation){
+        switch (operation){
+            case PLUS: {
+                doPlus();
+                break;
+            }
+            case MINUS:{
+                doMinus();
+                break;
+            }
+            case MULTIPLY:{
+                doMultiply();
+                break;
+            }
+            case DIVIDE:{
+                doDivide();
+                break;
+            }
+        }
     }
 }

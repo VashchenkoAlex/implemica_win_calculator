@@ -10,32 +10,32 @@ abstract class MainOperations {
 
     private static BigDecimal[] variables = new BigDecimal[3];
 
-    static void doPlus(String varStr){
+    static void addNumber(String numberStr){
 
         if (variables[0] == null){
-            variables[0] = new BigDecimal(replaceComaToDot(varStr));
-        }else if (variables[1] == null){
-            variables[1] = new BigDecimal(replaceComaToDot(varStr));
-            variables[2] = variables[0].add(variables[1]);
-        }else {
-            variables[0] = variables[2];
-            variables[1] = new BigDecimal(replaceComaToDot(varStr));
-            variables[2] = variables[0].add(variables[1]);
+            variables[0] = new BigDecimal(numberStr);
+        }
+        if (variables[1] == null){
+            variables[1] = new BigDecimal(numberStr);
         }
     }
 
-    static void doMinus(String varStr){
+    static void doPlus(){
 
-        if (variables[0] == null){
-            variables[0] = new BigDecimal(replaceComaToDot(varStr));
-        }else if (variables[1] == null){
-            variables[1] = new BigDecimal(replaceComaToDot(varStr));
-            variables[2] = variables[0].subtract(variables[1]);
-        }else {
-            variables[0] = variables[2];
-            variables[1] = new BigDecimal(replaceComaToDot(varStr));
-            variables[2] = variables[0].subtract(variables[1]);
-        }
+        variables[2] = variables[0].add(variables[1]);
+    }
+
+    static void doMinus(){
+
+        variables[2] = variables[0].subtract(variables[1]);
+    }
+
+    static void doMultiply(){
+        variables[2] = variables[0].multiply(variables[1]);
+    }
+
+    static void doDivide(){
+        variables[2] = variables[0].divide(variables[1]);
     }
 
     static boolean isResult(){

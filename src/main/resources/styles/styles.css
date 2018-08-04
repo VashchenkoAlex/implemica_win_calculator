@@ -104,6 +104,10 @@
     -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );*/
 }
 
+#buttonComa {
+    -fx-font-family: "Segoe UI Semibold";
+}
+
 .actionButton:hover{
     -fx-background-color: #dadada;
     -fx-border-color: #a7a7a7;
