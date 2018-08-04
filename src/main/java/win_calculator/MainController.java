@@ -172,45 +172,17 @@ public class MainController
 
     public void buttonMultiplyClick(){
 
-        if (wasNotAction){
-            String numberStr = removeSpaces(display.getText());
-            addNumber(numberStr);
-            setHistoryText(numberStr+MULTIPLY.getValue());
-        }else {
-            changeOperationAtHistory(MULTIPLY);
-        }
-        setWasNotAction(false);
+        doOperation(MULTIPLY);
     }
 
     public void buttonMinusClick(){
 
-        if (wasNotAction){
-            String numberStr = removeSpaces(display.getText());
-            addNumber(numberStr);
-            setHistoryText(numberStr+MINUS.getValue());
-            doMinus();
-            if (isResult()){
-                display.setText(getResultString());
-            }
-        }else {
-            changeOperationAtHistory(MINUS);
-        }
-        setWasNotAction(false);
+        doOperation(MINUS);
     }
 
     public void buttonPlusClick(){
 
-        if (wasNotAction){
-            String displayValue = removeSpaces(display.getText());
-            setHistoryText(displayValue+PLUS.getValue());
-            doPlus();
-            if (isResult()){
-                display.setText(getResultString());
-            }
-        }else {
-            changeOperationAtHistory(PLUS);
-        }
-        setWasNotAction(false);
+        doOperation(PLUS);
     }
 
     public void buttonNegateClick(){
@@ -220,7 +192,6 @@ public class MainController
 
     public void buttonEnterClick(){
 
-        finalizeCalc(MINUS);
         display.setText(getResultString());
         setWasNotAction(false);
     }
@@ -314,23 +285,33 @@ public class MainController
     }
 
     private void doOperation(MainOperation operation){
-        switch (operation){
-            case PLUS: {
-                doPlus();
-                break;
+
+        if (wasNotAction){
+            String numberStr = removeSpaces(display.getText());
+            addNumber(numberStr);
+            setHistoryText(numberStr+operation.getValue());
+            switch (operation){
+                case PLUS: {
+                    doPlus();
+                    break;
+                }
+                case MINUS:{
+                    doMinus();
+                    break;
+                }
+                case MULTIPLY:{
+                    doMultiply();
+                    break;
+                }
+                case DIVIDE:{
+                    doDivide();
+                    break;
+                }
             }
-            case MINUS:{
-                doMinus();
-                break;
-            }
-            case MULTIPLY:{
-                doMultiply();
-                break;
-            }
-            case DIVIDE:{
-                doDivide();
-                break;
-            }
+        }else {
+            changeOperationAtHistory(operation);
         }
+        setWasNotAction(false);
+
     }
 }

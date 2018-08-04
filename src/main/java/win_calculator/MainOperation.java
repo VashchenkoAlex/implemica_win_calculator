@@ -7,7 +7,7 @@ public enum MainOperation {
     DIVIDE(" / ");
 
     private String value;
-    private MainOperation(String value){
+    MainOperation(String value){
         this.value = value;
     }
 
