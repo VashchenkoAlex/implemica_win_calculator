@@ -20,7 +20,9 @@ public class MainController
     @FXML
     private Label historyText;
 
-    private static boolean wasNotAction = true;
+    private static boolean wasOperationBefore = false;
+    private static boolean wasNumber = true;
+    private static MainOperation lastOperation;
     private static final String ZERO = "0";
     private static final String ZERO_REGEX = "^0";
     private static final String COMA = ",";
@@ -43,157 +45,161 @@ public class MainController
 
     public void buttonPercentClick(){
 
-        setWasNotAction(false);
-    }
+        setWasNumber(false);
+    } //TO DO
 
     public void buttonSqrtClick(){
 
-        setWasNotAction(false);
-    }
+        setWasNumber(false);
+    } //TO DO
 
     public void buttonSqrClick(){
 
-        setWasNotAction(false);
-    }
+        setWasNumber(false);
+    } //TO DO
 
     public void buttonFractionOneClick(){
 
-        setWasNotAction(false);
-    }
+        setWasNumber(false);
+    } //TO DO
 
+    // -------- CLEAR BUTTONS ------------------
     public void buttonClearEnteredClick(){
 
-        setDisplayZero();
-        setWasNotAction(true);
-    }
+        setDisplay(ZERO);
+        setWasNumber(true);
+    } //DONE
 
     public void buttonClearClick(){
 
-        setDisplayZero();
-        historyText.setText("");
+        setDisplay(ZERO);
+        clearHistory();
         setEmptyVariables();
-        setWasNotAction(true);
-    }
+        setWasNumber(true);
+    } //DONE
 
     public void buttonBackSpaceClick(){
 
         String currentText = display.getText();
-        setWasNotAction(true);
         if (currentText.length()>1){
             display.setText(deleteOneSymbolFromTheEnd(currentText));
         }
         if (currentText.length()==1){
-            setDisplayZero();
+            setDisplay(ZERO);
         }
-    }
+        setWasNumber(true);
+    } //DONE
 
+    // -------- NUMBER BUTTONS -----------------
     public void buttonOneClick(){
 
         addNumberToDisplay("1");
-        setWasNotAction(true);
-    }
+        setWasNumber(true);
+    } //DONE
 
     public void buttonTwoClick(){
 
         addNumberToDisplay("2");
-        setWasNotAction(true);
-    }
+        setWasNumber(true);
+    } //DONE
 
     public void buttonThreeClick(){
 
         addNumberToDisplay("3");
-        setWasNotAction(true);
-    }
+        setWasNumber(true);
+    } //DONE
 
     public void buttonFourClick(){
 
         addNumberToDisplay("4");
-        setWasNotAction(true);
-    }
+        setWasNumber(true);
+    } //DONE
 
     public void buttonFiveClick(){
 
         addNumberToDisplay("5");
-        setWasNotAction(true);
-    }
+        setWasNumber(true);
+    } //DONE
 
     public void buttonSixClick(){
 
         addNumberToDisplay("6");
-        setWasNotAction(true);
-    }
+        setWasNumber(true);
+    } //DONE
 
     public void buttonSevenClick(){
 
         addNumberToDisplay("7");
-        setWasNotAction(true);
-    }
+        setWasNumber(true);
+    } //DONE
 
     public void buttonEightClick(){
 
         addNumberToDisplay("8");
-        setWasNotAction(true);
-    }
+        setWasNumber(true);
+    } //DONE
 
     public void buttonNineClick(){
 
         addNumberToDisplay("9");
-        setWasNotAction(true);
-    }
+        setWasNumber(true);
+    } //DONE
 
     public void buttonZeroClick(){
 
         if (isZeroNotFirst()){
             putZeroToDisplay();
-            setWasNotAction(true);
+            setWasNumber(true);
         }
-    }
+    } //DONE
 
     public void buttonComaClick(){
 
         putComaToDisplay();
-        setWasNotAction(true);
-    }
+        setWasNumber(true);
+    } //DONE
 
+    // -------- MAIN OPERATIONS BUTTONS ----------
     public void buttonDivideClick(){
 
-        if (wasNotAction){
-            String numberStr = removeSpaces(display.getText());
-            addNumber(numberStr);
-            setHistoryText(numberStr+DIVIDE.getValue());
-            doDivide();
-        }
+        setLastOperation(DIVIDE);
 
-        if (isResult()){
-            getResultString();
-            setWasNotAction(false);
-        }
     }
 
     public void buttonMultiplyClick(){
 
-        doOperation(MULTIPLY);
+        setLastOperation(MULTIPLY);
+
     }
 
     public void buttonMinusClick(){
 
-        doOperation(MINUS);
+        setLastOperation(MINUS);
+
     }
 
     public void buttonPlusClick(){
 
+        setLastOperation(PLUS);
+        addOperationToHistory(PLUS);
+        setNextNumber();
         doOperation(PLUS);
-    }
-
-    public void buttonNegateClick(){
-
-        setWasNotAction(true);
+        setWasNumber(false);
+        setWasOperationBefore(true);
     }
 
     public void buttonEnterClick(){
 
-        display.setText(getResultString());
-        setWasNotAction(false);
+        if (wasOperationBefore){
+            finalizeCalc(lastOperation);
+            setDisplay(getResultString());
+        }
+        setWasNumber(false);
+    }
+
+    public void buttonNegateClick(){
+
+        setWasNumber(true);
     }
 
     public void buttonClearAllMemoryClick(){
@@ -220,9 +226,10 @@ public class MainController
 
     }
 
+    // -------- SUPPORT METHODS -----------------------
     private void addNumberToDisplay(String value){
 
-        if (wasNotAction && isZeroNotFirst()){
+        if (wasNumber && isZeroNotFirst()){
             String currentStr = display.getText();
             if (currentStr.length()<21){
                 if (currentStr.length()>2 && isComaAbsent(currentStr) && !COMA.equals(value)) {
@@ -238,7 +245,7 @@ public class MainController
 
     private void putZeroToDisplay(){
 
-        if (wasNotAction){
+        if (wasNumber){
             String currentStr = display.getText();
             if (!ZERO.equals(currentStr)){
                 display.setText(currentStr+ZERO);
@@ -261,8 +268,12 @@ public class MainController
         display.setText(ZERO+COMA);
     }
 
-    private void setWasNotAction(boolean val){
-        wasNotAction = val;
+    private void setWasNumber(boolean val){
+        wasNumber = val;
+    }
+
+    private void setWasOperationBefore(boolean val){
+        wasOperationBefore = val;
     }
 
     private boolean isZeroNotFirst(){
@@ -270,13 +281,57 @@ public class MainController
         return !display.getText().matches(ZERO_REGEX);
     }
 
-    private void setDisplayZero(){
+    private void setDisplay(String string){
 
-        display.setText(ZERO);
+        display.setText(string);
     }
 
     private void setHistoryText(String string){
         historyText.setText(historyText.getText()+string);
+    }
+
+    private void doOperation(MainOperation currentOperation){
+
+        selectOperation(currentOperation); //+
+
+        setWasOperationBefore(true);
+    }
+
+    private void clearHistory(){
+        historyText.setText("");
+    }
+
+    private void setLastOperation(MainOperation operation){
+        lastOperation = operation;
+    }
+
+    private void selectOperation(MainOperation operation){
+        switch (operation){
+            case PLUS: {
+                doPlus();
+                break;
+            }
+            case MINUS:{
+                doMinus();
+                break;
+            }
+            case MULTIPLY:{
+                doMultiply();
+                break;
+            }
+            case DIVIDE:{
+                doDivide();
+                break;
+            }
+        }
+    }
+
+    private void addOperationToHistory(MainOperation operation){
+        if (wasNumber){
+            setHistoryText(removeSpaces(display.getText())+operation.getValue());
+        }else {
+            changeOperationAtHistory(operation);
+        }
     }
 
     private void changeOperationAtHistory(MainOperation operation){
@@ -284,34 +339,7 @@ public class MainController
         historyText.setText(historyString.substring(0,historyString.length()-3)+operation.getValue());
     }
 
-    private void doOperation(MainOperation operation){
-
-        if (wasNotAction){
-            String numberStr = removeSpaces(display.getText());
-            addNumber(numberStr);
-            setHistoryText(numberStr+operation.getValue());
-            switch (operation){
-                case PLUS: {
-                    doPlus();
-                    break;
-                }
-                case MINUS:{
-                    doMinus();
-                    break;
-                }
-                case MULTIPLY:{
-                    doMultiply();
-                    break;
-                }
-                case DIVIDE:{
-                    doDivide();
-                    break;
-                }
-            }
-        }else {
-            changeOperationAtHistory(operation);
-        }
-        setWasNotAction(false);
-
+    private void setNextNumber(){
+        addNumber(removeSpaces(display.getText()));
     }
 }
