@@ -1,35 +1,32 @@
 package win_calculator;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
+import java.io.IOException;
 
 public class MainApp extends Application {
 
-
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args){
         launch(args);
     }
 
-    public void start(final Stage primaryStage) throws Exception {
+    public void start(final Stage primaryStage) throws IOException {
 
         String fxmlFile = "/fxml/calculator.fxml";
-        FXMLLoader loader = new FXMLLoader();
-        Parent rootNode = loader.load(getClass().getResourceAsStream(fxmlFile));
+        Stage stage = FXMLLoader.load(getClass().getResource(fxmlFile));
 
-        Scene scene = new Scene(rootNode, 320, 470);
-        scene.getStylesheets().add("/styles/styles.css");
-
-        primaryStage.setTitle("Calculator");
-        primaryStage.setScene(scene);
-        //primaryStage.initStyle(StageStyle.UNDECORATED);
-        primaryStage.setMinHeight(470);
-        primaryStage.setMinWidth(320);
-        primaryStage.setOpacity(0.99F);
-        primaryStage.getIcons().add(new Image("/images/icon.jpg"));
+        stage.setResizable(true);
+        stage.initStyle(StageStyle.UNDECORATED);
+        stage.toBack();
+        stage.setOpacity(0.95F);
+        stage.getIcons().add(new Image("/images/calc_logo.png"));
+        stage.setOnCloseRequest(e -> Platform.exit());
+        ComponentResizer.addResizeListener(stage);
 
         //System.out.println("\uE700" + " Dropdown menu");
         //System.out.println("\uE947" + " Calculator multiply");
@@ -43,7 +40,8 @@ public class MainApp extends Application {
         //System.out.println("\uE94F" + " Calculator Backspace");
         //System.out.println("\uE81C" + " Calculator History");
 
-        primaryStage.show();
+        //System.out.println(" - minimize");
 
+        stage.show();
     }
 }

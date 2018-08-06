@@ -1,18 +1,34 @@
 package win_calculator;
 
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
+import javafx.stage.Stage;
 
+import java.net.URL;
 import java.util.Optional;
+import java.util.ResourceBundle;
+
 import static win_calculator.MainOperation.*;
 import static win_calculator.MainOperations.*;
 import static win_calculator.StringUtils.*;
 
-public class MainController
+public class MainController implements Initializable
 {
 
     @FXML
+    private AnchorPane rootPane;
+
+    @FXML
     private Button menu;
+
+    @FXML
+    private GridPane mainTable;
 
     @FXML
     private TextField display;
@@ -20,6 +36,11 @@ public class MainController
     @FXML
     private Label historyText;
 
+    @FXML
+    private Button fullScreenBtn;
+
+    private static final String FULL_SCREEN_CSS = "full_screen_styles.css";
+    private static final String MAIN_CSS = "full_screen_styles.css";
     private static boolean wasOperationBefore = false;
     private static boolean wasNumber = true;
     private static MainOperation lastOperation;
@@ -27,7 +48,32 @@ public class MainController
     private static final String ZERO_REGEX = "^0";
     private static final String COMA = ",";
 
-    public void buttonMenuClick(){
+    public void closeBtn(){
+
+        Platform.exit();
+    } //DONE
+
+    public void hideBtn(){
+
+        Stage stage = (Stage) rootPane.getScene().getWindow();
+        stage.toBack();
+    } //DONE
+
+    public void fullScreenBtnClick(){
+
+        Stage stage = (Stage) rootPane.getScene().getWindow();
+        if (stage.isFullScreen()){
+            stage.setFullScreen(false);
+            changeStyleTo(MAIN_CSS);
+            fullScreenBtn.setText("\uE922");
+        }else {
+            stage.setFullScreen(true);
+            changeStyleTo(FULL_SCREEN_CSS);
+            fullScreenBtn.setText("\uE923");
+        }
+    }
+
+    public void menuBtn(){
 
         Dialog<String> dialog = new TextInputDialog("Enter new text here");
         dialog.setTitle("Change button text");
@@ -35,7 +81,7 @@ public class MainController
         optional.ifPresent(menu::setText);
     }
 
-    public void buttonHistoryClick(){
+    public void historyBtn(){
 
         Dialog<String> dialog = new TextInputDialog("Enter new text here");
         dialog.setTitle("Change button text");
@@ -341,5 +387,23 @@ public class MainController
 
     private void setNextNumber(){
         addNumber(removeSpaces(display.getText()));
+    }
+
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        setSizeMainTableColumns();
+    }
+
+    private void setSizeMainTableColumns(){
+        ObservableList<RowConstraints> rows = mainTable.getRowConstraints();
+        rows.get(0).setPercentHeight(10);
+        rows.get(1).setPercentHeight(10);
+        rows.get(2).setPercentHeight(8);
+        rows.get(3).setPercentHeight(72);
+    }
+
+    private void changeStyleTo(String style){
+        rootPane.getStylesheets().add(getClass().getResource(style).toExternalForm());
     }
 }

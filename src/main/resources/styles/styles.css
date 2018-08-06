@@ -1,10 +1,41 @@
 /* Application wide styles */
+#mainScene {
+    -fx-min-width: 320px;
+    -fx-min-height: 470px;
+}
 
 #mainTable {
     -fx-background-color: #ececec;
-    -fx-border-width: 0;
-    -fx-border-color: black;
+
 }
+
+#buttonComa {
+    -fx-font-family: "Segoe UI Semibold";
+    -fx-font-size: 26;
+    -fx-padding: 0px,0px,20px,0px;
+}
+
+.captionButton {
+    -fx-font-family: "Segoe MDL2 Assets";
+    -fx-font-size: 10;
+    -fx-background-color: #ececec;
+    -fx-background-radius: 0;
+    -fx-min-height: 30px;
+    -fx-max-height: 30px;
+    -fx-min-width: 45px;
+    -fx-max-width: 45px;
+}
+
+.captionButton:hover {
+    -fx-background-color: #d6d6d6;
+
+}
+
+#closeBtn:hover {
+    -fx-text-fill: white;
+    -fx-background-color: #e81123;
+}
+
 
 #mainMessage {
     -fx-font-family: "Segoe UI";
@@ -12,6 +43,7 @@
     -fx-min-width: 180;
     -fx-max-width: 180;
     -fx-padding: 10px;
+
 }
 
 #buttonFractionOne {
@@ -23,14 +55,22 @@
     -fx-font-family: "Segoe UI";
 }
 
+.captionButtons {
+    -fx-min-height: 30px;
+    -fx-max-height: 30px;
+    -fx-min-width: 155px;
+    -fx-max-width: 155px;
+}
+
 .historyText {
     -fx-font-family: "Segoe MDL2 Assets";
     -fx-alignment: CENTER-RIGHT;
     -fx-min-width: 200px;
-    -fx-padding-top: 15px;
-    -fx-min-height: 20px;
+    -fx-padding-top: 0px;
+    -fx-min-height: 25px;
     -fx-max-height: 20px;
     -fx-font-size: 15px;
+
 }
 
 .menu {
@@ -53,7 +93,7 @@
 
 .historyButton {
     -fx-font-family: "Segoe MDL2 Assets";
-    -fx-font-size: 16;
+    -fx-font-size: 17;
     -fx-min-width: 48.0;
     -fx-max-width: 48.0;
     -fx-min-height: 48.0;
@@ -70,14 +110,16 @@
 }
 
 .displayText {
-    -fx-padding: 10px;
+
+    -fx-padding: 5px;
     -fx-min-width: 200px;
-    -fx-min-height: 68px;
+    -fx-min-height: 60px;
     -fx-background-color: #ececec;
     -fx-background-radius: 0;
     -fx-font-family: "Segoe UI Semibold";
     -fx-font-size: 47;
     -fx-alignment: CENTER-RIGHT;
+
 }
 
 .memoryButtonsGrid {
@@ -102,10 +144,6 @@
 
     /*-fx-font-weight: bold;
     -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );*/
-}
-
-#buttonComa {
-    -fx-font-family: "Segoe UI Semibold";
 }
 
 .actionButton:hover{
@@ -165,7 +203,6 @@
     -fx-min-height: 28px;
     -fx-pref-height: 28px;
     -fx-border-width: 2px;
-    -fx-margin:5px;
 }
 .memoryButton:hover {
     -fx-background-color: #dbdbdb;
@@ -178,6 +215,8 @@
     -fx-font-family: "Segoe UI";
     -fx-background-color: #ebebeb;
     -fx-end-margin: 10px;
+    -fx-border-color: grey;
+    -fx-border-width: 1px;
 }
 
 
