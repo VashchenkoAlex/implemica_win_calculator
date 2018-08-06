@@ -204,27 +204,27 @@ public class MainController
 
     public void buttonClearAllMemoryClick(){
 
-    }
+    } //TO DO
 
     public void buttonMemoryRecallClick(){
 
-    }
+    } //TO DO
 
     public void buttonMemoryAddClick(){
 
-    }
+    } //TO DO
 
     public void buttonMemorySubtractClick(){
 
-    }
+    } //TO DO
 
     public void buttonMemoryStoreClick(){
 
-    }
+    } //TO DO
 
     public void buttonMemoryClick(){
 
-    }
+    } //TO DO
 
     // -------- SUPPORT METHODS -----------------------
     private void addNumberToDisplay(String value){
@@ -248,10 +248,10 @@ public class MainController
         if (wasNumber){
             String currentStr = display.getText();
             if (!ZERO.equals(currentStr)){
-                display.setText(currentStr+ZERO);
+                setDisplay(currentStr+ZERO);
             }
         }else {
-            display.setText(ZERO);
+            setDisplay(ZERO);
         }
 
     }
@@ -261,11 +261,11 @@ public class MainController
         String currentStr = display.getText();
         if (!ZERO.equals(currentStr)){
             if (isComaAbsent(currentStr)){
-                display.setText(currentStr+COMA);
+                setDisplay(currentStr+COMA);
                 return;
             }
         }
-        display.setText(ZERO+COMA);
+        setDisplay(ZERO+COMA);
     }
 
     private void setWasNumber(boolean val){
