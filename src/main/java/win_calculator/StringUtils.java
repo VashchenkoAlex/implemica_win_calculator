@@ -3,7 +3,7 @@ package win_calculator;
 abstract class StringUtils {
 
     private static final String COMA = ",";
-    private static final int DIGIT = 3;
+    private static final int DIGITS = 3;
 
     static String replaceComaToDot(String string){
         return string.replace(",",".");
@@ -17,11 +17,11 @@ abstract class StringUtils {
 
         String[] stringParts = splitByComa(currentStr);
         String result = "";
-        if (stringParts[0].length()>DIGIT){
-            int firstPartIndex = (stringParts[0].length()%DIGIT)+count;
+        if (stringParts[0].length()>= DIGITS){
+            int firstPartIndex = (stringParts[0].length()% DIGITS)+count;
             String firstWholePart = stringParts[0].substring(0,firstPartIndex);
             String secondPart = stringParts[0].substring(firstWholePart.length());
-            String[] subStr = secondPart.split("(?<=\\G.{"+DIGIT+"})");
+            String[] subStr = secondPart.split("(?<=\\G.{"+ DIGITS +"})");
             for (String str : subStr) {
                 result +=" "+str;
             }
@@ -46,6 +46,7 @@ abstract class StringUtils {
     }
 
     static String removeSpaces(String currentString){
+
         return currentString.replaceAll("\\s","");
     }
 
@@ -53,10 +54,33 @@ abstract class StringUtils {
         return !string.contains(COMA);
     }
 
-    static String deleteOneSymbolFromTheEnd(String currentStr){
-        String result = removeSpaces(currentStr);
+    static String deleteOneSymbolFromTheEnd(String current){
+
+        String result = optimizeString(current);
         result = result.substring(0,result.length()-1);
         if (result.length()>3){
+            result = addSpaces(result,0);
+        }
+        return result;
+    }
+
+    static String cutLastZeros(String current){
+
+        String result = current;
+        if (current.contains(",")){
+            result = current.replaceAll("[0]+$","");
+        }
+        return result;
+    }
+
+    static String cutLastComa(String currentStr){
+        return currentStr.replaceAll(",$","");
+    }
+
+    static String optimizeString(String current){
+
+        String result = cutLastComa(cutLastZeros(removeSpaces(replaceDotToComa(current))));
+        if (result.length()>DIGITS){
             result = addSpaces(result,0);
         }
         return result;

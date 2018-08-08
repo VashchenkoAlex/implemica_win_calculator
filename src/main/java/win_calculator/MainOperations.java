@@ -1,60 +1,67 @@
 package win_calculator;
 
+import win_calculator.exceptions.MyException;
+import win_calculator.main_operations.MainOperation;
+
 import java.math.BigDecimal;
 
-import static win_calculator.StringUtils.addSpaces;
-import static win_calculator.StringUtils.replaceComaToDot;
-import static win_calculator.StringUtils.replaceDotToComa;
+import static win_calculator.StringUtils.*;
 
 abstract class MainOperations {
 
-    private static BigDecimal[] variables = new BigDecimal[3];
+    private static BigDecimal firstNumber;
+    private static BigDecimal secondNumber;
+    private static BigDecimal resultNumber;
 
-    static void addNumber(String numberStr){
+    static void selectOperation(MainOperation operation,boolean isRepeated) throws MyException {
 
-        if (variables[0] == null){
-            variables[0] = new BigDecimal(replaceComaToDot(numberStr));
+        if (isSecondNumberEmpty()){
+            if (isResultEmpty()){
+                resultNumber = operation.calculate(firstNumber);
+            }else {
+                resultNumber = operation.calculate(resultNumber,firstNumber);
+            }
+        }else {
+            if (isRepeated&&!isResultEmpty()){
+                resultNumber = operation.calculate(resultNumber,secondNumber);
+            }else {
+                resultNumber = operation.calculate(firstNumber,secondNumber);
+            }
         }
-        if (variables[1] == null){
-            variables[1] = new BigDecimal(replaceComaToDot(numberStr));
-        }
     }
 
-    static void doPlus(){
+    static BigDecimal getResult(){
 
-        variables[2] = variables[0].add(variables[1]);
+        return resultNumber;
     }
 
-    static void doMinus(){
-
-        variables[2] = variables[0].subtract(variables[1]);
+    static void resetValues(){
+        firstNumber = null;
+        secondNumber = null;
+        resultNumber = null;
     }
 
-    static void doMultiply(){
-        variables[2] = variables[0].multiply(variables[1]);
+    static void setFirstNumber(String numberStr){
+
+        firstNumber = new BigDecimal(replaceComaToDot(numberStr));
     }
 
-    static void doDivide(){
-        variables[2] = variables[0].divide(variables[1]);
+    static void setSecondNumber(String numberStr){
+
+        secondNumber = new BigDecimal(replaceComaToDot(numberStr));
     }
 
-    static boolean isResult(){
-        return variables[2]!=null;
+    static void setResult(String numberStr){
+        resultNumber = new BigDecimal(replaceComaToDot(numberStr));
     }
 
-    static String getResultString(){
-        String resultStr = replaceDotToComa(variables[2].toString());
-        if (resultStr.length()>3){
-            resultStr = addSpaces(resultStr,0);
-        }
-        return resultStr;
+    private static boolean isResultEmpty(){
+
+        return resultNumber==null;
     }
 
-    static void setEmptyVariables(){
-        variables = new BigDecimal[3];
-    }
+    private static boolean isSecondNumberEmpty(){
 
-    static void finalizeCalc(MainOperation operation){
-
+        return secondNumber==null;
     }
 }

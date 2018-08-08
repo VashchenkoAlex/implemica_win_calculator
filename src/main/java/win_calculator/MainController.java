@@ -9,12 +9,13 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
+import win_calculator.exceptions.MyException;
+import win_calculator.main_operations.*;
 
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static win_calculator.MainOperation.*;
 import static win_calculator.MainOperations.*;
 import static win_calculator.StringUtils.*;
 
@@ -39,13 +40,14 @@ public class MainController implements Initializable
     @FXML
     private Button fullScreenBtn;
 
-    private static final String FULL_SCREEN_CSS = "full_screen_styles.css";
-    private static final String MAIN_CSS = "full_screen_styles.css";
+    private static final String FULL_SCREEN_CSS = "/styles/full_screen_style.css";
+    private static final String MAIN_CSS = "/styles/styles.css";
     private static boolean wasOperationBefore = false;
     private static boolean wasNumber = true;
+    private static boolean isEnterRepeated = false;
+    private static boolean isOperationRepeated = false;
     private static MainOperation lastOperation;
     private static final String ZERO = "0";
-    private static final String ZERO_REGEX = "^0";
     private static final String COMA = ",";
 
     public void closeBtn(){
@@ -75,221 +77,230 @@ public class MainController implements Initializable
 
     public void menuBtn(){
 
-        Dialog<String> dialog = new TextInputDialog("Enter new text here");
+        Dialog<String> dialog = new TextInputDialog("...");
         dialog.setTitle("Change button text");
         Optional<String> optional = dialog.showAndWait();
         optional.ifPresent(menu::setText);
-    }
+    } //TO DO
 
     public void historyBtn(){
 
-        Dialog<String> dialog = new TextInputDialog("Enter new text here");
+        Dialog<String> dialog = new TextInputDialog("...");
         dialog.setTitle("Change button text");
         Optional<String> optional = dialog.showAndWait();
         optional.ifPresent(menu::setText);
-    }
-
-    public void buttonPercentClick(){
-
-        setWasNumber(false);
-    } //TO DO
-
-    public void buttonSqrtClick(){
-
-        setWasNumber(false);
-    } //TO DO
-
-    public void buttonSqrClick(){
-
-        setWasNumber(false);
-    } //TO DO
-
-    public void buttonFractionOneClick(){
-
-        setWasNumber(false);
     } //TO DO
 
     // -------- CLEAR BUTTONS ------------------
-    public void buttonClearEnteredClick(){
+    public void clearEnteredBtnClick(){
 
         setDisplay(ZERO);
         setWasNumber(true);
     } //DONE
 
-    public void buttonClearClick(){
+    public void clearBtnClick(){
 
         setDisplay(ZERO);
         clearHistory();
-        setEmptyVariables();
+        resetValues();
         setWasNumber(true);
-    } //DONE
+        setWasOperationBefore(false);
+    }
 
-    public void buttonBackSpaceClick(){
+    public void backspaceBtnClick(){
 
         String currentText = display.getText();
-        if (currentText.length()>1){
+        if (currentText.length()>1&&wasNumber){
             display.setText(deleteOneSymbolFromTheEnd(currentText));
         }
         if (currentText.length()==1){
             setDisplay(ZERO);
         }
-        setWasNumber(true);
-    } //DONE
+    }
 
     // -------- NUMBER BUTTONS -----------------
-    public void buttonOneClick(){
+    public void oneBtnClick(){
 
         addNumberToDisplay("1");
         setWasNumber(true);
-    } //DONE
+    }
 
-    public void buttonTwoClick(){
+    public void twoBtnClick(){
 
         addNumberToDisplay("2");
         setWasNumber(true);
-    } //DONE
 
-    public void buttonThreeClick(){
+    }
+
+    public void threeBtnClick(){
 
         addNumberToDisplay("3");
         setWasNumber(true);
-    } //DONE
+    }
 
-    public void buttonFourClick(){
+    public void fourBtnClick(){
 
         addNumberToDisplay("4");
         setWasNumber(true);
-    } //DONE
+    }
 
-    public void buttonFiveClick(){
+    public void fiveBtnClick(){
 
         addNumberToDisplay("5");
         setWasNumber(true);
-    } //DONE
+    }
 
-    public void buttonSixClick(){
+    public void sixBtnClick(){
 
         addNumberToDisplay("6");
         setWasNumber(true);
-    } //DONE
+    }
 
-    public void buttonSevenClick(){
+    public void sevenBtnClick(){
 
         addNumberToDisplay("7");
         setWasNumber(true);
-    } //DONE
+    }
 
-    public void buttonEightClick(){
+    public void eightBtnClick(){
 
         addNumberToDisplay("8");
         setWasNumber(true);
-    } //DONE
+    }
 
-    public void buttonNineClick(){
+    public void nineBtnClick(){
 
         addNumberToDisplay("9");
         setWasNumber(true);
-    } //DONE
+    }
 
-    public void buttonZeroClick(){
+    public void zeroBtnClick(){
 
         if (isZeroNotFirst()){
             putZeroToDisplay();
             setWasNumber(true);
         }
-    } //DONE
+    }
 
-    public void buttonComaClick(){
+    public void comaBtnClick(){
 
         putComaToDisplay();
-        setWasNumber(true);
-    } //DONE
+    }
 
     // -------- MAIN OPERATIONS BUTTONS ----------
-    public void buttonDivideClick(){
+    public void divideBtnClick(){
 
-        setLastOperation(DIVIDE);
-
+        doMainOperation(new Divide());
     }
 
-    public void buttonMultiplyClick(){
+    public void multiplyBtnClick(){
 
-        setLastOperation(MULTIPLY);
-
+        doMainOperation(new Multiply());
     }
 
-    public void buttonMinusClick(){
+    public void minusBtnClick(){
 
-        setLastOperation(MINUS);
-
+        doMainOperation(new Minus());
     }
 
-    public void buttonPlusClick(){
+    public void plusBtnClick(){
 
-        setLastOperation(PLUS);
-        addOperationToHistory(PLUS);
-        setNextNumber();
-        doOperation(PLUS);
-        setWasNumber(false);
-        setWasOperationBefore(true);
+        doMainOperation(new Plus());
     }
 
-    public void buttonEnterClick(){
+    public void enterBtnClick(){
 
         if (wasOperationBefore){
-            finalizeCalc(lastOperation);
-            setDisplay(getResultString());
+            if (wasNumber){
+                setSecondNumber(takeDisplayedNumber());
+            }
+            try {
+                selectOperation(lastOperation, isEnterRepeated||isOperationRepeated);
+                clearHistory();
+                setDisplay(optimizeString(getResult().toString()));
+            } catch (MyException e) {
+                setDisplay(e.getMessage());
+            }
+            setEnterRepeated(true);
+            setOperationRepeated(false);
+            setWasNumber(false);
+            setWasOperationBefore(true);
+        }else {
+
+            setResult(takeDisplayedNumber());
         }
-        setWasNumber(false);
+
     }
 
-    public void buttonNegateClick(){
+    //---------- ADVANCED OPERATIONS BUTTONS ----------------
+
+    public void percentBtnClick(){
+
+        setWasNumber(false);
+    } //TO DO
+
+    public void sqrtBtnClick(){
+
+        setWasNumber(false);
+    } //TO DO
+
+    public void sqrBtnClick(){
+
+        setWasNumber(false);
+    } //TO DO
+
+    public void fractionBtnOneClick(){
+
+        setWasNumber(false);
+    } //TO DO
+
+    public void negateBtnClick(){
 
         setWasNumber(true);
-    }
+    } //TO DO
 
-    public void buttonClearAllMemoryClick(){
+    public void clearAllMemoryBtnClick(){
 
     } //TO DO
 
-    public void buttonMemoryRecallClick(){
+    public void memoryRecallBtnClick(){
 
     } //TO DO
 
-    public void buttonMemoryAddClick(){
+    public void memoryAddBtnClick(){
 
     } //TO DO
 
-    public void buttonMemorySubtractClick(){
+    public void memorySubtractBtnClick(){
 
     } //TO DO
 
-    public void buttonMemoryStoreClick(){
+    public void memoryStoreBtnClick(){
 
     } //TO DO
 
-    public void buttonMemoryClick(){
+    public void memoryBtnClick(){
 
     } //TO DO
 
     // -------- SUPPORT METHODS -----------------------
-    private void addNumberToDisplay(String value){
+    void addNumberToDisplay(String value){
 
         if (wasNumber && isZeroNotFirst()){
-            String currentStr = display.getText();
-            if (currentStr.length()<21){
-                if (currentStr.length()>2 && isComaAbsent(currentStr) && !COMA.equals(value)) {
-                    currentStr = removeSpaces(currentStr);
-                    currentStr = addSpaces(currentStr,1);
+            String current = display.getText();
+            if (current.length()<21){
+                if (current.length()>2 && isComaAbsent(current) && !COMA.equals(value)) {
+                    current = removeSpaces(current);
+                    current = addSpaces(current,1);
                 }
-                display.setText(currentStr+value);
+                display.setText(current+value);
             }
         }else {
             display.setText(value);
         }
     }
 
-    private void putZeroToDisplay(){
+    void putZeroToDisplay(){
 
         if (wasNumber){
             String currentStr = display.getText();
@@ -302,91 +313,71 @@ public class MainController implements Initializable
 
     }
 
-    private void putComaToDisplay(){
+    void putComaToDisplay(){
 
-        String currentStr = display.getText();
-        if (!ZERO.equals(currentStr)){
-            if (isComaAbsent(currentStr)){
-                setDisplay(currentStr+COMA);
-                return;
+            String currentStr = display.getText();
+            if (isComaAbsent(currentStr)&&wasNumber){
+                if (ZERO.equals(currentStr)){
+                    setDisplay(ZERO+COMA);
+                }else {
+                    setDisplay(currentStr+COMA);
+                }
+            }else if (wasOperationBefore){
+                setDisplay(ZERO+COMA);
             }
-        }
-        setDisplay(ZERO+COMA);
+            setWasNumber(true);
     }
 
-    private void setWasNumber(boolean val){
+    void setWasNumber(boolean val){
+
         wasNumber = val;
     }
 
-    private void setWasOperationBefore(boolean val){
+    void setWasOperationBefore(boolean val){
         wasOperationBefore = val;
     }
 
-    private boolean isZeroNotFirst(){
+    boolean isZeroNotFirst(){
 
-        return !display.getText().matches(ZERO_REGEX);
+        return !display.getText().matches("0");
     }
 
-    private void setDisplay(String string){
+    void setDisplay(String string){
 
         display.setText(string);
     }
 
-    private void setHistoryText(String string){
+    void setHistoryText(String string){
         historyText.setText(historyText.getText()+string);
     }
 
-    private void doOperation(MainOperation currentOperation){
-
-        selectOperation(currentOperation); //+
-
-        setWasOperationBefore(true);
-    }
-
-    private void clearHistory(){
+    void clearHistory(){
         historyText.setText("");
     }
 
-    private void setLastOperation(MainOperation operation){
+    void setLastOperation(MainOperation operation){
         lastOperation = operation;
     }
 
-    private void selectOperation(MainOperation operation){
-        switch (operation){
-            case PLUS: {
-                doPlus();
-                break;
-            }
-            case MINUS:{
-                doMinus();
-                break;
-            }
-            case MULTIPLY:{
-                doMultiply();
-                break;
-            }
-            case DIVIDE:{
-                doDivide();
-                break;
-            }
-        }
-    }
 
-    private void addOperationToHistory(MainOperation operation){
+
+    void addOperationToHistory(MainOperation operation){
         if (wasNumber){
-            setHistoryText(removeSpaces(display.getText())+operation.getValue());
+            setHistoryText(optimizeString(display.getText())+operation.getValue());
         }else {
             changeOperationAtHistory(operation);
         }
     }
 
-    private void changeOperationAtHistory(MainOperation operation){
+    void changeOperationAtHistory(MainOperation operation){
         String historyString = historyText.getText();
-        historyText.setText(historyString.substring(0,historyString.length()-3)+operation.getValue());
+        if (historyString.length()>0){
+            historyText.setText(historyString.substring(0,historyString.length()-3)+operation.getValue());
+        }
     }
 
-    private void setNextNumber(){
-        addNumber(removeSpaces(display.getText()));
+    String takeDisplayedNumber(){
+        return removeSpaces(display.getText());
     }
 
 
@@ -395,7 +386,7 @@ public class MainController implements Initializable
         setSizeMainTableColumns();
     }
 
-    private void setSizeMainTableColumns(){
+    void setSizeMainTableColumns(){
         ObservableList<RowConstraints> rows = mainTable.getRowConstraints();
         rows.get(0).setPercentHeight(10);
         rows.get(1).setPercentHeight(10);
@@ -403,7 +394,46 @@ public class MainController implements Initializable
         rows.get(3).setPercentHeight(72);
     }
 
-    private void changeStyleTo(String style){
-        rootPane.getStylesheets().add(getClass().getResource(style).toExternalForm());
+    void changeStyleTo(String style){
+
+        String object = getClass().getResource(style).toExternalForm();
+        rootPane.getStylesheets().add(object);
+    }
+
+    void doMainOperation(MainOperation operation){
+
+        setLastOperation(operation);
+        addOperationToHistory(operation);
+        if (wasOperationBefore&&wasNumber){
+            setSecondNumber(takeDisplayedNumber());
+            try {
+                selectOperation(lastOperation, isOperationRepeated);
+            } catch (MyException e) {
+                setDisplay(e.getMessage());
+            }
+            setDisplay(optimizeString(getResult().toString()));
+            setOperationRepeated(true);
+        }else {
+            setFirstNumber(takeDisplayedNumber());
+        }
+        optimizeDisplay();
+        setEnterRepeated(false);
+        setWasNumber(false);
+        setWasOperationBefore(true);
+    }
+
+    void setEnterRepeated(boolean val){
+
+        isEnterRepeated = val;
+    }
+
+    void setOperationRepeated(boolean val){
+
+        isOperationRepeated = val;
+    }
+
+    void optimizeDisplay(){
+
+        display.setText(optimizeString(display.getText()));
     }
 }

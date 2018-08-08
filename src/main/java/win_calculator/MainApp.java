@@ -23,7 +23,7 @@ public class MainApp extends Application {
         stage.setResizable(true);
         stage.initStyle(StageStyle.UNDECORATED);
         stage.toBack();
-        stage.setOpacity(0.95F);
+        stage.setOpacity(0.98F);
         stage.getIcons().add(new Image("/images/calc_logo.png"));
         stage.setOnCloseRequest(e -> Platform.exit());
         ComponentResizer.addResizeListener(stage);
