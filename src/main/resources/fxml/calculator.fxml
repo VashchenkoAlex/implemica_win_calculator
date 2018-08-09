@@ -13,7 +13,7 @@
 <Stage title="Calculator"
        xmlns:fx="http://javafx.com/fxml/1"
        xmlns="http://javafx.com/javafx/2.2"
-       fx:controller="win_calculator.MainController"
+       fx:controller="win_calculator.Controller"
        minHeight="500.0"
        minWidth="320.0"
         >

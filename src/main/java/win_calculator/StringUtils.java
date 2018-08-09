@@ -1,5 +1,8 @@
 package win_calculator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 abstract class StringUtils {
 
     private static final String COMA = ",";
@@ -15,32 +18,42 @@ abstract class StringUtils {
 
     static String addSpaces(String currentStr,int count){
 
-        String[] stringParts = splitByComa(currentStr);
+
+        ArrayList<String> stringParts = cutMinus(currentStr);
+        stringParts.addAll(splitByComa(stringParts.get(1)));
         String result = "";
-        if (stringParts[0].length()>= DIGITS){
-            int firstPartIndex = (stringParts[0].length()% DIGITS)+count;
-            String firstWholePart = stringParts[0].substring(0,firstPartIndex);
-            String secondPart = stringParts[0].substring(firstWholePart.length());
+        if (stringParts.size()>3){
+            count = 1;
+        }
+        if (stringParts.get(2).length()>= DIGITS+count){
+            int firstPartIndex = (stringParts.get(2).length()% DIGITS)-count+1;
+            String firstWholePart = stringParts.get(2).substring(0,firstPartIndex);
+            String secondPart = stringParts.get(2).substring(firstWholePart.length());
             String[] subStr = secondPart.split("(?<=\\G.{"+ DIGITS +"})");
             for (String str : subStr) {
-                result +=" "+str;
+                result +=str+" ";
             }
-            if (stringParts.length>1){
-                result += ","+stringParts[1];
+            result = result.substring(0,result.length()-1);
+            if (stringParts.size()>3){
+                result += ","+stringParts.get(3);
+            }
+            if (!"".equals(firstWholePart)){
+                firstWholePart+=" ";
             }
             result = firstWholePart+result;
         }else {
-            result = currentStr;
+            result = stringParts.get(1);
         }
-        return result;
+        return stringParts.get(0)+result;
     }
 
-    private static String[] splitByComa(String string){
-        String[] result;
+    private static ArrayList<String> splitByComa(String string){
+        ArrayList<String> result;
         if (string.contains(",")){
-            result = string.split("[,]");
+            result = new ArrayList<>(Arrays.asList(string.split("[,]")));
         } else {
-            result = new String[]{string};
+            result = new ArrayList<>();
+            result.add(string);
         }
         return result;
     }
@@ -59,7 +72,7 @@ abstract class StringUtils {
         String result = optimizeString(current);
         result = result.substring(0,result.length()-1);
         if (result.length()>3){
-            result = addSpaces(result,0);
+            result = addSpaces(result,1);
         }
         return result;
     }
@@ -80,8 +93,16 @@ abstract class StringUtils {
     static String optimizeString(String current){
 
         String result = cutLastComa(cutLastZeros(removeSpaces(replaceDotToComa(current))));
-        if (result.length()>DIGITS){
-            result = addSpaces(result,0);
+        result = addSpaces(result,1);
+        return result;
+    }
+
+    static ArrayList<String> cutMinus(String currentStr){
+
+        ArrayList<String> result = new ArrayList<String>(){{add("");add(currentStr);}};
+        if (currentStr.contains("-")) {
+            result.set(0,"-");
+            result.set(1,currentStr.substring(1));
         }
         return result;
     }

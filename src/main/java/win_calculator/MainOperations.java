@@ -12,20 +12,21 @@ abstract class MainOperations {
     private static BigDecimal firstNumber;
     private static BigDecimal secondNumber;
     private static BigDecimal resultNumber;
+    private static MainOperation lastOperation;
 
-    static void selectOperation(MainOperation operation,boolean isRepeated) throws MyException {
+    static void calculate(boolean isRepeated) throws MyException {
 
         if (isSecondNumberEmpty()){
             if (isResultEmpty()){
-                resultNumber = operation.calculate(firstNumber);
+                resultNumber = lastOperation.calculate(firstNumber);
             }else {
-                resultNumber = operation.calculate(resultNumber,firstNumber);
+                resultNumber = lastOperation.calculate(resultNumber,firstNumber);
             }
         }else {
             if (isRepeated&&!isResultEmpty()){
-                resultNumber = operation.calculate(resultNumber,secondNumber);
+                resultNumber = lastOperation.calculate(resultNumber,secondNumber);
             }else {
-                resultNumber = operation.calculate(firstNumber,secondNumber);
+                resultNumber = lastOperation.calculate(firstNumber,secondNumber);
             }
         }
     }
@@ -63,5 +64,9 @@ abstract class MainOperations {
     private static boolean isSecondNumberEmpty(){
 
         return secondNumber==null;
+    }
+
+    static void setLastOperation(MainOperation operation){
+        lastOperation = operation;
     }
 }

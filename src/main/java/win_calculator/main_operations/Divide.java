@@ -3,6 +3,7 @@ package win_calculator.main_operations;
 import win_calculator.exceptions.MyException;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Divide implements MainOperation {
 
@@ -26,7 +27,7 @@ public class Divide implements MainOperation {
 
         BigDecimal result;
         try{
-            result = firstNumber.divide(secondNumber);
+            result = firstNumber.divide(secondNumber,16,RoundingMode.HALF_DOWN);
         }catch (ArithmeticException e){
             throw new MyException("Cannot divide by zero");
         }

@@ -41,6 +41,8 @@ public class MainApp extends Application {
         //System.out.println("\uE81C" + " Calculator History");
 
         //System.out.println(" - minimize");
+        //System.out.println("9,999999999999376e+9999 is MAX for CALC");
+        //System.out.println("9,999999999999376e+9999 ++ show -> Overflow -> 0");
 
         stage.show();
     }

@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
 import static win_calculator.MainOperations.*;
 import static win_calculator.StringUtils.*;
 
-public class MainController implements Initializable
+public class Controller implements Initializable
 {
 
     @FXML
@@ -46,7 +46,6 @@ public class MainController implements Initializable
     private static boolean wasNumber = true;
     private static boolean isEnterRepeated = false;
     private static boolean isOperationRepeated = false;
-    private static MainOperation lastOperation;
     private static final String ZERO = "0";
     private static final String COMA = ",";
 
@@ -190,46 +189,55 @@ public class MainController implements Initializable
     // -------- MAIN OPERATIONS BUTTONS ----------
     public void divideBtnClick(){
 
-        doMainOperation(new Divide());
+        Divide divide = new Divide();
+        addOperationToHistory(divide);
+        String result = doMainOperation(divide,takeDisplayedNumber());
+        if (!("".equals(result))){
+            setDisplay(result);
+        }
+        optimizeDisplay();//?
     }
 
     public void multiplyBtnClick(){
 
-        doMainOperation(new Multiply());
+        Multiply multiply = new Multiply();
+        addOperationToHistory(multiply);
+        String result = doMainOperation(multiply,takeDisplayedNumber());
+        if (!("".equals(result))){
+            setDisplay(result);
+        }
+        optimizeDisplay();
     }
 
     public void minusBtnClick(){
 
-        doMainOperation(new Minus());
+        Minus minus = new Minus();
+        addOperationToHistory(minus);
+        String result = doMainOperation(minus,takeDisplayedNumber());
+        if (!("".equals(result))){
+            setDisplay(result);
+        }
+        optimizeDisplay();
     }
 
     public void plusBtnClick(){
 
-        doMainOperation(new Plus());
+        Plus plus = new Plus();
+        addOperationToHistory(plus);
+        String result = doMainOperation(plus,takeDisplayedNumber());
+        if (!("".equals(result))){
+            setDisplay(result);
+        }
+        optimizeDisplay();
     }
 
     public void enterBtnClick(){
 
-        if (wasOperationBefore){
-            if (wasNumber){
-                setSecondNumber(takeDisplayedNumber());
-            }
-            try {
-                selectOperation(lastOperation, isEnterRepeated||isOperationRepeated);
-                clearHistory();
-                setDisplay(optimizeString(getResult().toString()));
-            } catch (MyException e) {
-                setDisplay(e.getMessage());
-            }
-            setEnterRepeated(true);
-            setOperationRepeated(false);
-            setWasNumber(false);
-            setWasOperationBefore(true);
-        }else {
-
-            setResult(takeDisplayedNumber());
+        String result = doEnter(takeDisplayedNumber());
+        if (!"".equals(result)){
+            clearHistory();
+            setDisplay(result);
         }
-
     }
 
     //---------- ADVANCED OPERATIONS BUTTONS ----------------
@@ -291,7 +299,7 @@ public class MainController implements Initializable
             if (current.length()<21){
                 if (current.length()>2 && isComaAbsent(current) && !COMA.equals(value)) {
                     current = removeSpaces(current);
-                    current = addSpaces(current,1);
+                    current = addSpaces(current,0);
                 }
                 display.setText(current+value);
             }
@@ -355,12 +363,6 @@ public class MainController implements Initializable
         historyText.setText("");
     }
 
-    void setLastOperation(MainOperation operation){
-        lastOperation = operation;
-    }
-
-
-
     void addOperationToHistory(MainOperation operation){
         if (wasNumber){
             setHistoryText(optimizeString(display.getText())+operation.getValue());
@@ -400,26 +402,49 @@ public class MainController implements Initializable
         rootPane.getStylesheets().add(object);
     }
 
-    void doMainOperation(MainOperation operation){
+    String doMainOperation(MainOperation operation,String displayedNumber){
 
         setLastOperation(operation);
-        addOperationToHistory(operation);
+        String result = "";
         if (wasOperationBefore&&wasNumber){
-            setSecondNumber(takeDisplayedNumber());
+            setSecondNumber(displayedNumber);
             try {
-                selectOperation(lastOperation, isOperationRepeated);
+                calculate(isOperationRepeated);
+                result = optimizeString(getResult().toString());
             } catch (MyException e) {
-                setDisplay(e.getMessage());
+                result = e.getMessage();
             }
-            setDisplay(optimizeString(getResult().toString()));
             setOperationRepeated(true);
         }else {
-            setFirstNumber(takeDisplayedNumber());
+            setFirstNumber(displayedNumber);
         }
-        optimizeDisplay();
         setEnterRepeated(false);
         setWasNumber(false);
         setWasOperationBefore(true);
+        return result;
+    }
+
+    String doEnter(String displayedNumber){
+
+        String result = "";
+        if (wasOperationBefore){
+            if (wasNumber||isOperationRepeated){
+                setSecondNumber(displayedNumber);
+            }
+            try {
+                calculate(isEnterRepeated||isOperationRepeated);
+                result = optimizeString(getResult().toString());
+            } catch (MyException e) {
+                result = e.getMessage();
+            }
+            setEnterRepeated(true);
+            setOperationRepeated(false);
+            setWasNumber(false);
+            setWasOperationBefore(true);
+        }else {
+            setResult(displayedNumber);
+        }
+        return result;
     }
 
     void setEnterRepeated(boolean val){
