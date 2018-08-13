@@ -2,10 +2,9 @@ package win_calculator.main_operations;
 
 import java.math.BigDecimal;
 
-public class Plus implements MainOperation{
+public class Plus implements MainOperation {
 
     private static final String VALUE = " + ";
-    private static final String NAME = "PLUS";
 
     @Override
     public BigDecimal calculate(BigDecimal number) {
@@ -23,8 +22,4 @@ public class Plus implements MainOperation{
         return VALUE;
     }
 
-    @Override
-    public String getName() {
-        return NAME;
-    }
 }

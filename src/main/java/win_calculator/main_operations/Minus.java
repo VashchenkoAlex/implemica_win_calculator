@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 public class Minus implements MainOperation {
 
     private static final String VALUE = " - ";
-    private static final String NAME = "MINUS";
 
     @Override
     public BigDecimal calculate(BigDecimal number) {
@@ -23,8 +22,4 @@ public class Minus implements MainOperation {
         return VALUE;
     }
 
-    @Override
-    public String getName() {
-        return NAME;
-    }
 }

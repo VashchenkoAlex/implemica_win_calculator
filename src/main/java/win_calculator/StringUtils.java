@@ -3,12 +3,12 @@ package win_calculator;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-abstract class StringUtils {
+public abstract class StringUtils {
 
     private static final String COMA = ",";
     private static final int DIGITS = 3;
 
-    static String replaceComaToDot(String string){
+    public static String replaceComaToDot(String string){
         return string.replace(",",".");
     }
 
@@ -16,8 +16,7 @@ abstract class StringUtils {
         return string.replace(".",",");
     }
 
-    static String addSpaces(String currentStr,int count){
-
+    static String addCapacity(String currentStr, int count){
 
         ArrayList<String> stringParts = cutMinus(currentStr);
         stringParts.addAll(splitByComa(stringParts.get(1)));
@@ -45,7 +44,7 @@ abstract class StringUtils {
             result = stringParts.get(1);
         }
         return stringParts.get(0)+result;
-    }
+    } //TO DO TESTS
 
     private static ArrayList<String> splitByComa(String string){
         ArrayList<String> result;
@@ -58,7 +57,7 @@ abstract class StringUtils {
         return result;
     }
 
-    static String removeSpaces(String currentString){
+    static String removeCapacity(String currentString){
 
         return currentString.replaceAll("\\s","");
     }
@@ -67,37 +66,36 @@ abstract class StringUtils {
         return !string.contains(COMA);
     }
 
-    static String deleteOneSymbolFromTheEnd(String current){
+    static String deleteOneSymbolFromTheEndOf(String current){
 
-        String result = optimizeString(current);
-        result = result.substring(0,result.length()-1);
+        String result = current.substring(0,current.length()-1);
         if (result.length()>3){
-            result = addSpaces(result,1);
+            result = addCapacity(result,1);
         }
         return result;
-    }
+    } //TO DO TESTS
 
-    static String cutLastZeros(String current){
+    private static String cutLastZeros(String current){
 
         String result = current;
         if (current.contains(",")){
             result = current.replaceAll("[0]+$","");
         }
         return result;
-    }
+    } //TO DO TESTS
 
-    static String cutLastComa(String currentStr){
+    private static String cutLastComa(String currentStr){
         return currentStr.replaceAll(",$","");
     }
 
-    static String optimizeString(String current){
+    public static String optimizeString(String current){
 
-        String result = cutLastComa(cutLastZeros(removeSpaces(replaceDotToComa(current))));
-        result = addSpaces(result,1);
+        String result = cutLastComa(cutLastZeros(removeCapacity(replaceDotToComa(current))));
+        result = addCapacity(result,1);
         return result;
-    }
+    } //TO DO TESTS
 
-    static ArrayList<String> cutMinus(String currentStr){
+    private static ArrayList<String> cutMinus(String currentStr){
 
         ArrayList<String> result = new ArrayList<String>(){{add("");add(currentStr);}};
         if (currentStr.contains("-")) {

@@ -1,21 +1,29 @@
 package win_calculator;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
+import win_calculator.buttons_handlers.ExtraActionButtonsHandler;
+import win_calculator.buttons_handlers.MainActionButtonsHandler;
+import win_calculator.extra_operations.ExtraOperation;
+import win_calculator.extra_operations.Percent;
 import win_calculator.main_operations.*;
 
+import java.math.BigDecimal;
+
 import static org.junit.gen5.api.Assertions.assertEquals;
-import static win_calculator.MainOperations.*;
-import static win_calculator.StringUtils.addSpaces;
+import static win_calculator.Controller.setInputtedNumber;
+import static win_calculator.StringUtils.addCapacity;
+import static win_calculator.StringUtils.removeCapacity;
+import static win_calculator.StringUtils.replaceComaToDot;
 
 class ControllerTest {
 
-    @Rule
-    private final Controller controller = new Controller();
+    private final MainActionButtonsHandler mainActBtnsHandler = new MainActionButtonsHandler();
+    private final ExtraActionButtonsHandler extraActBtnHandler = new ExtraActionButtonsHandler();
     private final Plus plus = new Plus();
     private final Minus minus = new Minus();
     private final Multiply multiply = new Multiply();
     private final Divide divide = new Divide();
+    private final Percent percent = new Percent();
 
     @Test
     void testChainNumActEnterEnterEnter(){
@@ -112,46 +120,60 @@ class ControllerTest {
 
         testThirdChain(2,3,plus,15);
     }
+
+    @Test
+    void testChainNumActNumEActEnterEnterEnter(){
+
+        testFourthChain(100,10,plus,percent,"130");
+        testFourthChain(100,10,minus,percent,"70");
+        testFourthChain(100,10,multiply,percent,"100 000");
+        testFourthChain(100,10,divide,percent,"0,1");
+    }
+
     private void testFirstChain(long displayedNumber, MainOperation operation, long expResult){
 
         String display = displayedNumber+"";
-        display = setDisplay(controller.doMainOperation(operation,display),display);
-        display = setDisplay(controller.doEnter(display),display);
-        display = setDisplay(controller.doEnter(display),display);
-        display = controller.doEnter(display);
+        display = setDisplay(mainActBtnsHandler.doOperation(operation,new BigDecimal(display)),display);
+        display = setDisplay(mainActBtnsHandler.doEnter(new BigDecimal(display)),display);
+        display = setDisplay(mainActBtnsHandler.doEnter(new BigDecimal(display)),display);
+        display = mainActBtnsHandler.doEnter(new BigDecimal(display));
         assertEquals(expResult+"",display);
-        resetValues();
+        mainActBtnsHandler.resetValues();
     }
 
-    private void testSecondChain(long firstNum,long secondNum,long thirdNum,long fourthNum,
-                                 MainOperation operation,String expResult){
+    private void testSecondChain(long firstNum, long secondNum, long thirdNum, long fourthNum,
+                                 MainOperation operation, String expResult){
 
-        String display = firstNum+"";
-        controller.doMainOperation(operation,display);
-        display = secondNum+"";
-        controller.setWasNumber(true);
-        controller.doMainOperation(operation,display);
-        display = thirdNum+"";
-        controller.setWasNumber(true);
-        controller.doMainOperation(operation,display);
-        display = fourthNum+"";
-        controller.setWasNumber(true);
-        display = controller.doEnter(display);
-        assertEquals(addSpaces(expResult+"",1),controller.doEnter(display));
-        ;
-        resetValues();
+        mainActBtnsHandler.doOperation(operation,BigDecimal.valueOf(firstNum));
+        setInputtedNumber(true);
+        mainActBtnsHandler.doOperation(operation,BigDecimal.valueOf(secondNum));
+        setInputtedNumber(true);
+        mainActBtnsHandler.doOperation(operation,BigDecimal.valueOf(thirdNum));
+        setInputtedNumber(true);
+        String display = replaceComaToDot(removeCapacity(mainActBtnsHandler.doEnter(BigDecimal.valueOf(fourthNum))));
+        assertEquals(addCapacity(expResult+"",1), mainActBtnsHandler.doEnter(new BigDecimal(display)));
+        mainActBtnsHandler.resetValues();
     }
 
-    private void testThirdChain(long firstNum,long secondNum,MainOperation operation,long expResult){
+    private void testThirdChain(long firstNum, long secondNum, MainOperation operation, long expResult){
 
-        String display = firstNum+"";
-        controller.doMainOperation(operation,display);
-        display = secondNum+"";
-        controller.setWasNumber(true);
-        display = controller.doMainOperation(operation,display);
-        display = controller.doEnter(display);
-        assertEquals(expResult+"",controller.doEnter(display));
-        resetValues();
+        mainActBtnsHandler.doOperation(operation, BigDecimal.valueOf(firstNum));
+        setInputtedNumber(true);
+        String display = mainActBtnsHandler.doOperation(operation,BigDecimal.valueOf(secondNum));
+        display = mainActBtnsHandler.doEnter(new BigDecimal(display));
+        assertEquals(expResult+"", mainActBtnsHandler.doEnter(new BigDecimal(display)));
+        mainActBtnsHandler.resetValues();
+    }
+
+    private void testFourthChain(long firstNum, long secondNum, MainOperation mOperation, ExtraOperation eOperation,String result){
+
+        mainActBtnsHandler.doOperation(mOperation,BigDecimal.valueOf(firstNum));
+        setInputtedNumber(true);
+        String display = extraActBtnHandler.doOperation(eOperation,BigDecimal.valueOf(firstNum),BigDecimal.valueOf(secondNum));
+        display = mainActBtnsHandler.doEnter(new BigDecimal(replaceComaToDot(removeCapacity(display))));
+        display = mainActBtnsHandler.doEnter(new BigDecimal(replaceComaToDot(removeCapacity(display))));
+        display = mainActBtnsHandler.doEnter(new BigDecimal(replaceComaToDot(removeCapacity(display))));
+        assertEquals(result,display);
     }
     private String setDisplay(String result,String display){
 

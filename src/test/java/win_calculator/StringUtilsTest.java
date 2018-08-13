@@ -3,7 +3,7 @@ package win_calculator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static win_calculator.StringUtils.addSpaces;
+import static win_calculator.StringUtils.addCapacity;
 
 class StringUtilsTest {
 
@@ -166,6 +166,6 @@ class StringUtilsTest {
 
     private void testAddSpaces(String inserted, int count, String expected){
 
-        assertEquals(expected,addSpaces(inserted,count));
+        assertEquals(expected, addCapacity(inserted,count));
     }
 }

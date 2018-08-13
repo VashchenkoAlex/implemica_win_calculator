@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 public class Multiply implements MainOperation {
 
     private static final String VALUE = " \u00D7 ";
-    private static final String NAME = "MULTIPLY";
 
     @Override
     public BigDecimal calculate(BigDecimal number) {
@@ -23,8 +22,5 @@ public class Multiply implements MainOperation {
         return VALUE;
     }
 
-    @Override
-    public String getName() {
-        return NAME;
-    }
+
 }

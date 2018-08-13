@@ -9,14 +9,16 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
-import win_calculator.exceptions.MyException;
+import win_calculator.buttons_handlers.ExtraActionButtonsHandler;
+import win_calculator.buttons_handlers.MainActionButtonsHandler;
+import win_calculator.extra_operations.Percent;
 import win_calculator.main_operations.*;
 
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static win_calculator.MainOperations.*;
 import static win_calculator.StringUtils.*;
 
 public class Controller implements Initializable
@@ -42,13 +44,12 @@ public class Controller implements Initializable
 
     private static final String FULL_SCREEN_CSS = "/styles/full_screen_style.css";
     private static final String MAIN_CSS = "/styles/styles.css";
-    private static boolean wasOperationBefore = false;
-    private static boolean wasNumber = true;
-    private static boolean isEnterRepeated = false;
-    private static boolean isOperationRepeated = false;
+    private static boolean operationBefore = false;
+    private static boolean inputtedNumber = true;
     private static final String ZERO = "0";
     private static final String COMA = ",";
-
+    private final MainActionButtonsHandler mainActnBtnsHandler = new MainActionButtonsHandler();
+    private final ExtraActionButtonsHandler extraActnBtnsHandler = new ExtraActionButtonsHandler();
     public void closeBtn(){
 
         Platform.exit();
@@ -93,91 +94,69 @@ public class Controller implements Initializable
     // -------- CLEAR BUTTONS ------------------
     public void clearEnteredBtnClick(){
 
-        setDisplay(ZERO);
-        setWasNumber(true);
-    } //DONE
+        doClearEnteredBtn();
+    } //TO DO TESTS
 
     public void clearBtnClick(){
 
-        setDisplay(ZERO);
-        clearHistory();
-        resetValues();
-        setWasNumber(true);
-        setWasOperationBefore(false);
+        doClearBtn();
     }
 
     public void backspaceBtnClick(){
 
-        String currentText = display.getText();
-        if (currentText.length()>1&&wasNumber){
-            display.setText(deleteOneSymbolFromTheEnd(currentText));
-        }
-        if (currentText.length()==1){
-            setDisplay(ZERO);
-        }
-    }
+        doBackspaceBtn();
+    } //TO DO TESTS
 
     // -------- NUMBER BUTTONS -----------------
     public void oneBtnClick(){
 
         addNumberToDisplay("1");
-        setWasNumber(true);
     }
 
     public void twoBtnClick(){
 
         addNumberToDisplay("2");
-        setWasNumber(true);
-
     }
 
     public void threeBtnClick(){
 
         addNumberToDisplay("3");
-        setWasNumber(true);
     }
 
     public void fourBtnClick(){
 
         addNumberToDisplay("4");
-        setWasNumber(true);
     }
 
     public void fiveBtnClick(){
 
         addNumberToDisplay("5");
-        setWasNumber(true);
     }
 
     public void sixBtnClick(){
 
         addNumberToDisplay("6");
-        setWasNumber(true);
     }
 
     public void sevenBtnClick(){
 
         addNumberToDisplay("7");
-        setWasNumber(true);
     }
 
     public void eightBtnClick(){
 
         addNumberToDisplay("8");
-        setWasNumber(true);
     }
 
     public void nineBtnClick(){
 
         addNumberToDisplay("9");
-        setWasNumber(true);
     }
 
     public void zeroBtnClick(){
 
         if (isZeroNotFirst()){
             putZeroToDisplay();
-            setWasNumber(true);
         }
     }
 
@@ -189,84 +168,59 @@ public class Controller implements Initializable
     // -------- MAIN OPERATIONS BUTTONS ----------
     public void divideBtnClick(){
 
-        Divide divide = new Divide();
-        addOperationToHistory(divide);
-        String result = doMainOperation(divide,takeDisplayedNumber());
-        if (!("".equals(result))){
-            setDisplay(result);
-        }
-        optimizeDisplay();//?
+        doMainOperationBtn(new Divide());
     }
 
     public void multiplyBtnClick(){
 
-        Multiply multiply = new Multiply();
-        addOperationToHistory(multiply);
-        String result = doMainOperation(multiply,takeDisplayedNumber());
-        if (!("".equals(result))){
-            setDisplay(result);
-        }
-        optimizeDisplay();
+        doMainOperationBtn(new Multiply());
+
     }
 
     public void minusBtnClick(){
 
-        Minus minus = new Minus();
-        addOperationToHistory(minus);
-        String result = doMainOperation(minus,takeDisplayedNumber());
-        if (!("".equals(result))){
-            setDisplay(result);
-        }
-        optimizeDisplay();
+        doMainOperationBtn(new Minus());
     }
 
     public void plusBtnClick(){
 
-        Plus plus = new Plus();
-        addOperationToHistory(plus);
-        String result = doMainOperation(plus,takeDisplayedNumber());
-        if (!("".equals(result))){
-            setDisplay(result);
-        }
-        optimizeDisplay();
+        doMainOperationBtn(new Plus());
     }
 
     public void enterBtnClick(){
 
-        String result = doEnter(takeDisplayedNumber());
-        if (!"".equals(result)){
-            clearHistory();
-            setDisplay(result);
-        }
+        doEnterBtn();
     }
 
     //---------- ADVANCED OPERATIONS BUTTONS ----------------
 
     public void percentBtnClick(){
 
-        setWasNumber(false);
+        doPercentBtn();
+        setInputtedNumber(false);
     } //TO DO
 
     public void sqrtBtnClick(){
 
-        setWasNumber(false);
+        setInputtedNumber(false);
     } //TO DO
 
     public void sqrBtnClick(){
 
-        setWasNumber(false);
+        setInputtedNumber(false);
     } //TO DO
 
     public void fractionBtnOneClick(){
 
-        setWasNumber(false);
+        setInputtedNumber(false);
     } //TO DO
 
     public void negateBtnClick(){
 
-        setWasNumber(true);
+        setInputtedNumber(true);
     } //TO DO
 
+    //---------- MEMORY BUTTONS ------------------
     public void clearAllMemoryBtnClick(){
 
     } //TO DO
@@ -294,23 +248,24 @@ public class Controller implements Initializable
     // -------- SUPPORT METHODS -----------------------
     void addNumberToDisplay(String value){
 
-        if (wasNumber && isZeroNotFirst()){
+        if (inputtedNumber && isZeroNotFirst()){
             String current = display.getText();
             if (current.length()<21){
                 if (current.length()>2 && isComaAbsent(current) && !COMA.equals(value)) {
-                    current = removeSpaces(current);
-                    current = addSpaces(current,0);
+                    current = removeCapacity(current);
+                    current = addCapacity(current,0);
                 }
                 display.setText(current+value);
             }
         }else {
             display.setText(value);
         }
+        setInputtedNumber(true);
     }
 
-    void putZeroToDisplay(){
+    private void putZeroToDisplay(){
 
-        if (wasNumber){
+        if (inputtedNumber){
             String currentStr = display.getText();
             if (!ZERO.equals(currentStr)){
                 setDisplay(currentStr+ZERO);
@@ -318,31 +273,42 @@ public class Controller implements Initializable
         }else {
             setDisplay(ZERO);
         }
-
+        setInputtedNumber(true);
     }
 
     void putComaToDisplay(){
 
             String currentStr = display.getText();
-            if (isComaAbsent(currentStr)&&wasNumber){
+            if (isComaAbsent(currentStr)&& inputtedNumber){
                 if (ZERO.equals(currentStr)){
                     setDisplay(ZERO+COMA);
                 }else {
                     setDisplay(currentStr+COMA);
                 }
-            }else if (wasOperationBefore){
+            }else if (operationBefore){
                 setDisplay(ZERO+COMA);
             }
-            setWasNumber(true);
+            setInputtedNumber(true);
     }
 
-    void setWasNumber(boolean val){
+    public static void setInputtedNumber(boolean val){
 
-        wasNumber = val;
+        inputtedNumber = val;
     }
 
-    void setWasOperationBefore(boolean val){
-        wasOperationBefore = val;
+    public static boolean wasInputtedNumber(){
+
+        return inputtedNumber;
+    }
+
+    public static void setOperationBefore(boolean val){
+
+        operationBefore = val;
+    }
+
+    public static boolean wasOperationBefore(){
+
+        return operationBefore;
     }
 
     boolean isZeroNotFirst(){
@@ -356,39 +322,51 @@ public class Controller implements Initializable
     }
 
     void setHistoryText(String string){
+
         historyText.setText(historyText.getText()+string);
     }
 
     void clearHistory(){
+
         historyText.setText("");
     }
 
     void addOperationToHistory(MainOperation operation){
-        if (wasNumber){
-            setHistoryText(optimizeString(display.getText())+operation.getValue());
+
+        if (inputtedNumber){
+            setHistoryText(removeCapacity(display.getText())+operation.getValue());
         }else {
             changeOperationAtHistory(operation);
         }
     }
 
+    void addExtraOperationToHistory(){
+
+        setHistoryText(removeCapacity(display.getText()));
+    }
+
     void changeOperationAtHistory(MainOperation operation){
+
         String historyString = historyText.getText();
         if (historyString.length()>0){
             historyText.setText(historyString.substring(0,historyString.length()-3)+operation.getValue());
         }
     }
 
-    String takeDisplayedNumber(){
-        return removeSpaces(display.getText());
+    private BigDecimal takeDisplayedNumber(){
+
+        return new BigDecimal(replaceComaToDot(removeCapacity(display.getText())));
     }
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         setSizeMainTableColumns();
     }
 
-    void setSizeMainTableColumns(){
+    private void setSizeMainTableColumns(){
+
         ObservableList<RowConstraints> rows = mainTable.getRowConstraints();
         rows.get(0).setPercentHeight(10);
         rows.get(1).setPercentHeight(10);
@@ -396,69 +374,71 @@ public class Controller implements Initializable
         rows.get(3).setPercentHeight(72);
     }
 
-    void changeStyleTo(String style){
+    private void changeStyleTo(String style){
 
         String object = getClass().getResource(style).toExternalForm();
         rootPane.getStylesheets().add(object);
     }
 
-    String doMainOperation(MainOperation operation,String displayedNumber){
-
-        setLastOperation(operation);
-        String result = "";
-        if (wasOperationBefore&&wasNumber){
-            setSecondNumber(displayedNumber);
-            try {
-                calculate(isOperationRepeated);
-                result = optimizeString(getResult().toString());
-            } catch (MyException e) {
-                result = e.getMessage();
-            }
-            setOperationRepeated(true);
-        }else {
-            setFirstNumber(displayedNumber);
-        }
-        setEnterRepeated(false);
-        setWasNumber(false);
-        setWasOperationBefore(true);
-        return result;
-    }
-
-    String doEnter(String displayedNumber){
-
-        String result = "";
-        if (wasOperationBefore){
-            if (wasNumber||isOperationRepeated){
-                setSecondNumber(displayedNumber);
-            }
-            try {
-                calculate(isEnterRepeated||isOperationRepeated);
-                result = optimizeString(getResult().toString());
-            } catch (MyException e) {
-                result = e.getMessage();
-            }
-            setEnterRepeated(true);
-            setOperationRepeated(false);
-            setWasNumber(false);
-            setWasOperationBefore(true);
-        }else {
-            setResult(displayedNumber);
-        }
-        return result;
-    }
-
-    void setEnterRepeated(boolean val){
-
-        isEnterRepeated = val;
-    }
-
-    void setOperationRepeated(boolean val){
-
-        isOperationRepeated = val;
-    }
-
-    void optimizeDisplay(){
+    private void optimizeDisplay(){
 
         display.setText(optimizeString(display.getText()));
+    } //TO DO TESTS
+
+    private void doMainOperationBtn(MainOperation operation){
+
+        addOperationToHistory(operation);
+        String result = mainActnBtnsHandler.doOperation(operation,takeDisplayedNumber());
+        if (!("".equals(result))){
+            setDisplay(result);
+        }
+        optimizeDisplay();
+    }
+
+    private void doEnterBtn(){
+
+        String result = mainActnBtnsHandler.doEnter(takeDisplayedNumber());
+        if (!"".equals(result)){
+            clearHistory();
+            setDisplay(result);
+        }
+    }
+
+    private void doBackspaceBtn(){
+
+        String currentText = display.getText();
+        if (inputtedNumber){
+            if (currentText.length()>1){
+                display.setText(deleteOneSymbolFromTheEndOf(currentText));
+            }else {
+                setDisplay(ZERO);
+            }
+        }
+    }
+
+    private void doClearEnteredBtn(){
+
+        setDisplay(ZERO);
+        setInputtedNumber(true);
+    }
+
+    private void doClearBtn(){
+
+        setDisplay(ZERO);
+        clearHistory();
+        mainActnBtnsHandler.resetValues();
+        setInputtedNumber(true);
+        setOperationBefore(false);
+    }
+
+    private void doPercentBtn(){
+
+        String result = extraActnBtnsHandler.doOperation(new Percent(), mainActnBtnsHandler.getFirstNumber(),takeDisplayedNumber());
+        mainActnBtnsHandler.setSecondNumber(new BigDecimal(result));
+        if (!("".equals(result))){
+            addExtraOperationToHistory();
+            setDisplay(result);
+        }
+        optimizeDisplay();
     }
 }

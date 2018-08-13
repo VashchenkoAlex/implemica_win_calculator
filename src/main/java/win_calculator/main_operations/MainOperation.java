@@ -11,6 +11,4 @@ public interface MainOperation {
     BigDecimal calculate(BigDecimal number) throws MyException;
 
     String getValue();
-
-    String getName();
 }

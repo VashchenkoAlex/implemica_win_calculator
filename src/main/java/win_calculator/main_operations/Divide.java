@@ -8,16 +8,17 @@ import java.math.RoundingMode;
 public class Divide implements MainOperation {
 
     private static final String VALUE = " \u00F7 ";
-    private static final String NAME = "DIVIDE";
+    private static final String EXCEPTION_MSG = "Cannot divide by zero";
+    private static final int SCALE = 16;
 
     @Override
     public BigDecimal calculate(BigDecimal number) throws MyException {
 
         BigDecimal result;
         try{
-            result = number.divide(number);
+            result = number.divide(number,SCALE,RoundingMode.HALF_DOWN);
         }catch (ArithmeticException e){
-            throw new MyException("Cannot divide by zero");
+            throw new MyException(EXCEPTION_MSG);
         }
         return result;
     }
@@ -27,9 +28,9 @@ public class Divide implements MainOperation {
 
         BigDecimal result;
         try{
-            result = firstNumber.divide(secondNumber,16,RoundingMode.HALF_DOWN);
+            result = firstNumber.divide(secondNumber,SCALE,RoundingMode.HALF_DOWN);
         }catch (ArithmeticException e){
-            throw new MyException("Cannot divide by zero");
+            throw new MyException(EXCEPTION_MSG);
         }
         return result;
     }
@@ -39,8 +40,4 @@ public class Divide implements MainOperation {
         return VALUE;
     }
 
-    @Override
-    public String getName() {
-        return NAME;
-    }
 }
