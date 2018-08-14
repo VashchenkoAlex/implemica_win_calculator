@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class Plus implements MainOperation {
 
-    private static final String VALUE = " + ";
+    private static final String VALUE = "  +  ";
 
     @Override
     public BigDecimal calculate(BigDecimal number) {

@@ -7,7 +7,7 @@ import java.math.RoundingMode;
 
 public class Divide implements MainOperation {
 
-    private static final String VALUE = " \u00F7 ";
+    private static final String VALUE = "  \u00F7  ";
     private static final String EXCEPTION_MSG = "Cannot divide by zero";
     private static final int SCALE = 16;
 

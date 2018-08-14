@@ -1,14 +1,23 @@
 package win_calculator;
 
 import org.junit.jupiter.api.Test;
+import win_calculator.extra_operations.ExtraOperation;
+import win_calculator.extra_operations.Fraction;
+import win_calculator.extra_operations.Sqr;
+import win_calculator.extra_operations.Sqrt;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static win_calculator.StringUtils.addCapacity;
+import static win_calculator.StringUtils.addExtraOperationToString;
 
 class StringUtilsTest {
 
     private static final int ENTERED_NUMBER = 0;
     private static final int RESULT_NUMBER = 1;
+    private static final String SQRT = "√";
+    private final Sqr sqr = new Sqr();
+    private final Sqrt sqrt = new Sqrt();
+    private final Fraction fraction = new Fraction();
 
     @Test
     void replaceComaToDot() {
@@ -164,8 +173,42 @@ class StringUtilsTest {
     void cutMinus() {
     }
 
+    @Test
+    void addExtraOperationToStringTest(){
+
+        testAddExtra("","10",sqr,"sqr( 10 )");
+        testAddExtra("","10",sqrt,SQRT+"( 10 )");
+        testAddExtra("","10",fraction,"1/( 10 )");
+
+        testAddExtra("0  -  ","1",sqr,"0  -  sqr( 1 )");
+        testAddExtra("0  -  ","1",sqrt,"0  -  "+SQRT+"( 1 )");
+        testAddExtra("0  -  ","1",fraction,"0  -  1/( 1 )");
+
+        testAddExtra(SQRT+"( 25 )  +  ","25",sqr,SQRT+"( 25 )  +  sqr( 25 )");
+        testAddExtra(SQRT+"( 25 )  +  ","25",sqrt,SQRT+"( 25 )  +  "+SQRT+"( 25 )");
+        testAddExtra(SQRT+"( 25 )  +  ","25",fraction,SQRT+"( 25 )  +  1/( 25 )");
+
+        testAddExtra(SQRT+"( 625 )","25",sqr,"sqr( "+SQRT+"( 625 ) )");
+        testAddExtra(SQRT+"( 625 )","25",sqrt,SQRT+"( "+SQRT+"( 625 ) )");
+        testAddExtra(SQRT+"( 625 )","25",fraction,"1/( "+SQRT+"( 625 ) )");
+
+        testAddExtra(SQRT+"( "+SQRT+"( 625 ) )","5",sqr,"sqr( "+SQRT+"( "+SQRT+"( 625 ) ) )");
+        testAddExtra(SQRT+"( "+SQRT+"( 625 ) )","5",sqrt,SQRT+"( "+SQRT+"( "+SQRT+"( 625 ) ) )");
+        testAddExtra(SQRT+"( "+SQRT+"( 625 ) )","5",fraction,"1/( "+SQRT+"( "+SQRT+"( 625 ) ) )");
+
+        testAddExtra(SQRT+"( "+SQRT+"( "+SQRT+"( 625 ) ) )  -  "+SQRT+"( "+SQRT+"( 625 ) )","5",sqr,SQRT+"( "+SQRT+"( "+SQRT+"( 625 ) ) )  -  sqr( "+SQRT+"( "+SQRT+"( 625 ) ) )");
+        testAddExtra(SQRT+"( "+SQRT+"( "+SQRT+"( 625 ) ) )  -  "+SQRT+"( "+SQRT+"( 625 ) )","5",sqrt,SQRT+"( "+SQRT+"( "+SQRT+"( 625 ) ) )  -  "+SQRT+"( "+SQRT+"( "+SQRT+"( 625 ) ) )");
+        testAddExtra(SQRT+"( "+SQRT+"( "+SQRT+"( 625 ) ) )  -  "+SQRT+"( "+SQRT+"( 625 ) )","5",fraction,SQRT+"( "+SQRT+"( "+SQRT+"( 625 ) ) )  -  1/( "+SQRT+"( "+SQRT+"( 625 ) ) )");
+
+    }
+
     private void testAddSpaces(String inserted, int count, String expected){
 
         assertEquals(expected, addCapacity(inserted,count));
+    }
+
+    private void testAddExtra(String historyStr, String displayStr, ExtraOperation eOperation,String expectedStr){
+
+        assertEquals(expectedStr,addExtraOperationToString(historyStr,displayStr,eOperation.getSymbol()));
     }
 }

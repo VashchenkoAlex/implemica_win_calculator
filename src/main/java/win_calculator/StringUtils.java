@@ -6,7 +6,10 @@ import java.util.Arrays;
 public abstract class StringUtils {
 
     private static final String COMA = ",";
+    private static final String BRACKET = " )";
+    private static final String SPACE = "  ";
     private static final int DIGITS = 3;
+    private static final String REGEXP = "^.+[\\s{2}][^\\s{2}]+$";
 
     public static String replaceComaToDot(String string){
         return string.replace(",",".");
@@ -44,7 +47,7 @@ public abstract class StringUtils {
             result = stringParts.get(1);
         }
         return stringParts.get(0)+result;
-    } //TO DO TESTS
+    }
 
     private static ArrayList<String> splitByComa(String string){
         ArrayList<String> result;
@@ -90,8 +93,18 @@ public abstract class StringUtils {
 
     public static String optimizeString(String current){
 
-        String result = cutLastComa(cutLastZeros(removeCapacity(replaceDotToComa(current))));
-        result = addCapacity(result,1);
+        String result;
+        if (current.matches("[a-zA-Z]+")||"0E-16".equals(current)){
+            if ("0E-16".equals(current)){
+                result = "0";
+            }else {
+                result = current;
+            }
+
+        }else {
+            result = cutLastComa(cutLastZeros(removeCapacity(replaceDotToComa(current))));
+            result = addCapacity(result,1);
+        }
         return result;
     } //TO DO TESTS
 
@@ -103,5 +116,28 @@ public abstract class StringUtils {
             result.set(1,currentStr.substring(1));
         }
         return result;
+    }
+
+    public static String addExtraOperationToString(String historyStr,String display,String symbol){
+
+        String resultStr = "";
+        if (historyStr.contains(SPACE)){
+            if (historyStr.matches(REGEXP)){
+                String[] parts = historyStr.split("\\s\\s");
+                for (int i = 0;i < parts.length-1;i++){
+                    resultStr += parts[i]+"  ";
+                }
+                resultStr = resultStr+symbol+parts[parts.length-1];
+            }else {
+                resultStr = historyStr+symbol+display;
+            }
+        }else {
+            if ("".equals(historyStr)){
+                resultStr = symbol+display;
+            }else {
+                resultStr = symbol+historyStr;
+            }
+        }
+        return resultStr+BRACKET;
     }
 }

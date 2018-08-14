@@ -19,7 +19,6 @@ public class MainActionButtonsHandler {
 
     public String doOperation(MainOperation operation, BigDecimal displayedNumber){
 
-        setLastOperation(operation);
         String result = "";
         if (wasOperationBefore() && wasInputtedNumber()){
             secondNumber = displayedNumber;
@@ -33,6 +32,7 @@ public class MainActionButtonsHandler {
         }else {
             firstNumber = displayedNumber;
         }
+        setLastOperation(operation);
         setEnterRepeated(false);
         setInputtedNumber(false);
         setOperationBefore(true);
@@ -120,5 +120,13 @@ public class MainActionButtonsHandler {
 
     public void setSecondNumber(BigDecimal secondNumber) {
         this.secondNumber = secondNumber;
+    }
+
+    public BigDecimal getSecondNumber() {
+        return secondNumber;
+    }
+
+    public BigDecimal getResultNumber() {
+        return resultNumber;
     }
 }

@@ -11,7 +11,8 @@ import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 import win_calculator.buttons_handlers.ExtraActionButtonsHandler;
 import win_calculator.buttons_handlers.MainActionButtonsHandler;
-import win_calculator.extra_operations.Percent;
+import win_calculator.buttons_handlers.PercentBtnHandler;
+import win_calculator.extra_operations.*;
 import win_calculator.main_operations.*;
 
 import java.math.BigDecimal;
@@ -48,8 +49,15 @@ public class Controller implements Initializable
     private static boolean inputtedNumber = true;
     private static final String ZERO = "0";
     private static final String COMA = ",";
+    private static final String BRACKET = ")";
     private final MainActionButtonsHandler mainActnBtnsHandler = new MainActionButtonsHandler();
     private final ExtraActionButtonsHandler extraActnBtnsHandler = new ExtraActionButtonsHandler();
+    private final PercentBtnHandler percentBtnHandler = new PercentBtnHandler();
+    private final Percent percent = new Percent();
+    private final Sqrt sqrt = new Sqrt();
+    private final Sqr sqr = new Sqr();
+    private final Fraction fraction = new Fraction();
+
     public void closeBtn(){
 
         Platform.exit();
@@ -197,22 +205,22 @@ public class Controller implements Initializable
     public void percentBtnClick(){
 
         doPercentBtn();
-        setInputtedNumber(false);
+
     } //TO DO
 
     public void sqrtBtnClick(){
 
-        setInputtedNumber(false);
+        doSqrtBtn();
     } //TO DO
 
     public void sqrBtnClick(){
 
-        setInputtedNumber(false);
+        doSqrBtn();
     } //TO DO
 
     public void fractionBtnOneClick(){
 
-        setInputtedNumber(false);
+        doFractionBtn();
     } //TO DO
 
     public void negateBtnClick(){
@@ -321,11 +329,6 @@ public class Controller implements Initializable
         display.setText(string);
     }
 
-    void setHistoryText(String string){
-
-        historyText.setText(historyText.getText()+string);
-    }
-
     void clearHistory(){
 
         historyText.setText("");
@@ -333,24 +336,32 @@ public class Controller implements Initializable
 
     void addOperationToHistory(MainOperation operation){
 
+        String currentHistory = historyText.getText();
+        String result;
         if (inputtedNumber){
-            setHistoryText(removeCapacity(display.getText())+operation.getValue());
+            if (currentHistory.contains(BRACKET)){
+                result = currentHistory+operation.getValue();
+            }else {
+                result = currentHistory+removeCapacity(display.getText())+operation.getValue();
+            }
         }else {
-            changeOperationAtHistory(operation);
+            if ("".equals(currentHistory)){
+                result = removeCapacity(display.getText())+operation.getValue();
+            }else {
+                result = currentHistory.substring(0,currentHistory.length()-3)+operation.getValue();
+            }
         }
+        historyText.setText(result);
     }
 
-    void addExtraOperationToHistory(){
+    private void addExtraOperationToHistory(ExtraOperation operation){
 
-        setHistoryText(removeCapacity(display.getText()));
+        historyText.setText(addExtraOperationToString(historyText.getText(),display.getText(),operation.getSymbol()));
     }
 
-    void changeOperationAtHistory(MainOperation operation){
+    void addPercentToHistory(){
 
-        String historyString = historyText.getText();
-        if (historyString.length()>0){
-            historyText.setText(historyString.substring(0,historyString.length()-3)+operation.getValue());
-        }
+        historyText.setText(historyText.getText()+removeCapacity(display.getText()));
     }
 
     private BigDecimal takeDisplayedNumber(){
@@ -433,12 +444,43 @@ public class Controller implements Initializable
 
     private void doPercentBtn(){
 
-        String result = extraActnBtnsHandler.doOperation(new Percent(), mainActnBtnsHandler.getFirstNumber(),takeDisplayedNumber());
+        BigDecimal firstNumber = mainActnBtnsHandler.getResultNumber();
+        if (firstNumber==null){
+            firstNumber = mainActnBtnsHandler.getFirstNumber();
+        }
+        String result = percentBtnHandler.doOperation(percent,firstNumber,takeDisplayedNumber());
         mainActnBtnsHandler.setSecondNumber(new BigDecimal(result));
         if (!("".equals(result))){
-            addExtraOperationToHistory();
+            addPercentToHistory();
             setDisplay(result);
         }
+        setInputtedNumber(true);
+        optimizeDisplay();
+    }
+
+    private void doSqrtBtn(){
+
+        doExtraOperation(sqrt);
+    } //TO DO TESTS
+
+    private void doSqrBtn(){
+
+        doExtraOperation(sqr);
+    }
+
+    private void doFractionBtn(){
+
+        doExtraOperation(fraction);
+    }
+
+    private void doExtraOperation(ExtraOperation eOperation){
+
+        String result = extraActnBtnsHandler.doOperation(eOperation,takeDisplayedNumber());
+        if (!("".equals(result))){
+            addExtraOperationToHistory(eOperation);
+            setDisplay(result);
+        }
+        setInputtedNumber(true);
         optimizeDisplay();
     }
 }

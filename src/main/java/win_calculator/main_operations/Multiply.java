@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class Multiply implements MainOperation {
 
-    private static final String VALUE = " \u00D7 ";
+    private static final String VALUE = "  \u00D7  ";
 
     @Override
     public BigDecimal calculate(BigDecimal number) {
