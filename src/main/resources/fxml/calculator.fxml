@@ -13,7 +13,7 @@
 <Stage title="Calculator"
        xmlns:fx="http://javafx.com/fxml/1"
        xmlns="http://javafx.com/javafx/2.2"
-       fx:controller="win_calculator.Controller"
+       fx:controller="win_calculator.controller.FXMLViewController"
        minHeight="502.0"
        minWidth="320.0"
         >
@@ -37,7 +37,7 @@
                         <Button fx:id="historyButton" styleClass="historyButton" text="" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="33.0" onAction="#historyBtn"/>
                         <GridPane fx:id="mainTable" AnchorPane.topAnchor="84.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0">
                             <children>
-                                <Label fx:id="historyText" styleClass="historyText" GridPane.columnIndex="0" GridPane.rowIndex="0" maxWidth="Infinity">
+                                <Label fx:id="historyField" text="" styleClass="historyText" GridPane.columnIndex="0" GridPane.rowIndex="0" maxWidth="Infinity">
                                     <GridPane.margin>
                                         <Insets right="20.0" bottom="29.0"/>
                                     </GridPane.margin>
@@ -49,7 +49,7 @@
                                 </TextField>
                                 <GridPane fx:id="memoryButtonsGrid" styleClass="memoryButtonsGrid" minHeight="30.0" minWidth="320" GridPane.columnIndex="0" GridPane.rowIndex="2">
                                     <children>
-                                        <Button fx:id="buttonClearAllMemory" styleClass="memoryButton" text="MC" GridPane.columnIndex="0" GridPane.rowIndex="0" onAction="#clearAllMemoryBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <Button fx:id="buttonClearAllMemory" styleClass="memoryButton" text="MC" GridPane.columnIndex="0" GridPane.rowIndex="0" onAction="#clearMemoryBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="5.0" />
                                             </GridPane.margin>
@@ -74,7 +74,7 @@
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="5.0" />
                                             </GridPane.margin>
                                         </Button>
-                                        <Button fx:id="buttonMemory" styleClass="memoryButton" text="Mˇ" GridPane.columnIndex="5" GridPane.rowIndex="0" onAction="#memoryBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <Button fx:id="buttonMemory" styleClass="memoryButton" text="Mˇ" GridPane.columnIndex="5" GridPane.rowIndex="0" onAction="#memoryShowBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="5.0" />
                                             </GridPane.margin>

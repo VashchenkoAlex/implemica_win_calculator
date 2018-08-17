@@ -2,6 +2,7 @@ package win_calculator.main_operations;
 
 import org.junit.jupiter.api.Test;
 import win_calculator.exceptions.MyException;
+import win_calculator.model.nodes.actions.main_operations.*;
 
 import java.math.BigDecimal;
 
