@@ -8,7 +8,6 @@ public class ExtraOperationHandler {
 
     public BigDecimal doOperation(BigDecimal number, ExtraOperation operation) throws MyException {
 
-        BigDecimal result = operation.calculate(number);
-        return result;
+        return operation.calculate(number);
     }
 }

@@ -1,4 +1,4 @@
-package win_calculator.model.button_handlers;
+package win_calculator.controller.view_handlers;
 
 import javafx.application.Platform;
 import javafx.scene.control.Button;

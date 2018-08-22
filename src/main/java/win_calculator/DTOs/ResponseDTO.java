@@ -1,13 +1,11 @@
 package win_calculator.DTOs;
 
-import java.math.BigDecimal;
-
 public class ResponseDTO {
 
-    private BigDecimal displayNumber;
+    private String displayNumber;
     private String history;
 
-    public BigDecimal getDisplayNumber() {
+    public String getDisplayNumber() {
 
         return displayNumber;
     }
@@ -16,7 +14,7 @@ public class ResponseDTO {
         return history;
     }
 
-    public ResponseDTO(BigDecimal displayNumber, String history) {
+    public ResponseDTO(String displayNumber, String history) {
         this.displayNumber = displayNumber;
         this.history = history;
     }

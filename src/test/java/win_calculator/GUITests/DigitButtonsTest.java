@@ -15,7 +15,7 @@ import static org.testfx.api.FxAssert.verifyThat;
 
 
 @ExtendWith(ApplicationExtension.class)
-class NumberButtonsTest {
+class DigitButtonsTest {
 
     private MainApp app = new MainApp();
     private FxRobot robot;

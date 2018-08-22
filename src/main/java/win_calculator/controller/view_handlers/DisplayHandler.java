@@ -20,8 +20,23 @@ public class DisplayHandler {
 
     public void setDisplayedText(String string){
 
+        String currentStr = replaceDotToComa(string);
+        if (!"".equals(currentStr)){
+            if (currentStr.startsWith("0,")){
+                display.setText(currentStr);
+            }else {
+                display.setText(cutLastComa(cutLastZeros(optimizeString(string))));
+            }
+        }else {
+            clearDisplay();
+        }
+    }
+
+    public void setEnteredText(String string){
+
         if (!"".equals(string)){
-            display.setText(cutLastComa(cutLastZeros(optimizeString(string))));
+            String currentStr = addCapacity(replaceDotToComa(string));
+            display.setText(currentStr);
         }
     }
 
@@ -31,11 +46,6 @@ public class DisplayHandler {
         if (!"".equals(text)&& isComaAbsent(text)){
             display.setText(optimizeStringWithComaAndZero(text+","));
         }
-    }
-
-    public void setDisplayedTextWithZero(String string){
-
-        display.setText(optimizeStringWithComaAndZero(string));
     }
 
 

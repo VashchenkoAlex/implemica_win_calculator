@@ -11,14 +11,16 @@ import win_calculator.DTOs.ResponseDTO;
 import win_calculator.controller.view_handlers.HistoryFieldHandler;
 import win_calculator.exceptions.MyException;
 import win_calculator.model.AppModel;
-import win_calculator.model.button_handlers.CaptionHandler;
+import win_calculator.controller.view_handlers.CaptionHandler;
 import win_calculator.controller.view_handlers.DisplayHandler;
 import win_calculator.model.nodes.actions.Action;
 import win_calculator.model.nodes.actions.clear.BaskSpace;
+import win_calculator.model.nodes.actions.clear.ClearDisplay;
+import win_calculator.model.nodes.actions.digits.Number;
 import win_calculator.model.nodes.actions.enter.Enter;
 import win_calculator.model.nodes.actions.clear.Clear;
 import win_calculator.model.nodes.actions.memory.*;
-import win_calculator.model.nodes.actions.numbers.*;
+import win_calculator.model.nodes.actions.digits.*;
 import win_calculator.controller.view_handlers.StylesHandler;
 import win_calculator.model.nodes.actions.extra_operations.*;
 import win_calculator.model.nodes.actions.main_operations.*;
@@ -27,8 +29,6 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
-
-import static win_calculator.utils.StringUtils.optimizeString;
 
 public class FXMLViewController implements Initializable
 {
@@ -56,6 +56,7 @@ public class FXMLViewController implements Initializable
     private CaptionHandler captionHandler = new CaptionHandler();
     private StylesHandler stylesHandler = new StylesHandler();
     private DisplayHandler displayHandler = new DisplayHandler();
+    private NumberBuilder numberBuilder = new NumberBuilder();
 
     public void closeBtn(){
 
@@ -91,74 +92,75 @@ public class FXMLViewController implements Initializable
     // -------- CLEAR BUTTONS ------------------
     public void clearEnteredBtnClick(){
 
-        displayHandler.clearDisplay();
+        handleDigit(new ClearDisplay());
     } //TO DO TESTS
 
     public void clearBtnClick(){
 
-        displayHandler.clearDisplay();
-        handleAction(new Clear());
+        Action clear = new Clear();
+        handleDigit(clear);
+        handleAction(clear);
     }
 
     public void backspaceBtnClick(){
 
-        handleAction(new BaskSpace());
+        handleDigit(new BaskSpace());
     } //TO DO TESTS
 
-    // -------- NUMBER BUTTONS -----------------
+    // -------- DIGIT BUTTONS -----------------
     public void oneBtnClick(){
 
-        handleAction(new OneNumber());
+        handleDigit(new OneDigit());
     }
 
     public void twoBtnClick(){
 
-        handleAction(new TwoNumber());
+        handleDigit(new TwoDigit());
     }
 
     public void threeBtnClick(){
 
-        handleAction(new ThreeNumber());
+        handleDigit(new ThreeDigit());
     }
 
     public void fourBtnClick(){
 
-        handleAction(new FourNumber());
+        handleDigit(new FourDigit());
     }
 
     public void fiveBtnClick(){
 
-        handleAction(new FiveNumber());
+        handleDigit(new FiveDigit());
     }
 
     public void sixBtnClick(){
 
-        handleAction(new SixNumber());
+        handleDigit(new SixDigit());
     }
 
     public void sevenBtnClick(){
 
-        handleAction(new SevenNumber());
+        handleDigit(new SevenDigit());
     }
 
     public void eightBtnClick(){
 
-        handleAction(new EightNumber());
+        handleDigit(new EightDigit());
     }
 
     public void nineBtnClick(){
 
-        handleAction(new NineNumber());
+        handleDigit(new NineDigit());
     }
 
     public void zeroBtnClick(){
 
-        handleAction(new ZeroNumber());
+        handleDigit(new ZeroDigit());
     }
 
     public void comaBtnClick(){
 
-        handleAction(new Coma());
+        handleDigit(new Coma());
         displayHandler.addComa();
     }
 
@@ -272,18 +274,24 @@ public class FXMLViewController implements Initializable
     private void handleAction(Action action){
 
         String display;
+        Number currentNum = numberBuilder.finish();
         try {
-            ResponseDTO response = model.toDo(action);
-            BigDecimal responseNumber = response.getDisplayNumber();
+            ResponseDTO response = model.toDo(action,currentNum);
+            String responseNumber = response.getDisplayNumber();
             if (responseNumber == null){
                 display = "0";
             }else {
-                display = optimizeString(responseNumber.toString());
+                display = responseNumber;
             }
             historyFieldHandler.setHistoryText(response.getHistory());
         } catch (MyException e) {
             display = e.getMessage();
         }
         displayHandler.setDisplayedText(display);
+    }
+
+    private void handleDigit(Action action){
+
+        displayHandler.setEnteredText(numberBuilder.toDo(action));
     }
 }

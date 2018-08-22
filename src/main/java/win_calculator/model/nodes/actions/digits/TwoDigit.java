@@ -1,11 +1,11 @@
-package win_calculator.model.nodes.actions.numbers;
+package win_calculator.model.nodes.actions.digits;
 
 import win_calculator.utils.ActionType;
 
-public class TwoNumber implements Number {
+public class TwoDigit implements Digit {
 
     private static final String VALUE = "2";
-    private static final ActionType TYPE = ActionType.NUMBER;
+    private static final ActionType TYPE = ActionType.DIGIT;
 
     @Override
     public String getValue() {

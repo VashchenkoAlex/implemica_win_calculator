@@ -17,7 +17,7 @@ public abstract class StringUtils {
         return string.replace(",",".");
     }
 
-    static String replaceDotToComa(String string){
+    public static String replaceDotToComa(String string){
         return string.replace(".",",");
     }
 
@@ -70,7 +70,7 @@ public abstract class StringUtils {
         return !number.contains(COMA);
     }
 
-    public static boolean isDotAbsent(BigDecimal number){
+    /*public static boolean isDotAbsent(BigDecimal number){
 
         boolean re = true;
         if (number!=null){
@@ -90,7 +90,7 @@ public abstract class StringUtils {
             result = addCapacity(result);
         }
         return result;
-    } //TO DO TESTS
+    } //TO DO TESTS*/
 
     public static String cutLastZeros(String current){
 
@@ -136,24 +136,21 @@ public abstract class StringUtils {
         return result;
     }
 
-    public static String addExtraOperationToString(String historyStr/*,String display*/,String symbol){
+    public static String addExtraOperationToString(String currentStr,String symbol){
 
         String resultStr = "";
-        if (historyStr.contains(SPACE)){
-            if (historyStr.matches(REGEXP)){
-                String[] parts = historyStr.split("\\s\\s");
+        if (currentStr.contains(SPACE)){
+            if (currentStr.matches(REGEXP)){
+                String[] parts = currentStr.split("\\s\\s");
                 for (int i = 0;i < parts.length-1;i++){
                     resultStr += parts[i]+"  ";
                 }
                 resultStr = resultStr+symbol+parts[parts.length-1];
             }else {
-                resultStr = historyStr+symbol/*+display*/;
+                resultStr = currentStr+symbol;
             }
-        }else {
-            if ("".equals(historyStr)){
-            }else {
-                resultStr = symbol+historyStr;
-            }
+        }else if (!"".equals(currentStr)){
+            resultStr = symbol+currentStr;
         }
         return resultStr+BRACKET;
     }

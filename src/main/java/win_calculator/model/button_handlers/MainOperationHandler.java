@@ -2,22 +2,19 @@ package win_calculator.model.button_handlers;
 
 import win_calculator.exceptions.MyException;
 import win_calculator.model.nodes.History;
-import win_calculator.model.nodes.actions.enter.Enter;
 import win_calculator.model.nodes.actions.main_operations.MainOperation;
 import win_calculator.model.response_handlers.HistoryHandler;
 
 import java.math.BigDecimal;
 
 import static win_calculator.utils.ActionType.MAIN_OPERATION;
-import static win_calculator.utils.StringUtils.optimizeString;
 
 public class MainOperationHandler {
 
     private HistoryHandler historyHandler;
-    private BigDecimal firstNumber;
-    private BigDecimal secondNumber;
+    private BigDecimal lastNumber;
+    private BigDecimal previousNumber;
     private BigDecimal resultNumber;
-    private boolean operationRepeated;
     private boolean enterRepeated;
     private boolean mOperationBefore = false;
     private MainOperation lastOperation;
@@ -26,63 +23,60 @@ public class MainOperationHandler {
         this.historyHandler = historyHandler;
     }
 
-    public void doOperation(MainOperation operation) throws MyException {
+    public BigDecimal doOperation(MainOperation operation) throws MyException {
 
         initVariables();
+        setEnterRepeated(false);
         if (MAIN_OPERATION.equals(historyHandler.getLastActionType())){
             historyHandler.changeLastAction(operation);
         }else {
             doCalculation();
-            if (mOperationBefore){
-                historyHandler.setOperationRepeated(true);
-            }
             historyHandler.setResultNumber(resultNumber);
             historyHandler.addActionToHistory(operation);
         }
         lastOperation = operation;
+        return resultNumber;
     }
 
     private void doCalculation() throws MyException {
         if (mOperationBefore||enterRepeated){
-            if (isSecondNumberEmpty()){
+            if (isPreviousNumberEmpty()){
                 if (isResultEmpty()){
-                    resultNumber = lastOperation.calculate(firstNumber);
+                    resultNumber = lastOperation.calculate(lastNumber);
                 }else {
-                    resultNumber = lastOperation.calculate(resultNumber,firstNumber);
+                    resultNumber = lastOperation.calculate(resultNumber, lastNumber);
                 }
             }else {
                 if (enterRepeated || !isResultEmpty()){
-                    resultNumber = lastOperation.calculate(resultNumber,firstNumber);
+                    resultNumber = lastOperation.calculate(resultNumber, lastNumber);
                 }else {
-                    resultNumber = lastOperation.calculate(secondNumber,firstNumber);
+                    resultNumber = lastOperation.calculate(previousNumber, lastNumber);
                 }
             }
         }
     }
-    public void doEnter() throws MyException {
+    public BigDecimal doEnter() throws MyException {
 
         initVariables();
         if (mOperationBefore||enterRepeated){
-            if (operationRepeated){
-                firstNumber = historyHandler.getLastAssembledNumber();
-            }
             doCalculation();
             setEnterRepeated(true);
-            setOperationRepeated(false);
             historyHandler.setMOperationBefore(false);
         }else {
-            resultNumber = historyHandler.getLastAssembledNumber();
+            resultNumber = historyHandler.getResultNumber();
         }
         historyHandler.setResultNumber(resultNumber);
         historyHandler.setHistory(new History());
-        secondNumber = null;
+        previousNumber = null;
+        return resultNumber;
     }
 
     public void resetValues(){
-        firstNumber = null;
-        secondNumber = null;
+        lastNumber = null;
+        previousNumber = null;
         resultNumber = null;
         enterRepeated = false;
+        mOperationBefore = false;
     }
 
     private boolean isResultEmpty(){
@@ -90,34 +84,30 @@ public class MainOperationHandler {
         return resultNumber==null;
     }
 
-    private boolean isSecondNumberEmpty(){
+    private boolean isPreviousNumberEmpty(){
 
-        return secondNumber == null;
+        return previousNumber == null;
     }
 
-    public void setEnterRepeated(boolean val){
+    private void setEnterRepeated(boolean val){
 
         enterRepeated = val;
     }
 
-    public void setOperationRepeated(boolean val){
-
-        operationRepeated = val;
-    }
-
     private void initVariables(){
 
-        BigDecimal lastNumber = historyHandler.getLastAssembledNumber();
+        BigDecimal lastNumber = historyHandler.getLastNumber();
         if (lastNumber !=null){
-            firstNumber = lastNumber;
+            this.lastNumber = lastNumber;
         }
         BigDecimal previousNumber = historyHandler.getPreviousNumber();
         if (previousNumber!=null){
-            secondNumber = previousNumber;
+            this.previousNumber = previousNumber;
         }
         BigDecimal resultNumFromHistory = historyHandler.getResultNumber();
         if (resultNumFromHistory!=null){
             resultNumber = resultNumFromHistory;
         }
+        mOperationBefore = historyHandler.isMOperationBefore();
     }
 }
