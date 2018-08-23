@@ -1,6 +1,5 @@
 package win_calculator.utils;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -12,6 +11,7 @@ public abstract class StringUtils {
     private static final String SPACE = "  ";
     private static final int DIGITS = 3;
     private static final String REGEXP = "^.+[\\s{2}][^\\s{2}]+$";
+    private static final String CAPACITY_REGEX = "(?<=\\G.{3})";
 
     public static String replaceComaToDot(String string){
         return string.replace(",",".");
@@ -30,7 +30,7 @@ public abstract class StringUtils {
             int firstPartIndex = (stringParts.get(3).length()% DIGITS);
             String firstWholePart = stringParts.get(3).substring(0,firstPartIndex);
             String secondPart = stringParts.get(3).substring(firstWholePart.length());
-            String[] subStr = secondPart.split("(?<=\\G.{"+ DIGITS +"})");
+            String[] subStr = secondPart.split(CAPACITY_REGEX);
             for (String str : subStr) {
                 result +=str+" ";
             }
@@ -108,12 +108,8 @@ public abstract class StringUtils {
     public static String optimizeString(String current){
 
         String result;
-        if (current.matches("[a-zA-Z]+")||"0E-16".equals(current)){
-            if ("0E-16".equals(current)){
-                result = "0";
-            }else {
-                result = current;
-            }
+        if (current.contains("0E-")){
+            result = "0";
         }else {
             result = removeCapacity(replaceDotToComa(current));
             result = addCapacity(result);
@@ -140,6 +136,7 @@ public abstract class StringUtils {
 
         String resultStr = "";
         if (currentStr.contains(SPACE)){
+            //есть ошибка
             if (currentStr.matches(REGEXP)){
                 String[] parts = currentStr.split("\\s\\s");
                 for (int i = 0;i < parts.length-1;i++){

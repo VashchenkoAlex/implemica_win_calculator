@@ -1,15 +1,28 @@
 package win_calculator.model.nodes.actions.memory;
 
 import win_calculator.utils.ActionType;
+import win_calculator.utils.MemoryType;
+
+import static win_calculator.utils.MemoryType.CLEAR;
 
 public class ClearMemoryAction implements MemoryAction {
+
+    private static final String VALUE = " MR ";
+    private static final ActionType TYPE = ActionType.MEMORY;
+    private static final MemoryType MEMORY_TYPE = CLEAR;
+
+    @Override
+    public MemoryType getMemoryType() {
+        return MEMORY_TYPE;
+    }
+
     @Override
     public String getValue() {
-        return null;
+        return VALUE;
     }
 
     @Override
     public ActionType getType() {
-        return null;
+        return TYPE;
     }
 }

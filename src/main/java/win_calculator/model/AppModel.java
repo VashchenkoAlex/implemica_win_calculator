@@ -1,6 +1,7 @@
 package win_calculator.model;
 
 import win_calculator.DTOs.ResponseDTO;
+import win_calculator.controller.view_handlers.MemoryHandler;
 import win_calculator.exceptions.MyException;
 import win_calculator.model.nodes.actions.Action;
 import win_calculator.model.nodes.actions.digits.Number;
@@ -8,6 +9,7 @@ import win_calculator.model.nodes.actions.digits.ZeroDigit;
 import win_calculator.model.nodes.actions.extra_operations.ExtraOperation;
 import win_calculator.model.nodes.actions.extra_operations.Percent;
 import win_calculator.model.nodes.actions.main_operations.MainOperation;
+import win_calculator.model.nodes.actions.memory.MemoryAction;
 import win_calculator.model.response_handlers.HistoryHandler;
 import win_calculator.model.button_handlers.ExtraOperationHandler;
 import win_calculator.model.button_handlers.MainOperationHandler;
@@ -16,9 +18,6 @@ import win_calculator.model.button_handlers.PercentHandler;
 import java.math.BigDecimal;
 
 import static win_calculator.utils.ActionType.MAIN_OPERATION;
-import static win_calculator.utils.StringUtils.optimizeString;
-import static win_calculator.utils.StringUtils.removeCapacity;
-import static win_calculator.utils.StringUtils.replaceComaToDot;
 
 public class AppModel {
 
@@ -26,7 +25,8 @@ public class AppModel {
     private MainOperationHandler mOperationHandler = new MainOperationHandler(historyHandler);
     private ExtraOperationHandler eOperationHandler = new ExtraOperationHandler();
     private PercentHandler percentHandler = new PercentHandler(historyHandler);
-    private String responseNumber;
+    private MemoryHandler memoryHandler = new MemoryHandler();
+    private BigDecimal responseNumber;
     private Number lastNumber;
 
     public ResponseDTO toDo(Action action,Number number) throws MyException {
@@ -52,6 +52,13 @@ public class AppModel {
                 processClear();
                 break;
             }
+            case MEMORY:{
+                processMemoryOperation(action,number);
+                break;
+            }
+            case CLEAR_EXTRA:{
+                historyHandler.rejectLastNumberWithExtraOperations();
+            }
         }
         return new ResponseDTO(responseNumber,historyHandler.getHistoryString());
     }
@@ -66,21 +73,22 @@ public class AppModel {
 
     private void processExtraOperation(Action eOperation,Number number) throws MyException {
 
-        lastNumber = number;
+        //lastNumber = number;
         BigDecimal operationNumber;
-        if (lastNumber!=null){
-            historyHandler.addActionToHistory(lastNumber);
-            operationNumber = new BigDecimal(lastNumber.getValue());
+        if (number!=null){
+            historyHandler.addActionToHistory(number);
+            operationNumber = new BigDecimal(number.getValue());
         }else {
-            operationNumber = new BigDecimal(replaceComaToDot(responseNumber));
+            operationNumber = responseNumber;
             historyHandler.setLastNumber(operationNumber);
             if (MAIN_OPERATION.equals(historyHandler.getLastActionType())){
                 historyHandler.addActionToHistory(new Number(operationNumber));
             }
         }
         BigDecimal resultNum = eOperationHandler.doOperation(operationNumber,(ExtraOperation) eOperation);
-        historyHandler.setResultNumber(resultNum);
-        responseNumber = resultNum.toString();
+        //historyHandler.setResultNumber(resultNum);
+        historyHandler.changeLastNumber(resultNum);
+        responseNumber = resultNum;
         historyHandler.addActionToHistory(eOperation);
     }
 
@@ -89,11 +97,11 @@ public class AppModel {
         if (number!=null){
             historyHandler.setLastNumber(number.getBigDecimalValue());
         }else if(responseNumber!=null){
-            historyHandler.setLastNumber(new BigDecimal(replaceComaToDot(removeCapacity(responseNumber))));
+            historyHandler.setLastNumber(responseNumber);
         }
         BigDecimal result = percentHandler.doOperation((Percent) percent);
-        responseNumber = result.toString();
-        if (!"0".equals(responseNumber)){
+        responseNumber = result;
+        if (!BigDecimal.ZERO.equals(responseNumber)){
             BigDecimal tempNumber = new BigDecimal(historyHandler.getPreviousNumber().toString());
             if (historyHandler.isPercentLast()){
                 historyHandler.changeLastActionNumber(new Number(result));
@@ -120,9 +128,9 @@ public class AppModel {
         }
         BigDecimal operationResult = mOperationHandler.doEnter();
         if (operationResult!=null){
-            responseNumber = optimizeString(operationResult.toString());
-        }else {
-            responseNumber = lastNumber.getValue();
+            responseNumber = operationResult;
+        }else if (lastNumber!=null){
+            responseNumber = lastNumber.getBigDecimalValue();
         }
         historyHandler.setEnterRepeated(true);
     }
@@ -132,13 +140,18 @@ public class AppModel {
         if (number !=null ){
             historyHandler.addActionToHistory(number);
         }else {
-            historyHandler.changeLastNumber(new BigDecimal(responseNumber));
+            historyHandler.changeLastNumber(responseNumber);
         }
         BigDecimal operationResult = mOperationHandler.doOperation((MainOperation) mOperation);
         if (operationResult!=null){
-            responseNumber = optimizeString(operationResult.toString());
-        }else if (number!=null && (responseNumber==null||"".equals(responseNumber))){
-            responseNumber = number.getValue();
+            responseNumber = operationResult;
+        }else if (number!=null && (responseNumber==null)){
+            responseNumber = number.getBigDecimalValue();
         }
+    }
+
+    private void processMemoryOperation(Action action,Number number){
+
+        responseNumber = memoryHandler.doAction((MemoryAction) action,number).getBigDecimalValue();
     }
 }

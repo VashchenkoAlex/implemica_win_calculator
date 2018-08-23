@@ -8,7 +8,6 @@ public class BaskSpace implements Action {
     private static final String VALUE = " <- ";
     private static final ActionType TYPE = ActionType.BACKSPACE;
 
-    @Override
     public String getValue() {
         return VALUE;
     }

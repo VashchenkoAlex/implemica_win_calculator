@@ -15,6 +15,13 @@
     -fx-padding: 0px,0px,20px,0px;
 }
 
+#menuList {
+    -fx-min-width: 200px;
+    -fx-pref-width: 200px;
+    -fx-min-height: 500px;
+    -fx-pref-height: 500px;
+}
+
 .captionButton {
     -fx-font-family: "Segoe MDL2 Assets";
     -fx-font-size: 10;

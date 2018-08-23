@@ -18,7 +18,6 @@ public class Percent implements Action {
         return firstNumber.multiply(secondNumber.divide(HUNDRED,SCALE,RoundingMode.HALF_DOWN));
     }
 
-    @Override
     public String getValue() {
         return VALUE;
     }

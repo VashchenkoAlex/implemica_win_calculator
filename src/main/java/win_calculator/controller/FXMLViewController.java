@@ -16,6 +16,7 @@ import win_calculator.controller.view_handlers.DisplayHandler;
 import win_calculator.model.nodes.actions.Action;
 import win_calculator.model.nodes.actions.clear.BaskSpace;
 import win_calculator.model.nodes.actions.clear.ClearDisplay;
+import win_calculator.model.nodes.actions.clear.LastExtraCleaner;
 import win_calculator.model.nodes.actions.digits.Number;
 import win_calculator.model.nodes.actions.enter.Enter;
 import win_calculator.model.nodes.actions.clear.Clear;
@@ -24,11 +25,13 @@ import win_calculator.model.nodes.actions.digits.*;
 import win_calculator.controller.view_handlers.StylesHandler;
 import win_calculator.model.nodes.actions.extra_operations.*;
 import win_calculator.model.nodes.actions.main_operations.*;
+import win_calculator.utils.ActionType;
 
-import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static win_calculator.utils.ActionType.*;
 
 public class FXMLViewController implements Initializable
 {
@@ -57,6 +60,7 @@ public class FXMLViewController implements Initializable
     private StylesHandler stylesHandler = new StylesHandler();
     private DisplayHandler displayHandler = new DisplayHandler();
     private NumberBuilder numberBuilder = new NumberBuilder();
+    private Action lastAction;
 
     public void closeBtn(){
 
@@ -89,164 +93,162 @@ public class FXMLViewController implements Initializable
         optional.ifPresent(menu::setText);
     } //TO DO
 
-    // -------- CLEAR BUTTONS ------------------
+    // -------- CLEAR_ENTERED BUTTONS ------------------
     public void clearEnteredBtnClick(){
 
-        handleDigit(new ClearDisplay());
+        makeAction(new ClearDisplay());
     } //TO DO TESTS
 
     public void clearBtnClick(){
 
-        Action clear = new Clear();
-        handleDigit(clear);
-        handleAction(clear);
+        makeAction(new Clear());
     }
 
     public void backspaceBtnClick(){
 
-        handleDigit(new BaskSpace());
+        makeAction(new BaskSpace());
     } //TO DO TESTS
 
     // -------- DIGIT BUTTONS -----------------
     public void oneBtnClick(){
 
-        handleDigit(new OneDigit());
+        makeAction(new OneDigit());
     }
 
     public void twoBtnClick(){
 
-        handleDigit(new TwoDigit());
+        makeAction(new TwoDigit());
     }
 
     public void threeBtnClick(){
 
-        handleDigit(new ThreeDigit());
+        makeAction(new ThreeDigit());
     }
 
     public void fourBtnClick(){
 
-        handleDigit(new FourDigit());
+        makeAction(new FourDigit());
     }
 
     public void fiveBtnClick(){
 
-        handleDigit(new FiveDigit());
+        makeAction(new FiveDigit());
     }
 
     public void sixBtnClick(){
 
-        handleDigit(new SixDigit());
+        makeAction(new SixDigit());
     }
 
     public void sevenBtnClick(){
 
-        handleDigit(new SevenDigit());
+        makeAction(new SevenDigit());
     }
 
     public void eightBtnClick(){
 
-        handleDigit(new EightDigit());
+        makeAction(new EightDigit());
     }
 
     public void nineBtnClick(){
 
-        handleDigit(new NineDigit());
+        makeAction(new NineDigit());
     }
 
     public void zeroBtnClick(){
 
-        handleDigit(new ZeroDigit());
+        makeAction(new ZeroDigit());
     }
 
     public void comaBtnClick(){
 
-        handleDigit(new Coma());
+        makeAction(new Coma());
         displayHandler.addComa();
     }
 
     // -------- MAIN OPERATIONS BUTTONS ----------
     public void divideBtnClick(){
 
-        handleAction(new Divide());
+        makeAction(new Divide());
     }
 
     public void multiplyBtnClick(){
 
-        handleAction(new Multiply());
+        makeAction(new Multiply());
     }
 
     public void minusBtnClick(){
 
-        handleAction(new Minus());
+        makeAction(new Minus());
     }
 
     public void plusBtnClick(){
 
-        handleAction(new Plus());
+        makeAction(new Plus());
     }
 
     public void enterBtnClick(){
 
-        handleAction(new Enter());
+        makeAction(new Enter());
     }
 
     //---------- ADVANCED OPERATIONS BUTTONS ----------------
 
     public void percentBtnClick(){
 
-        handleAction(new Percent());
+        makeAction(new Percent());
 
     } //TO DO
 
     public void sqrtBtnClick(){
 
-        handleAction(new Sqrt());
+        makeAction(new Sqrt());
     } //TO DO
 
     public void sqrBtnClick(){
 
-        handleAction(new Sqr());
+        makeAction(new Sqr());
     } //TO DO
 
     public void fractionBtnOneClick(){
 
-        handleAction(new Fraction());
+        makeAction(new Fraction());
     } //TO DO
 
     public void negateBtnClick(){
 
-        handleAction(new Negate());
+        makeAction(new Negate());
     } //TO DO
 
     //---------- MEMORY BUTTONS ------------------
     public void clearMemoryBtnClick(){
 
-        handleAction(new ClearMemoryAction());
+        makeAction(new ClearMemoryAction());
     } //TO DO
 
     public void memoryRecallBtnClick(){
 
-        handleAction(new RecallMemory());
+        makeAction(new RecallMemory());
     } //TO DO
 
     public void memoryAddBtnClick(){
 
-        handleAction(new AddToMemoryAction());
+        makeAction(new AddToMemoryAction());
     } //TO DO
 
     public void memorySubtractBtnClick(){
 
-        handleAction(new SubtractMemoryAction());
+        makeAction(new SubtractMemoryAction());
     } //TO DO
 
     public void memoryStoreBtnClick(){
 
-        handleAction(new SubtractMemoryAction());
+        makeAction(new MemoryStoreAction());
     } //TO DO
 
     public void memoryShowBtnClick(){
 
-        handleAction(new ShowMemoryAction());
+        //makeAction(new ShowMemoryAction());
     } //TO DO
 
     // -------- SUPPORT METHODS -----------------------
@@ -271,27 +273,60 @@ public class FXMLViewController implements Initializable
         rows.get(3).setPercentHeight(72);
     }
 
-    private void handleAction(Action action){
+    private void makeAction(Action action){
 
-        String display;
+        String[] results = handleAction(action);
+        displayHandler.setDisplayedText(results[0]);
+        if (results[1]!=null){
+            historyFieldHandler.setHistoryText(results[1]);
+        }
+    }
+
+    public String[] handleAction(Action action){
+
+        String[] results;
+        ActionType type = action.getType();
+        if (DIGIT.equals(type)||BACKSPACE.equals(type)|| CLEAR_ENTERED.equals(type)){
+            results = handleDigit(action);
+        }else {
+            results = handleOperation(action);
+        }
+        return results;
+    }
+
+    private String[] handleOperation(Action action){
+
+        String[] results = new String[2];
         Number currentNum = numberBuilder.finish();
         try {
             ResponseDTO response = model.toDo(action,currentNum);
             String responseNumber = response.getDisplayNumber();
             if (responseNumber == null){
-                display = "0";
+                results[0] = "0";
             }else {
-                display = responseNumber;
+                results[0] = responseNumber;
             }
-            historyFieldHandler.setHistoryText(response.getHistory());
+            results[1] = response.getHistory();
         } catch (MyException e) {
-            display = e.getMessage();
+            results[0] = e.getMessage();
         }
-        displayHandler.setDisplayedText(display);
+        lastAction = action;
+        return results;
     }
 
-    private void handleDigit(Action action){
+    private String[] handleDigit(Action action){
 
-        displayHandler.setEnteredText(numberBuilder.toDo(action));
+        String[] results = new String[2];
+        if (lastAction!=null && EXTRA_OPERATION.equals(lastAction.getType())){
+            try {
+                ResponseDTO responseDTO = model.toDo(new LastExtraCleaner(),null);
+                results[1] = responseDTO.getHistory();
+            } catch (MyException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        results[0] = numberBuilder.toDo(action);
+        lastAction = action;
+        return results;
     }
 }

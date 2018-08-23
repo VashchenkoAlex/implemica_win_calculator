@@ -16,7 +16,7 @@ public class Number implements Action {
     public Number() {
     }
 
-    @Override
+
     public String getValue() {
 
         return bigDecimalValue.toString();

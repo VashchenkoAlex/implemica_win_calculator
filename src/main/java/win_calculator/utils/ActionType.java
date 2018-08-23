@@ -7,7 +7,9 @@ public enum ActionType {
     PERCENT,
     ENTER,
     CLEAR,
+    CLEAR_ENTERED,
+    NUMBER,
+    MEMORY,
     BACKSPACE,
-    CLEAR_DISPLAY,
-    NUMBER
+    CLEAR_EXTRA
 }

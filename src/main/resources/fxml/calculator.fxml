@@ -10,6 +10,8 @@
 <?import javafx.stage.Stage?>
 <?import javafx.scene.Scene?>
 <?import java.net.URL?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 <Stage title="Calculator"
        xmlns:fx="http://javafx.com/fxml/1"
        xmlns="http://javafx.com/javafx/2.2"
@@ -241,6 +243,22 @@
                                 <RowConstraints vgrow="ALWAYS"/>
                             </rowConstraints>
                         </GridPane>
+                        <AnchorPane>
+                            <children>
+                                <Label text="Calculator" AnchorPane.topAnchor="100.0"/>
+                                <ListView fx:id="menuList" styleClass="menuList" prefHeight="502" prefWidth="250" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="130.0" AnchorPane.bottomAnchor="0.0">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="Standard"/>
+                                            <String fx:value="Scientific"/>
+                                            <String fx:value="Programmer"/>
+                                            <String fx:value="Date Calculation"/>
+                                            <String fx:value="Five"/>
+                                        </FXCollections>
+                                    </items>
+                                </ListView>
+                            </children>
+                        </AnchorPane>
                     </children>
                 </AnchorPane>
             </root>

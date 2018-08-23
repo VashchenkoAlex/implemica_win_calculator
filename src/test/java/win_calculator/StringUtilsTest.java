@@ -152,6 +152,6 @@ class StringUtilsTest {
 
     private void testAddExtra(String historyStr, String displayStr, ExtraOperation eOperation,String expectedStr){
 
-        //assertEquals(expectedStr,addExtraOperationToString(historyStr,displayStr,eOperation.getValue()));
+        //assertEquals(expectedStr,addExtraOperationToString(historyStr,displayStr,eOperation.getMemoryType()));
     }
 }

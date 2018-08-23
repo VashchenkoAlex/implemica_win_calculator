@@ -25,7 +25,7 @@ public class DisplayHandler {
             if (currentStr.startsWith("0,")){
                 display.setText(currentStr);
             }else {
-                display.setText(cutLastComa(cutLastZeros(optimizeString(string))));
+                display.setText(cutLastComa(cutLastZeros(string)));
             }
         }else {
             clearDisplay();

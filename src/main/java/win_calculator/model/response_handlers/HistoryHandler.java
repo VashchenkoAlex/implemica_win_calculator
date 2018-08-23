@@ -141,4 +141,16 @@ public class HistoryHandler {
 
         history.changeLastNumber(number);
     }
+
+    public void rejectLastNumberWithExtraOperations(){
+
+        LinkedList<Action> actions = new LinkedList<>(history.getActions());
+        for (int i = actions.size()-1; i>0 && EXTRA_OPERATION.equals(actions.getLast().getType());i--) {
+            actions.removeLast();
+        }
+        actions.removeLast();
+        history.setActions(actions);
+        lastNumber = null;
+        previousNumber = null;
+    }
 }

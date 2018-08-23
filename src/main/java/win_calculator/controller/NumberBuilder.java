@@ -23,7 +23,7 @@ public class NumberBuilder {
             add((Digit) action);
         }else if (BACKSPACE.equals(actionType)){
             backSpace();
-        }else if (CLEAR.equals(actionType)){
+        }else if (CLEAR_ENTERED.equals(actionType)){
             clear();
         }
         return getValue();
