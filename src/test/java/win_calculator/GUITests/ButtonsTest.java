@@ -1,5 +1,6 @@
 package win_calculator.GUITests;
 
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +16,7 @@ import static org.testfx.api.FxAssert.verifyThat;
 
 
 @ExtendWith(ApplicationExtension.class)
-class DigitButtonsTest {
+class ButtonsTest {
 
     private MainApp app = new MainApp();
     private FxRobot robot;
@@ -27,7 +28,7 @@ class DigitButtonsTest {
     }
 
     @Test
-    void numbersTest(FxRobot robot){
+    void TestNumbers(FxRobot robot){
 
         this.robot = robot;
         test("#buttonOne","1","");
@@ -55,10 +56,27 @@ class DigitButtonsTest {
         test("#buttonComa","1 234 567 890,09876543210","");
     }
 
+    @Test
+    void TestMainOperations(FxRobot robot){
+
+        this.robot = robot;
+        test("#buttonTwo","2","");
+        test("#buttonPlus","2","2  +  ");
+        test("#buttonThree","3","2  +  ");
+        test("#buttonMinus","5","2  +  3  -  ");
+        test("#buttonMultiply","5","2  +  3  ×  ");
+        test("#buttonFour","4","2  +  3  ×  ");
+        test("#buttonDivide","20","2  +  3  ×  4  ÷  ");
+        test("#buttonNine","9","2  +  3  ×  4  ÷  ");
+        test("#buttonSqrt","3","2  +  3  ×  4  ÷  √( 9 )");
+        test("#buttonSqr","9","2  +  3  ×  4  ÷  sqr( √( 9 ) )");
+        test("#buttonMultiply","2,222222222222222","2  +  3  ×  4  ÷  sqr( √( 9 ) ) × ");
+    }
+
     private void test(String btnId, String display,String history){
 
         robot.clickOn(btnId);
-        verifyThat("#display",TextInputControlMatchers.hasText(display));
+        verifyThat("#display",LabeledMatchers.hasText(display));
         verifyThat("#historyField",LabeledMatchers.hasText(history));
     }
 }

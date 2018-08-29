@@ -1,18 +1,23 @@
 package win_calculator.controller;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.util.Callback;
 import win_calculator.DTOs.ResponseDTO;
-import win_calculator.controller.view_handlers.HistoryFieldHandler;
+import win_calculator.controller.view_handlers.*;
 import win_calculator.exceptions.MyException;
 import win_calculator.model.AppModel;
-import win_calculator.controller.view_handlers.CaptionHandler;
-import win_calculator.controller.view_handlers.DisplayHandler;
 import win_calculator.model.nodes.actions.Action;
 import win_calculator.model.nodes.actions.clear.BaskSpace;
 import win_calculator.model.nodes.actions.clear.ClearDisplay;
@@ -22,22 +27,36 @@ import win_calculator.model.nodes.actions.enter.Enter;
 import win_calculator.model.nodes.actions.clear.Clear;
 import win_calculator.model.nodes.actions.memory.*;
 import win_calculator.model.nodes.actions.digits.*;
-import win_calculator.controller.view_handlers.StylesHandler;
 import win_calculator.model.nodes.actions.extra_operations.*;
 import win_calculator.model.nodes.actions.main_operations.*;
 import win_calculator.utils.ActionType;
+import win_calculator.utils.ComboBoxOption;
 
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static win_calculator.utils.ActionType.*;
+import static win_calculator.utils.StringUtils.*;
 
 public class FXMLViewController implements Initializable
 {
 
     @FXML
+    private Text menuBoxText;
+
+    @FXML
     private AnchorPane rootPane;
+
+    @FXML
+    private ComboBox<ComboBoxOption> menuBox;
+
+    @FXML
+    private void trimLabelPosition(ActionEvent event){
+    }
+
+    @FXML
+    private Pane menuBoxPane;
 
     @FXML
     private Button menu;
@@ -46,7 +65,7 @@ public class FXMLViewController implements Initializable
     private GridPane mainTable;
 
     @FXML
-    private TextField display;
+    private Label display;
 
     @FXML
     private Label historyField;
@@ -77,20 +96,12 @@ public class FXMLViewController implements Initializable
         captionHandler.fullScreen();
     }
 
-    public void menuBtn(){
+    public void menuBox(){
 
-        Dialog<String> dialog = new TextInputDialog("...");
-        dialog.setTitle("Change button text");
-        Optional<String> optional = dialog.showAndWait();
-        optional.ifPresent(menu::setText);
     } //TO DO
 
     public void historyBtn(){
 
-        Dialog<String> dialog = new TextInputDialog("...");
-        dialog.setTitle("Change button text");
-        Optional<String> optional = dialog.showAndWait();
-        optional.ifPresent(menu::setText);
     } //TO DO
 
     // -------- CLEAR_ENTERED BUTTONS ------------------
@@ -258,19 +269,47 @@ public class FXMLViewController implements Initializable
     public void initialize(URL location, ResourceBundle resources) {
 
         setSizeMainTableColumns();
+        setCellFactoryMenuBox();
         displayHandler.setDisplay(display);
         historyFieldHandler.setHistoryField(historyField);
         captionHandler.setFullScreenBtn(fullScreenBtn);
         captionHandler.setStage(rootPane);
     }
 
+    private void setCellFactoryMenuBox(){
+        menuBox.setCellFactory(new Callback<ListView<ComboBoxOption>, ListCell<ComboBoxOption>>() {
+            @Override
+            public ListCell<ComboBoxOption> call(ListView<ComboBoxOption> param) {
+                return new ListCell<ComboBoxOption>(){
+                    @Override
+                    protected void updateItem(ComboBoxOption item,boolean empty){
+                        super.updateItem(item,empty);
+                        if (empty){
+                            setText("");
+                            setGraphic(null);
+                        }else {
+                            setText(item.getLabel());
+                            if (item.isOption().equals("NOT_OPTION")){
+                                setId("notOption");
+                                setDisable(true);
+                            }else{
+                                setId("option");
+                            }
+                        }
+                    }
+                };
+            }
+        });
+    }
+
     private void setSizeMainTableColumns(){
 
         ObservableList<RowConstraints> rows = mainTable.getRowConstraints();
-        rows.get(0).setPercentHeight(10);
-        rows.get(1).setPercentHeight(10);
-        rows.get(2).setPercentHeight(8);
-        rows.get(3).setPercentHeight(72);
+        rows.get(0).setPercentHeight(5);
+        rows.get(1).setPercentHeight(5);
+        rows.get(2).setPercentHeight(10);
+        rows.get(3).setPercentHeight(8);
+        rows.get(4).setPercentHeight(77);
     }
 
     private void makeAction(Action action){
@@ -304,7 +343,7 @@ public class FXMLViewController implements Initializable
             if (responseNumber == null){
                 results[0] = "0";
             }else {
-                results[0] = responseNumber;
+                results[0] = cutLastComa(cutLastZeros(replaceDotToComa(responseNumber)));
             }
             results[1] = response.getHistory();
         } catch (MyException e) {
@@ -325,7 +364,7 @@ public class FXMLViewController implements Initializable
                 System.out.println(e.getMessage());
             }
         }
-        results[0] = numberBuilder.toDo(action);
+        results[0] = addCapacity(replaceDotToComa(numberBuilder.toDo(action)));
         lastAction = action;
         return results;
     }

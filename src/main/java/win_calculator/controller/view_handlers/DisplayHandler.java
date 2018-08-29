@@ -1,14 +1,16 @@
 package win_calculator.controller.view_handlers;
 
-import javafx.scene.control.TextField;
+import javafx.scene.control.Label;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 import static win_calculator.utils.StringUtils.*;
 
 public class DisplayHandler {
 
-    private TextField display;
+    private Label display;
 
-    public void setDisplay(TextField display) {
+    public void setDisplay(Label display) {
 
         this.display = display;
     }
@@ -20,23 +22,11 @@ public class DisplayHandler {
 
     public void setDisplayedText(String string){
 
-        String currentStr = replaceDotToComa(string);
-        if (!"".equals(currentStr)){
-            if (currentStr.startsWith("0,")){
-                display.setText(currentStr);
-            }else {
-                display.setText(cutLastComa(cutLastZeros(string)));
-            }
+        if (!"".equals(string)){
+            display.setText(string);
+            fixFontSize();
         }else {
             clearDisplay();
-        }
-    }
-
-    public void setEnteredText(String string){
-
-        if (!"".equals(string)){
-            String currentStr = addCapacity(replaceDotToComa(string));
-            display.setText(currentStr);
         }
     }
 
@@ -48,5 +38,17 @@ public class DisplayHandler {
         }
     }
 
+    private void fixFontSize(){
+        display.layout();
+        while (overrun()){
+            double x = display.getFont().getSize();
+            display.setFont(new Font(x-10.0));
 
+        }
+
+    }
+    private boolean overrun(){
+
+        return !display.getText().equals(((Text)display.lookup(".text")).getText());
+    }
 }

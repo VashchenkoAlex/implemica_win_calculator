@@ -11,7 +11,11 @@
 <?import javafx.scene.Scene?>
 <?import java.net.URL?>
 <?import javafx.collections.FXCollections?>
-<?import java.lang.String?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.cell.ComboBoxListCell?>
+<?import win_calculator.utils.ComboBoxOption?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.TextFlow?>
 <Stage title="Calculator"
        xmlns:fx="http://javafx.com/fxml/1"
        xmlns="http://javafx.com/javafx/2.2"
@@ -31,25 +35,55 @@
                             <Button fx:id="fullScreenBtn" styleClass="captionButton" text="" AnchorPane.rightAnchor="45.0" onAction="#fullScreenBtnClick"/>
                             <Button fx:id="hideBtn" styleClass="captionButton" text="" AnchorPane.rightAnchor="90.0" onAction="#hideBtn"/>
                         </AnchorPane>
-                        <Label text="Calculator" styleClass="captionText" AnchorPane.topAnchor="10.0" AnchorPane.leftAnchor="10.0"/>
-                        <FlowPane styleClass="flowPane" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="30.0">
-                            <Button fx:id="menu" styleClass="menu" text="" onAction="#menuBtn"/>
-                            <Label fx:id="mainMessage" text="Standard"/>
-                        </FlowPane>
+                        <Label text="Calculator" styleClass="captionText" AnchorPane.topAnchor="8.0" AnchorPane.leftAnchor="10.0"/>
+                        <AnchorPane styleClass="flowPane" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="30.0">
+                            <children>
+                                <Text fx:id="menuBoxText" styleClass="menuBoxText" text="" AnchorPane.topAnchor="18.0" AnchorPane.leftAnchor="15.0"/>
+                                <ComboBox fx:id="menuBox" styleClass="menu" promptText="" minWidth="250.0" onAction="#trimLabelPosition" onMouseClicked="#menuBox" AnchorPane.topAnchor="5.0" AnchorPane.leftAnchor="1.0">
+                                    <buttonCell>
+                                        <ComboBoxListCell/>
+                                    </buttonCell>
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <ComboBoxOption fx:value="CALCULATOR"/>
+                                            <ComboBoxOption fx:value="STANDARD"/>
+                                            <ComboBoxOption fx:value="SCIENTIFIC"/>
+                                            <ComboBoxOption fx:value="PROGRAMMER"/>
+                                            <ComboBoxOption fx:value="DATE_CALCULATION"/>
+                                            <ComboBoxOption fx:value="CONVERTER"/>
+                                            <ComboBoxOption fx:value="CURRENCY"/>
+                                            <ComboBoxOption fx:value="VOLUME"/>
+                                            <ComboBoxOption fx:value="LENGTH"/>
+                                            <ComboBoxOption fx:value="WEIGHT_AND_MASS"/>
+                                            <ComboBoxOption fx:value="TEMPERATURE"/>
+                                            <ComboBoxOption fx:value="ENERGY"/>
+                                            <ComboBoxOption fx:value="AREA"/>
+                                            <ComboBoxOption fx:value="SPEED"/>
+                                            <ComboBoxOption fx:value="TIME"/>
+                                            <ComboBoxOption fx:value="POWER"/>
+                                            <ComboBoxOption fx:value="DATA"/>
+                                            <ComboBoxOption fx:value="PRESSURE"/>
+                                            <ComboBoxOption fx:value="ANGLE"/>
+                                        </FXCollections>
+                                    </items>
+                                </ComboBox>
+                                <Label fx:id="mainMessage" styleClass="mainMessage" text="Standard" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="0.0"/>
+                            </children>
+                        </AnchorPane>
                         <Button fx:id="historyButton" styleClass="historyButton" text="" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="33.0" onAction="#historyBtn"/>
                         <GridPane fx:id="mainTable" AnchorPane.topAnchor="84.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0">
                             <children>
                                 <Label fx:id="historyField" text="" styleClass="historyText" GridPane.columnIndex="0" GridPane.rowIndex="0" maxWidth="Infinity">
                                     <GridPane.margin>
-                                        <Insets right="20.0" bottom="29.0"/>
+                                        <Insets right="5.0" bottom="20.0"/>
                                     </GridPane.margin>
                                 </Label>
-                                <TextField fx:id="display" text="0" styleClass="displayText" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                <Label fx:id="display" text="0" styleClass="displayText" GridPane.columnIndex="0" GridPane.rowIndex="1" maxWidth="Infinity">
                                     <GridPane.margin>
-                                        <Insets bottom="22.0" right="5.0"/>
+                                        <Insets top="30.0" right="5.0"/>
                                     </GridPane.margin>
-                                </TextField>
-                                <GridPane fx:id="memoryButtonsGrid" styleClass="memoryButtonsGrid" minHeight="30.0" minWidth="320" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                                </Label>
+                                <GridPane fx:id="memoryButtonsGrid" styleClass="memoryButtonsGrid" minHeight="30.0" minWidth="320" GridPane.columnIndex="0" GridPane.rowIndex="3">
                                     <children>
                                         <Button fx:id="buttonClearAllMemory" styleClass="memoryButton" text="MC" GridPane.columnIndex="0" GridPane.rowIndex="0" onAction="#clearMemoryBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
@@ -94,7 +128,7 @@
                                         <RowConstraints vgrow="ALWAYS" prefHeight="35.0"/>
                                     </rowConstraints>
                                 </GridPane>
-                                <GridPane fx:id="mainButtonsGrid" styleClass="mainButtonsGrid" hgap="3.0" vgap="3.0"  GridPane.columnIndex="0" GridPane.rowIndex="3" AnchorPane.leftAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                <GridPane fx:id="mainButtonsGrid" styleClass="mainButtonsGrid" hgap="3.0" vgap="3.0"  GridPane.columnIndex="0" GridPane.rowIndex="4" AnchorPane.leftAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                     <children>
                                         <Button fx:id="buttonPercent" styleClass="actionButton" text="" GridPane.columnIndex="0" GridPane.rowIndex="0" onAction="#percentBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
@@ -111,7 +145,7 @@
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                             </GridPane.margin>
                                         </Button>
-                                        <Button fx:id="buttonFractionOne" styleClass="actionButton" text="⅟𝑥" GridPane.columnIndex="3" GridPane.rowIndex="0" onAction="#fractionBtnOneClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <Button fx:id="buttonFraction" styleClass="actionButton" text="⅟𝑥" GridPane.columnIndex="3" GridPane.rowIndex="0" onAction="#fractionBtnOneClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                             </GridPane.margin>
@@ -240,25 +274,10 @@
                                 <RowConstraints minHeight="20.0" vgrow="SOMETIMES"/>
                                 <RowConstraints vgrow="SOMETIMES"/>
                                 <RowConstraints vgrow="SOMETIMES"/>
+                                <RowConstraints vgrow="SOMETIMES"/>
                                 <RowConstraints vgrow="ALWAYS"/>
                             </rowConstraints>
                         </GridPane>
-                        <AnchorPane>
-                            <children>
-                                <Label text="Calculator" AnchorPane.topAnchor="100.0"/>
-                                <ListView fx:id="menuList" styleClass="menuList" prefHeight="502" prefWidth="250" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="130.0" AnchorPane.bottomAnchor="0.0">
-                                    <items>
-                                        <FXCollections fx:factory="observableArrayList">
-                                            <String fx:value="Standard"/>
-                                            <String fx:value="Scientific"/>
-                                            <String fx:value="Programmer"/>
-                                            <String fx:value="Date Calculation"/>
-                                            <String fx:value="Five"/>
-                                        </FXCollections>
-                                    </items>
-                                </ListView>
-                            </children>
-                        </AnchorPane>
                     </children>
                 </AnchorPane>
             </root>

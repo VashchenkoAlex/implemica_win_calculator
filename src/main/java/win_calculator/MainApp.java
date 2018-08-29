@@ -37,19 +37,20 @@ public class MainApp extends Application {
         ResizeHandler.addResizeListener(stage);
         stage.show();
         stage.toFront();
+        //System.out.println("\uE700" + " Dropdown menu");
     }
 
-    //System.out.println("\uE700" + " Dropdown menu");
-    //System.out.println("\uE947" + " Calculator multiply");
-    //System.out.println("\uE948" + " Calculator addition");
-    //System.out.println("\uE949" + " Calculator subtract");
-    //System.out.println("\uE94A" + " Calculator Divide");
-    //System.out.println("\uE94B" + " Calculator Squareroot");
-    //System.out.println("\uE94C" + " Calculator percent");
-    //System.out.println("\uE94D" + " Calculator negate");
-    //System.out.println("\uE94E" + " Calculator equalTo");
-    //System.out.println("\uE94F" + " Calculator Backspace");
-    //System.out.println("\uE81C" + " Calculator History");
+
+    //System.out.println("\uE947" + " CALCULATOR multiply");
+    //System.out.println("\uE948" + " CALCULATOR addition");
+    //System.out.println("\uE949" + " CALCULATOR subtract");
+    //System.out.println("\uE94A" + " CALCULATOR Divide");
+    //System.out.println("\uE94B" + " CALCULATOR Squareroot");
+    //System.out.println("\uE94C" + " CALCULATOR percent");
+    //System.out.println("\uE94D" + " CALCULATOR negate");
+    //System.out.println("\uE94E" + " CALCULATOR equalTo");
+    //System.out.println("\uE94F" + " CALCULATOR Backspace");
+    //System.out.println("\uE81C" + " CALCULATOR History");
 
     //System.out.println(" - minimize");
     //System.out.println("9,999999999999376e+9999 is MAX for CALC");

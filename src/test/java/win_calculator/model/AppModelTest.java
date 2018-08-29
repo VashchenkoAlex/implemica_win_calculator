@@ -57,6 +57,9 @@ class AppModelTest {
     @Test
     void testMainActionOnce(){
 
+        test("+ =","0","");
+        test("+ 2 =","2","");
+
         test("2 + 2 =","4","");
         test("2 - 2 =","0","");
         test("2 * 2 =","4","");

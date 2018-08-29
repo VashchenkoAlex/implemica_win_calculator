@@ -13,6 +13,7 @@ import static win_calculator.utils.ActionType.*;
 
 public class NumberBuilder {
 
+    private boolean wasNotOperation = true;
     private Number number;
     private LinkedList<Digit> digitsChain = new LinkedList<>();
 
@@ -33,6 +34,7 @@ public class NumberBuilder {
         if (number == null) {
             number = new Number();
         }
+        wasNotOperation = false;
         if (".".equals(digit.getValue())){
             addComa(digit);
         }else if("0".equals(digit.getValue())){
@@ -49,6 +51,8 @@ public class NumberBuilder {
         if (isChainNotEmpty()){
             finishedNumber = new Number(number.getBigDecimalValue());
             number = new Number();
+        }else if (wasNotOperation){
+            finishedNumber = new Number(BigDecimal.ZERO);
         }
         digitsChain = new LinkedList<>();
         return finishedNumber;
