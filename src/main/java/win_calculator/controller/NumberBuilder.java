@@ -1,9 +1,9 @@
 package win_calculator.controller;
 
 import win_calculator.model.nodes.actions.Action;
-import win_calculator.model.nodes.actions.digits.Digit;
-import win_calculator.model.nodes.actions.digits.Number;
-import win_calculator.model.nodes.actions.digits.ZeroDigit;
+import win_calculator.controller.nodes.digits.Digit;
+import win_calculator.controller.nodes.digits.Number;
+import win_calculator.controller.nodes.digits.ZeroDigit;
 import win_calculator.utils.ActionType;
 
 import java.math.BigDecimal;
@@ -13,113 +13,116 @@ import static win_calculator.utils.ActionType.*;
 
 public class NumberBuilder {
 
+    private static final int MAX_DIGITS = 16;
+    private static final String COMA = ".";
+    private static final String ZERO = "0";
     private boolean wasNotOperation = true;
     private Number number;
     private LinkedList<Digit> digitsChain = new LinkedList<>();
 
-    public String toDo(Action action){
+    String toDo(Action action) {
 
         ActionType actionType = action.getType();
-        if (DIGIT.equals(actionType)){
+        if (DIGIT.equals(actionType) && isNotMaxDigits()) {
             add((Digit) action);
-        }else if (BACKSPACE.equals(actionType)){
+        } else if (BACKSPACE.equals(actionType)&& !digitsChain.isEmpty()) {
             backSpace();
-        }else if (CLEAR_ENTERED.equals(actionType)){
+        } else if (CLEAR_ENTERED.equals(actionType)) {
             clear();
         }
         return getValue();
     }
 
-    public void add(Digit digit){
+    private void add(Digit digit) {
         if (number == null) {
             number = new Number();
         }
         wasNotOperation = false;
-        if (".".equals(digit.getValue())){
+        if (COMA.equals(digit.getValue())) {
             addComa(digit);
-        }else if("0".equals(digit.getValue())){
+        } else if (ZERO.equals(digit.getValue())) {
             addZero(digit);
-        }else {
+        } else {
             addDigit(digit);
         }
         number.setBigDecimalValue(new BigDecimal(getValue()));
     }
 
-    public Number finish(){
+    Number finish() {
 
         Number finishedNumber = null;
-        if (isChainNotEmpty()){
+        if (isChainNotEmpty()) {
             finishedNumber = new Number(number.getBigDecimalValue());
             number = new Number();
-        }else if (wasNotOperation){
+        } else if (wasNotOperation) {
             finishedNumber = new Number(BigDecimal.ZERO);
         }
         digitsChain = new LinkedList<>();
         return finishedNumber;
     }
 
-    public void clear(){
+    public void clear() {
 
         number = new Number();
         digitsChain = new LinkedList<>();
     }
 
-    private void backSpace(){
+    private void backSpace() {
 
         cutLastDigit();
         number.setBigDecimalValue(new BigDecimal(getValue()));
     }
 
-    private void addDigit(Digit digit){
+    private void addDigit(Digit digit) {
 
-        if ("0".equals(getValue())){
+        if (ZERO.equals(getValue())) {
             digitsChain.removeLast();
             digitsChain.add(digit);
-        }else {
+        } else {
             digitsChain.add(digit);
         }
     }
 
-    private void addComa(Digit coma){
-        if (digitsChain.isEmpty()){
+    private void addComa(Digit coma) {
+        if (digitsChain.isEmpty()) {
             digitsChain.add(new ZeroDigit());
             digitsChain.add(coma);
-        }else {
-            if (numberWithoutComa()){
+        } else {
+            if (numberWithoutComa()) {
                 digitsChain.add(coma);
             }
         }
     }
 
-    private void addZero(Digit zero){
+    private void addZero(Digit zero) {
 
-        if (!"0".equals(getValue())){
+        if (!ZERO.equals(getValue())) {
             digitsChain.add(zero);
         }
     }
 
-    private boolean numberWithoutComa(){
+    private boolean numberWithoutComa() {
 
         boolean result = true;
         for (Digit digit : digitsChain) {
-            if (".".equals(digit.getValue())){
+            if (COMA.equals(digit.getValue())) {
                 result = false;
             }
         }
         return result;
     }
 
-    private void cutLastDigit(){
+    private void cutLastDigit() {
 
-        if (digitsChain.size()>1){
+        if (digitsChain.size() > 1) {
             digitsChain.removeLast();
-        }else {
+        } else {
             digitsChain.removeLast();
             digitsChain.add(new ZeroDigit());
         }
     }
 
-    private String getValue(){
+    private String getValue() {
 
         StringBuilder result = new StringBuilder();
         for (Digit digit : digitsChain) {
@@ -128,8 +131,19 @@ public class NumberBuilder {
         return result.toString();
     }
 
-    private boolean isChainNotEmpty(){
+    private boolean isChainNotEmpty() {
 
         return !digitsChain.isEmpty();
+    }
+
+    private boolean isNotMaxDigits() {
+
+        int digitsCount = digitsChain.size();
+        for (Digit d : digitsChain) {
+            if (COMA.equals(d.getValue())) {
+                --digitsCount;
+            }
+        }
+        return digitsCount < MAX_DIGITS;
     }
 }

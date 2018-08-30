@@ -15,40 +15,41 @@ public class DisplayHandler {
         this.display = display;
     }
 
-    public void clearDisplay(){
+    private void clearDisplay() {
 
         display.setText("0");
     }
 
-    public void setDisplayedText(String string){
+    public void setDisplayedText(String string) {
 
-        if (!"".equals(string)){
-            display.setText(string);
+        if (!"".equals(string)) {
+            display.setText(optimizeString(string));
             fixFontSize();
-        }else {
+        } else {
             clearDisplay();
         }
     }
 
-    public void addComa(){
+    public void addComa() {
 
         String text = display.getText();
-        if (!"".equals(text)&& isComaAbsent(text)){
-            display.setText(optimizeStringWithComaAndZero(text+","));
+        if (!"".equals(text) && isComaAbsent(text)) {
+            display.setText(optimizeStringWithComaAndZero(text + ","));
         }
     }
 
-    private void fixFontSize(){
+    private void fixFontSize() {
+
+        display.setFont(new Font(display.getFont().getName(), 47.0));
         display.layout();
-        while (overrun()){
-            double x = display.getFont().getSize();
-            display.setFont(new Font(x-10.0));
-
+        while (isOverrun()) {
+            display.setFont(new Font(display.getFont().getName(), display.getFont().getSize() - 1));
+            display.layout();
         }
-
     }
-    private boolean overrun(){
 
-        return !display.getText().equals(((Text)display.lookup(".text")).getText());
+    private boolean isOverrun() {
+
+        return !display.getText().equals(((Text) display.lookup(".text")).getText());
     }
 }

@@ -2,13 +2,13 @@ package win_calculator.model;
 
 import org.junit.jupiter.api.Test;
 import win_calculator.controller.FXMLViewController;
+import win_calculator.controller.nodes.digits.*;
+import win_calculator.controller.nodes.digits.Number;
 import win_calculator.exceptions.MyException;
 import win_calculator.model.nodes.actions.Action;
 import win_calculator.model.nodes.actions.clear.BaskSpace;
 import win_calculator.model.nodes.actions.clear.Clear;
 import win_calculator.model.nodes.actions.clear.ClearDisplay;
-import win_calculator.model.nodes.actions.digits.*;
-import win_calculator.model.nodes.actions.digits.Number;
 import win_calculator.model.nodes.actions.enter.Enter;
 import win_calculator.model.nodes.actions.extra_operations.*;
 import win_calculator.model.nodes.actions.main_operations.*;
@@ -97,7 +97,7 @@ class AppModelTest {
         test("2 + 3 + = =","15","");
         test("2 - 3 - = =","1","");
         test("2 * 3 * = =","216","");
-        test("2 / 3 / = =","1,4999999999999999","");
+        test("2 / 3 / = =","1,5","");
         test("1 + 2 + 3 = =","9","");
         test("1 - 2 - 3 = =","-7","");
         test("1 * 2 * 3 = =","18","");
@@ -165,8 +165,8 @@ class AppModelTest {
         //test positive values for Divide
         test("1 / 2 / 3 / 4 = =","0,0104166666666667","");
         test("2 / 3 / 4 / 5 = =","0,0066666666666667","");
-        //test("101 / 102 / 103 / 104 = =","11 476 922 496","");
-        //test("102 / 103 / 104 / 105 = =","12 046 179 600","");
+        //test("101 / 102 / 103 / 104 = =","-,8882712274E-7","");
+        //test("102 / 103 / 104 / 105 = =","-,6367631444E-7","");
 
         //test negative values for Divide
         test("1 neg / 2 neg / 3 neg / 4 neg = =","-0,0104166666666667","");
@@ -184,6 +184,7 @@ class AppModelTest {
     @Test
     void testDifferentMainOperations(){
 
+        test("1 / 3 * 3 +","1","1  ÷  3  ×  3  +  ");
         test("25 + 25 + 25 * 25 * 25 = =","1 171 875","");
     }
 
@@ -216,6 +217,7 @@ class AppModelTest {
         test("16 neg neg neg = =","-16","");
         test("256 neg neg neg = =","-256","");
 
+        test("5 sqrt sqr","5","sqr( √( 5 ) )");
         test("25 sqrt 16 sqrt + ","4","√( 16 )  +  ");
 
         test("25 sqrt + - * / ","5","√( 25 )  \u00F7  ");
@@ -223,11 +225,17 @@ class AppModelTest {
         test("25 sqrt + 16 sqrt = =","13","");
         test("25 sqrt + 16 sqrt + = =","27","");
 
+        test("25 sqrt - 16 sqrt = =","-3","");
+        test("25 sqrt - 16 sqrt - = =","-1","");
+
         test("16 sqrt + sqrt = =","8","");
+        test("16 sqr + sqr = =","131 328","");
 
         test("1 + 2 sqr * 3 = =","45","");
         test("1 + 4 sqrt * 3 = =","27","");
         test("1 + 4 1/x * 3 = =","11,25","");
+
+        test("5 sqrt sqr - 3 sqrt sqr -","2","sqr( √( 5 ) )");
     }
 
     @Test
@@ -260,7 +268,7 @@ class AppModelTest {
         test("20 + 10 % + 15 % = =","28,6","");
         test("20 - 10 % - 15 % = =","12,6","");
         test("20 * 10 % * 15 % = =","1 440","");
-        test("20 / 10 % / 15 % = =","4,4444444444444445","");
+        test("20 / 10 % / 15 % = =","4,444444444444444","");
 
         test("20 + 10 % + = =","66","");
         test("20 - 10 % - = =","-18","");
@@ -270,6 +278,42 @@ class AppModelTest {
         test("0 % % %","0","0");
     }
 
+    @Test
+    void testScalingAndRounding(){
+
+        test("10 / 9 * 0,1 *","0,1111111111111111","10  ÷  9  ×  0,1  ×  ");
+        test("1 / 3 /","0,3333333333333333","1  ÷  3  ÷  ");
+        test("3 1/x","0,3333333333333333","1/( 3 )");
+        test("1 / 6 /","0,1666666666666667","1  ÷  6  ÷  ");
+
+        test("2 sqrt","1,414213562373095","√( 2 )");
+        test("3 sqrt","1,732050807568877","√( 3 )");
+        test("10 / 9 /","1,111111111111111","10  ÷  9  ÷  ");
+        test("10 / 3 * ","3,333333333333333","10  ÷  3  ×  ");
+        test("20 sqrt","4,472135954999579","√( 20 )");
+        test("30 sqrt","5,477225575051661","√( 30 )");
+
+        test("100 / 9 /","11,11111111111111","100  ÷  9  ÷  ");
+        test("100 / 3 * ","33,33333333333333","100  ÷  3  ×  ");
+        test("200 sqrt","14,14213562373095","√( 200 )");
+        test("30 sqrt","5,477225575051661","√( 30 )");
+
+        test("1000000000000000 / 9 /","111 111 111 111 111,1","1000000000000000  ÷  9  ÷  ");
+        test("100000000000000 / 9 /","11 111 111 111 111,11","100000000000000  ÷  9  ÷  ");
+
+        test("1000000000000000 neg / 9 =","-111 111 111 111 111,1","");
+        test("100000000000000 neg / 9 =","-11 111 111 111 111,11","");
+
+//        test("1000000000000000 neg / 9 /","-111 111 111 111 111,1","1000000000000000  ÷  9  ÷  ");
+//        test("100000000000000 neg / 9 /","-11 111 111 111 111,11","100000000000000  ÷  9  ÷  ");
+
+    }
+
+    @Test
+    void testEValues(){
+
+        test("9999999999 * 9999999999 * 99 / 9999999999999999 =","989 999,9998020001","");
+    }
 
     @Test
     void testInvalidValues() throws MyException {

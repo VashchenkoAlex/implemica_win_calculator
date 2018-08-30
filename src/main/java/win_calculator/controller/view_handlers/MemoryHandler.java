@@ -1,7 +1,7 @@
 package win_calculator.controller.view_handlers;
 
 import win_calculator.model.nodes.Memory;
-import win_calculator.model.nodes.actions.digits.Number;
+import win_calculator.controller.nodes.digits.Number;
 import win_calculator.model.nodes.actions.memory.MemoryAction;
 import win_calculator.utils.MemoryType;
 

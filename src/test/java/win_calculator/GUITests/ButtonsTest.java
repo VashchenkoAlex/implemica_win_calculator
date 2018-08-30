@@ -1,13 +1,11 @@
 package win_calculator.GUITests;
 
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.*;
 import org.testfx.matcher.control.LabeledMatchers;
-import org.testfx.matcher.control.TextInputControlMatchers;
 import win_calculator.MainApp;
 
 import java.io.IOException;
@@ -48,12 +46,9 @@ class ButtonsTest {
         test("#buttonSeven","1 234 567 890,0987","");
         test("#buttonSix","1 234 567 890,09876","");
         test("#buttonFive","1 234 567 890,098765","");
-        test("#buttonFour","1 234 567 890,0987654","");
-        test("#buttonThree","1 234 567 890,09876543","");
-        test("#buttonTwo","1 234 567 890,098765432","");
-        test("#buttonOne","1 234 567 890,0987654321","");
-        test("#buttonZero","1 234 567 890,09876543210","");
-        test("#buttonComa","1 234 567 890,09876543210","");
+        test("#buttonFour","1 234 567 890,098765","");
+        test("#buttonComa","1 234 567 890,098765","");
+        test("#buttonClear","0","");
     }
 
     @Test
@@ -70,7 +65,8 @@ class ButtonsTest {
         test("#buttonNine","9","2  +  3  ×  4  ÷  ");
         test("#buttonSqrt","3","2  +  3  ×  4  ÷  √( 9 )");
         test("#buttonSqr","9","2  +  3  ×  4  ÷  sqr( √( 9 ) )");
-        test("#buttonMultiply","2,222222222222222","2  +  3  ×  4  ÷  sqr( √( 9 ) ) × ");
+        test("#buttonMultiply","2,222222222222222","2  +  3  ×  4  ÷  sqr( √( 9 ) )  ×  ");
+        test("#buttonClear","0","");
     }
 
     private void test(String btnId, String display,String history){

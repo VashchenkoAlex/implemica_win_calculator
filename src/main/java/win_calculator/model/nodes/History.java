@@ -1,7 +1,7 @@
 package win_calculator.model.nodes;
 
 import win_calculator.model.nodes.actions.Action;
-import win_calculator.model.nodes.actions.digits.Number;
+import win_calculator.controller.nodes.digits.Number;
 
 import java.util.LinkedList;
 

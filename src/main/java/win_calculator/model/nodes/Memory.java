@@ -1,6 +1,6 @@
 package win_calculator.model.nodes;
 
-import win_calculator.model.nodes.actions.digits.Number;
+import win_calculator.controller.nodes.digits.Number;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;

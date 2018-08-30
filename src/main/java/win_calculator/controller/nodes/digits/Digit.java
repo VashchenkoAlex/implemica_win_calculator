@@ -1,4 +1,4 @@
-package win_calculator.model.nodes.actions.digits;
+package win_calculator.controller.nodes.digits;
 
 import win_calculator.model.nodes.actions.Action;
 

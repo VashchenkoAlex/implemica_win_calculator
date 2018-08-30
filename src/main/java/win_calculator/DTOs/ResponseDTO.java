@@ -1,10 +1,10 @@
 package win_calculator.DTOs;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 
-import static win_calculator.utils.StringUtils.cutLastComa;
-import static win_calculator.utils.StringUtils.cutLastZeros;
-import static win_calculator.utils.StringUtils.optimizeString;
+import static win_calculator.utils.StringUtils.*;
 
 public class ResponseDTO {
 
@@ -15,7 +15,9 @@ public class ResponseDTO {
 
         String result = null;
         if (displayNumber!=null){
-            result = cutLastComa(cutLastZeros(optimizeString(displayNumber.toString())));
+            setCorrectScale();
+            displayNumber = displayNumber.setScale(17,RoundingMode.HALF_UP);
+            result = optimizeString(prepareScaling(displayNumber.toString()));
         }
         return result;
     }
@@ -27,5 +29,10 @@ public class ResponseDTO {
     public ResponseDTO(BigDecimal displayNumber, String history) {
         this.displayNumber = displayNumber;
         this.history = history;
+    }
+
+    private void setCorrectScale(){
+
+
     }
 }

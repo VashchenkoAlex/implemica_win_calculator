@@ -1,13 +1,14 @@
-package win_calculator.model.nodes.actions.digits;
+package win_calculator.controller.nodes.digits;
 
 import win_calculator.utils.ActionType;
 
-public class FourDigit implements Digit {
+public class NineDigit implements Digit {
 
-    private static final String VALUE = "4";
+    private static final String VALUE = "9";
     private static final ActionType TYPE = ActionType.DIGIT;
     @Override
     public String getValue() {
+
         return VALUE;
     }
 

@@ -11,7 +11,7 @@ public class Divide implements MainOperation {
     private static final String VALUE = "  \u00F7  ";
     private static final ActionType TYPE = ActionType.MAIN_OPERATION;
     private static final String EXCEPTION_MSG = "Cannot divide by zero";
-    private static final int SCALE = 16;
+    private static final int SCALE = 10000;
 
     @Override
     public BigDecimal calculate(BigDecimal number) throws MyException {

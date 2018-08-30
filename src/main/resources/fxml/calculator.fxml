@@ -16,6 +16,7 @@
 <?import win_calculator.utils.ComboBoxOption?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.text.Font?>
 <Stage title="Calculator"
        xmlns:fx="http://javafx.com/fxml/1"
        xmlns="http://javafx.com/javafx/2.2"
@@ -78,7 +79,10 @@
                                         <Insets right="5.0" bottom="20.0"/>
                                     </GridPane.margin>
                                 </Label>
-                                <Label fx:id="display" text="0" styleClass="displayText" GridPane.columnIndex="0" GridPane.rowIndex="1" maxWidth="Infinity">
+                                <Label fx:id="display" text="0" styleClass="displayText" cache="true" cacheHint="SCALE" cacheShape="false"  scaleShape="false" GridPane.columnIndex="0" GridPane.rowIndex="1" maxWidth="Infinity">
+                                    <font>
+                                        <Font name="Segoe UI Semibold" size="47.0"/>
+                                    </font>
                                     <GridPane.margin>
                                         <Insets top="30.0" right="5.0"/>
                                     </GridPane.margin>

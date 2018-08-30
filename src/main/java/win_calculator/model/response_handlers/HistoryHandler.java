@@ -2,7 +2,7 @@ package win_calculator.model.response_handlers;
 
 import win_calculator.model.nodes.History;
 import win_calculator.model.nodes.actions.Action;
-import win_calculator.model.nodes.actions.digits.Number;
+import win_calculator.controller.nodes.digits.Number;
 import win_calculator.utils.ActionType;
 
 import java.math.BigDecimal;

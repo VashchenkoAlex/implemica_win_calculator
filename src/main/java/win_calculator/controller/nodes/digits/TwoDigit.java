@@ -1,10 +1,10 @@
-package win_calculator.model.nodes.actions.digits;
+package win_calculator.controller.nodes.digits;
 
 import win_calculator.utils.ActionType;
 
-public class SixDigit implements Digit {
+public class TwoDigit implements Digit {
 
-    private static final String VALUE = "6";
+    private static final String VALUE = "2";
     private static final ActionType TYPE = ActionType.DIGIT;
 
     @Override

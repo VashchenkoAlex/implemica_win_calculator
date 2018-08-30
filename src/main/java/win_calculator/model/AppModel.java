@@ -4,14 +4,13 @@ import win_calculator.DTOs.ResponseDTO;
 import win_calculator.controller.view_handlers.MemoryHandler;
 import win_calculator.exceptions.MyException;
 import win_calculator.model.nodes.actions.Action;
-import win_calculator.model.nodes.actions.digits.Number;
-import win_calculator.model.nodes.actions.digits.ZeroDigit;
+import win_calculator.controller.nodes.digits.Number;
+import win_calculator.controller.nodes.digits.ZeroDigit;
 import win_calculator.model.nodes.actions.extra_operations.ExtraOperation;
 import win_calculator.model.nodes.actions.extra_operations.Percent;
 import win_calculator.model.nodes.actions.main_operations.MainOperation;
 import win_calculator.model.nodes.actions.memory.MemoryAction;
 import win_calculator.model.response_handlers.HistoryHandler;
-import win_calculator.model.button_handlers.ExtraOperationHandler;
 import win_calculator.model.button_handlers.MainOperationHandler;
 import win_calculator.model.button_handlers.PercentHandler;
 
@@ -23,11 +22,11 @@ public class AppModel {
 
     private HistoryHandler historyHandler = new HistoryHandler();
     private MainOperationHandler mOperationHandler = new MainOperationHandler(historyHandler);
-    private ExtraOperationHandler eOperationHandler = new ExtraOperationHandler();
     private PercentHandler percentHandler = new PercentHandler(historyHandler);
     private MemoryHandler memoryHandler = new MemoryHandler();
     private BigDecimal responseNumber;
     private Number lastNumber;
+    private boolean eOperationRepeated = false;
 
     public ResponseDTO toDo(Action action,Number number) throws MyException {
 
@@ -73,7 +72,6 @@ public class AppModel {
 
     private void processExtraOperation(Action eOperation,Number number) throws MyException {
 
-        //lastNumber = number;
         BigDecimal operationNumber;
         if (number!=null){
             historyHandler.addActionToHistory(number);
@@ -85,8 +83,7 @@ public class AppModel {
                 historyHandler.addActionToHistory(new Number(operationNumber));
             }
         }
-        BigDecimal resultNum = eOperationHandler.doOperation(operationNumber,(ExtraOperation) eOperation);
-        //historyHandler.setResultNumber(resultNum);
+        BigDecimal resultNum = ((ExtraOperation) eOperation).calculate(operationNumber);
         historyHandler.changeLastNumber(resultNum);
         responseNumber = resultNum;
         historyHandler.addActionToHistory(eOperation);

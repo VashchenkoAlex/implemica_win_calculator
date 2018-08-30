@@ -1,10 +1,10 @@
-package win_calculator.model.nodes.actions.digits;
+package win_calculator.controller.nodes.digits;
 
 import win_calculator.utils.ActionType;
 
-public class SevenDigit implements Digit {
+public class FiveDigit implements Digit {
 
-    private static final String VALUE = "7";
+    private static final String VALUE = "5";
     private static final ActionType TYPE = ActionType.DIGIT;
 
     @Override
@@ -14,6 +14,7 @@ public class SevenDigit implements Digit {
 
     @Override
     public ActionType getType() {
+
         return TYPE;
     }
 }

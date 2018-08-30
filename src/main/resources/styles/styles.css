@@ -119,13 +119,11 @@
 
 .displayText {
 
-    -fx-padding: 0 5 0 0;
+    -fx-padding: 0 5 0 5;
     -fx-min-width: 315px;
     -fx-min-height: 60px;
     -fx-background-color: #ebebeb;
     -fx-background-radius: 0;
-    -fx-font-family: "Segoe UI Semibold";
-    -fx-font-size: 48px;
 }
 #display{
     -fx-alignment: CENTER-RIGHT;
