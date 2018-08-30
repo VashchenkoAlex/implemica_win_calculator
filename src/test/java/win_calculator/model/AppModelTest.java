@@ -235,7 +235,16 @@ class AppModelTest {
         test("1 + 4 sqrt * 3 = =","27","");
         test("1 + 4 1/x * 3 = =","11,25","");
 
-        test("5 sqrt sqr - 3 sqrt sqr -","2","sqr( √( 5 ) )");
+        test("5 sqrt sqr - 4 sqrt -","3","sqr( √( 5 ) )  -  √( 4 )  -  ");
+        test("5 sqrt sqr sqrt sqr - 4 sqrt -","3","sqr( √( sqr( √( 5 ) ) ) )  -  √( 4 )  -  ");
+
+        test("5 sqrt sqr - 3 sqrt sqr -","2","sqr( √( 5 ) )  -  sqr( √( 3 ) )  -  ");
+        test("5 sqrt sqr - 3 sqrt sqr = =","-1","");
+
+        test("5 sqrt sqr sqrt sqr - 3 sqrt sqr sqrt sqr -","2","sqr( √( sqr( √( 5 ) ) ) )  -  sqr( √( sqr( √( 3 ) ) ) )  -  ");
+        test("5 sqrt sqr sqrt sqr - 3 sqrt sqr sqrt sqr = =","-1","");
+        test("5 sqrt sqr sqrt sqr + 3 sqrt sqr sqrt sqr +","8","sqr( √( sqr( √( 5 ) ) ) )  +  sqr( √( sqr( √( 3 ) ) ) )  +  ");
+        test("5 sqrt sqr sqrt sqr + 3 sqrt sqr sqrt sqr = =","11","");
     }
 
     @Test

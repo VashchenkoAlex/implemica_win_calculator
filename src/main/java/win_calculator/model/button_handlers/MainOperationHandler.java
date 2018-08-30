@@ -100,6 +100,10 @@ public class MainOperationHandler {
         if (lastNumber !=null){
             this.lastNumber = lastNumber;
         }
+        BigDecimal lastExtraResult = historyHandler.getLastExtraResult();
+        if (lastExtraResult !=null){
+            this.lastNumber = lastExtraResult;
+        }
         BigDecimal previousNumber = historyHandler.getPreviousNumber();
         if (previousNumber!=null){
             this.previousNumber = previousNumber;

@@ -3,6 +3,7 @@ package win_calculator.model.response_handlers;
 import win_calculator.model.nodes.History;
 import win_calculator.model.nodes.actions.Action;
 import win_calculator.controller.nodes.digits.Number;
+import win_calculator.model.nodes.actions.extra_operations.Negate;
 import win_calculator.utils.ActionType;
 
 import java.math.BigDecimal;
@@ -19,6 +20,8 @@ public class HistoryHandler {
     private BigDecimal lastNumber;
     private BigDecimal previousNumber;
     private BigDecimal resultNumber;
+    private BigDecimal lastExtraResult;
+    private static final String NEGATE_VALUE = "negate( ";
 
     public String getHistoryString(){
 
@@ -29,7 +32,11 @@ public class HistoryHandler {
         }
         for (Action action : actions) {
             if (EXTRA_OPERATION.equals(action.getType())){
-                result = addExtraOperationToString(result,action.getValue());
+                if (NEGATE_VALUE.equals(action.getValue())){
+                    result = addNegateToString(result,action.getValue(),((Negate)action).getExtraValue());
+                }else{
+                    result = addExtraOperationToString(result,action.getValue());
+                }
             }else {
                 result+=cutLastComa(cutLastZeros(replaceDotToComa(action.getValue())));
             }
@@ -58,6 +65,7 @@ public class HistoryHandler {
         mOperationBefore = false;
         lastNumber = null;
         previousNumber = null;
+        lastExtraResult = null;
     }
 
     public void setHistory(History history) {
@@ -152,5 +160,21 @@ public class HistoryHandler {
         history.setActions(actions);
         lastNumber = null;
         previousNumber = null;
+        setLastExtraResult(null);
+    }
+
+    public BigDecimal getLastExtraResult() {
+        return lastExtraResult;
+    }
+
+    public void setLastExtraResult(BigDecimal lastExtraResult) {
+        this.lastExtraResult = lastExtraResult;
+    }
+
+    public void resetLastExtraResult(){
+        if (lastExtraResult!=null){
+            lastNumber = new BigDecimal(lastExtraResult.toString());
+        }
+        lastExtraResult = null;
     }
 }

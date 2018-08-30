@@ -78,13 +78,14 @@ public class AppModel {
             operationNumber = new BigDecimal(number.getValue());
         }else {
             operationNumber = responseNumber;
-            historyHandler.setLastNumber(operationNumber);
+            //historyHandler.setLastNumber(operationNumber); //есть вопросы
             if (MAIN_OPERATION.equals(historyHandler.getLastActionType())){
                 historyHandler.addActionToHistory(new Number(operationNumber));
             }
         }
         BigDecimal resultNum = ((ExtraOperation) eOperation).calculate(operationNumber);
-        historyHandler.changeLastNumber(resultNum);
+        //historyHandler.changeLastNumber(resultNum); //тут есть вопросы
+        historyHandler.setLastExtraResult(resultNum);
         responseNumber = resultNum;
         historyHandler.addActionToHistory(eOperation);
     }
@@ -130,12 +131,17 @@ public class AppModel {
             responseNumber = lastNumber.getBigDecimalValue();
         }
         historyHandler.setEnterRepeated(true);
+//        historyHandler.setLastExtraResult(null);
+        historyHandler.resetLastExtraResult();
     }
 
     private void processMainOperation(Action mOperation,Number number) throws MyException {
 
+        BigDecimal lastExtraResult = historyHandler.getLastExtraResult();
         if (number !=null ){
             historyHandler.addActionToHistory(number);
+        }else if (lastExtraResult != null){
+            historyHandler.changeLastNumber(lastExtraResult);
         }else {
             historyHandler.changeLastNumber(responseNumber);
         }
@@ -145,6 +151,8 @@ public class AppModel {
         }else if (number!=null && (responseNumber==null)){
             responseNumber = number.getBigDecimalValue();
         }
+//        historyHandler.setLastExtraResult(null);
+        historyHandler.resetLastExtraResult();
     }
 
     private void processMemoryOperation(Action action,Number number){

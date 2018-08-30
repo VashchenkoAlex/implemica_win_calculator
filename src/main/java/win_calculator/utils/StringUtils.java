@@ -151,6 +151,14 @@ public abstract class StringUtils {
         }
         return resultStr + BRACKET;
     }
+
+    public static String addNegateToString(String currentStr, String symbol, String extraSymbol){
+
+        String resultStr = "";
+
+        return resultStr;
+    }
+
     private static String round(String current){
 
         int lastDigit = Integer.parseInt(current.substring(current.length()-1));
