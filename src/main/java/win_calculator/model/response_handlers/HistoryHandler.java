@@ -27,9 +27,6 @@ public class HistoryHandler {
 
         LinkedList<Action> actions = history.getActions();
         String result = "";
-        if (actions.size()>0 && !NUMBER.equals(actions.get(0).getType()) && resultNumber!=null){
-            result += optimizeString(resultNumber.toString());
-        }
         for (Action action : actions) {
             if (EXTRA_OPERATION.equals(action.getType())){
                 if (NEGATE_VALUE.equals(action.getValue())){
@@ -38,10 +35,10 @@ public class HistoryHandler {
                     result = addExtraOperationToString(result,action.getValue());
                 }
             }else {
-                result+=cutLastComa(cutLastZeros(replaceDotToComa(action.getValue())));
+                result+=optimizeStringForHistory(action.getValue());
             }
         }
-        return replaceDotToComa(result);
+        return result;
     }
 
     public void addActionToHistory(Action action){

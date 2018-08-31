@@ -191,6 +191,8 @@ class AppModelTest {
     @Test
     void testExtraActions(){
 
+        test("sqr + 5 sqr","25","sqr( 0 )  +  sqr( 5 )");
+
         test("4 sqrt + = =","6","");
         test("25 sqrt + = =","15","");
 
@@ -212,7 +214,7 @@ class AppModelTest {
         test("16 sqr sqr sqr","4 294 967 296","sqr( sqr( sqr( 16 ) ) )");
         test("256 sqr sqr sqr = =","18 446 744 073 709 551 616","");
 
-        test("0 neg neg neg","0","negate( negate( negate( 0 ) ) )");
+        test("0 neg neg neg","0","");
         test("1 neg neg neg = =","-1","");
         test("16 neg neg neg = =","-16","");
         test("256 neg neg neg = =","-256","");
@@ -255,6 +257,8 @@ class AppModelTest {
         test("20 %","0","0");
         test("1 %","0","0");
         test("20 %","0","0");
+
+        test("20 + 0 %","0","20  +  0");
 
         test("20 + 10 % = =","24","");
         test("20 + 10 %","2","20  +  2");
@@ -316,12 +320,39 @@ class AppModelTest {
 //        test("1000000000000000 neg / 9 /","-111 111 111 111 111,1","1000000000000000  ÷  9  ÷  ");
 //        test("100000000000000 neg / 9 /","-11 111 111 111 111,11","100000000000000  ÷  9  ÷  ");
 
+        test("9999999999 * 9999999999 * 99 / 9999999999999999 =","989 999,9998020001","");
+
     }
 
     @Test
     void testEValues(){
 
-        test("9999999999 * 9999999999 * 99 / 9999999999999999 =","989 999,9998020001","");
+        test("1 / 1000000000000000 = ","1,e-15","");
+        test("1 / 1000000000000000 = =","1,e-30","");
+        test("22 / 100000000 =","0,00000022","");
+        test("22 / 1000000000 =","0,000000022","");
+        test("22 / 10000000000 =","0,0000000022","");
+        test("22 / 100000000000 =","0,00000000022","");
+        test("22 / 1000000000000 =","0,000000000022","");
+        test("22 / 10000000000000 =","0,0000000000022","");
+        test("22 / 100000000000000 =","0,00000000000022","");
+        test("22 / 1000000000000000 =","0,000000000000022","");
+        test("22 / 1000000000000000 / 10 =","0,0000000000000022","");
+        test("22 / 1000000000000000 / 10 = =","2,2e-16","");
+        test("22 / 1000000000000000 / 10 = = =","2,2e-17","");
+        test("22 / 1000000000000000 = =","2,2e-29","");
+
+        test("1 / 1000000000000000 "+enterInLoop(100),"1,e-1500","");
+        test("1 / 1000000000000000 "+enterInLoop(666),"1,e-9990","");
+        test("1 / 1000000000000000 "+enterInLoop(667),"1,e-9990","");
+//        test("9999999999999999 + = = = = = = = = = = = = = = = = = = = =","2,1e+17","");
+    }
+
+    @Test
+    void testClear(){
+
+        test("5 - 3 = C - 2 -","-2","0  -  2  -  ");
+        test("sqr + 5 sqr","25","sqr( 0 )  +  sqr( 5 )");
     }
 
     @Test
@@ -354,5 +385,14 @@ class AppModelTest {
         String[] parsedActionStrings = expression.split(" ");
         assertThrows(MyException.class,()->appModel.toDo(actions.get(parsedActionStrings[1]),new Number(new BigDecimal(parsedActionStrings[0]))));
         appModel.toDo(new Clear(),null);
+    }
+
+    private String enterInLoop(int count){
+
+        StringBuilder result = new StringBuilder("=");
+        for (int i = 1; i < count; i++) {
+            result.append(" =");
+        }
+        return result.toString();
     }
 }

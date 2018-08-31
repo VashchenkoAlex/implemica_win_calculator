@@ -14,7 +14,7 @@ import static org.testfx.api.FxAssert.verifyThat;
 
 
 @ExtendWith(ApplicationExtension.class)
-class ButtonsTest {
+class UITest {
 
     private MainApp app = new MainApp();
     private FxRobot robot;
@@ -26,7 +26,7 @@ class ButtonsTest {
     }
 
     @Test
-    void TestNumbers(FxRobot robot){
+    void TestButtons(FxRobot robot){
 
         this.robot = robot;
         test("#buttonOne","1","");
@@ -49,12 +49,6 @@ class ButtonsTest {
         test("#buttonFour","1 234 567 890,098765","");
         test("#buttonComa","1 234 567 890,098765","");
         test("#buttonClear","0","");
-    }
-
-    @Test
-    void TestMainOperations(FxRobot robot){
-
-        this.robot = robot;
         test("#buttonTwo","2","");
         test("#buttonPlus","2","2  +  ");
         test("#buttonThree","3","2  +  ");
@@ -66,8 +60,10 @@ class ButtonsTest {
         test("#buttonSqrt","3","2  +  3  ×  4  ÷  √( 9 )");
         test("#buttonSqr","9","2  +  3  ×  4  ÷  sqr( √( 9 ) )");
         test("#buttonMultiply","2,222222222222222","2  +  3  ×  4  ÷  sqr( √( 9 ) )  ×  ");
+        test("#buttonClearEntered","0","2  +  3  ×  4  ÷  sqr( √( 9 ) )  ×  ");
         test("#buttonClear","0","");
     }
+
 
     private void test(String btnId, String display,String history){
 

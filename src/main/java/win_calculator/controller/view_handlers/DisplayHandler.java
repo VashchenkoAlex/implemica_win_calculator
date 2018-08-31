@@ -23,7 +23,10 @@ public class DisplayHandler {
     public void setDisplayedText(String string) {
 
         if (!"".equals(string)) {
-            display.setText(optimizeString(string));
+            if (!string.contains("e")){
+                string = prepareCapacity(string);
+            }
+            display.setText(string);
             fixFontSize();
         } else {
             clearDisplay();

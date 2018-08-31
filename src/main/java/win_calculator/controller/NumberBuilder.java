@@ -54,8 +54,6 @@ public class NumberBuilder {
         if (isChainNotEmpty()) {
             finishedNumber = new Number(number.getBigDecimalValue());
             number = new Number();
-        } else if (wasNotOperation) {
-            finishedNumber = new Number(BigDecimal.ZERO);
         }
         digitsChain = new LinkedList<>();
         return finishedNumber;

@@ -15,6 +15,7 @@ public class CaptionHandler {
     public void setStage(AnchorPane rootPane) {
 
         stage = (Stage) rootPane.getScene().getWindow();
+//        stage.setMaxHeight(500.0);
     }
 
     public void setFullScreenBtn(Button fullScreen) {
@@ -34,11 +35,11 @@ public class CaptionHandler {
 
     public void fullScreen(){
 
-        if (stage.isFullScreen()){
-            stage.setFullScreen(false);
+        if (stage.isMaximized()){
+            stage.setMaximized(false);
             fullScreenBtn.setText(FULL);
         }else {
-            stage.setFullScreen(true);
+            stage.setMaximized(true);
             fullScreenBtn.setText(MINIMIZE);
         }
     }

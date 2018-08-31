@@ -339,7 +339,7 @@ public class FXMLViewController implements Initializable
             if (responseNumber == null){
                 results[0] = "0";
             }else {
-                results[0] = cutLastComa(cutLastZeros(replaceDotToComa(responseNumber)));
+                results[0] = responseNumber;
             }
             results[1] = response.getHistory();
         } catch (MyException e) {

@@ -10,8 +10,9 @@ public abstract class StringUtils {
     private static final String BRACKET = " )";
     private static final String SPACE = "  ";
     private static final int DIGITS = 3;
-    private static final String REGEXP = "^.+[\\s{2}][^\\s{2}]+$";
+    private static final String ADD_EXTRA_OPERATION_REGEX = "^.+[\\s{2}][^\\s{2}]+$";
     private static final String CAPACITY_REGEX = "(?<=\\G.{3})";
+    private static final String FIND_ZERO_E_REGEX = "^0E-[0-9]+";
 
     public static String replaceComaToDot(String string) {
         return string.replace(",", ".");
@@ -83,22 +84,32 @@ public abstract class StringUtils {
         return currentStr.replaceAll(COMA + "$", "");
     }
 
-    public static String optimizeString(String current) {
+    public static String prepareCapacity(String current) {
 
-        String result;
-        if (current.contains("0E-")) {
-            result = "0";
-        } else {
-            result = removeCapacity(replaceDotToComa(current));
-            result = addCapacity(result);
-        }
-        return result;
+        return addCapacity(removeCapacity(replaceDotToComa(transformE(current))));
     } //TO DO TESTS
 
+    public static String optimizeStringForHistory(String current){
+
+        return cutLastComa(cutLastZeros(replaceDotToComa(transformE(current))));
+    }
+
+    public static String transformE(String current){
+
+        String result = current;
+        if (current.matches(FIND_ZERO_E_REGEX)){
+            result = "0";
+        }else if (current.contains("E")){
+            String[] parts = current.split("E");
+            parts[0] = cutLastZeros(replaceDotToComa(parts[0]));
+            result = parts[0] + "e" + parts[1];
+        }
+        return result;
+    }
     public static String prepareScaling(String current) {
 
         String result = cutLastComa(cutLastZeros(replaceDotToComa(current)));
-        if (result.contains(COMA)&&result.length()>17) {
+        if (result.contains(COMA)&&result.length()>18) {
             String[] resultParts = result.split(COMA);
             int wholeCount = 17 - resultParts[0].length();
             if ("0".equals(resultParts[0])) {
@@ -137,7 +148,7 @@ public abstract class StringUtils {
 
         String resultStr = "";
         if (currentStr.contains(SPACE)) {
-            if (currentStr.matches(REGEXP)) {
+            if (currentStr.matches(ADD_EXTRA_OPERATION_REGEX)) {
                 String[] parts = currentStr.split("\\s\\s");
                 for (int i = 0; i < parts.length - 1; i++) {
                     resultStr += parts[i] + "  ";
@@ -170,5 +181,17 @@ public abstract class StringUtils {
         }
 
         return result;
+    }
+
+    public static boolean isResultPlaceValid(String current){
+
+        String[] parts = current.split("E");
+        parts[0] = cutLastZeros(replaceDotToComa(parts[0]));
+        boolean result = true;
+        result = parts[1].length() < 17;
+        int first = Integer.parseInt(parts[1]);
+        int second = -12 - parts[0].length();
+        result = result &&  first < second;
+        return  result;
     }
 }

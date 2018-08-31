@@ -26,7 +26,7 @@ public class AppModel {
     private MemoryHandler memoryHandler = new MemoryHandler();
     private BigDecimal responseNumber;
     private Number lastNumber;
-    private boolean eOperationRepeated = false;
+//    private boolean eOperationRepeated = false;
 
     public ResponseDTO toDo(Action action,Number number) throws MyException {
 
@@ -76,15 +76,16 @@ public class AppModel {
         if (number!=null){
             historyHandler.addActionToHistory(number);
             operationNumber = new BigDecimal(number.getValue());
-        }else {
+        }else if (responseNumber!=null){
             operationNumber = responseNumber;
-            //historyHandler.setLastNumber(operationNumber); //есть вопросы
             if (MAIN_OPERATION.equals(historyHandler.getLastActionType())){
                 historyHandler.addActionToHistory(new Number(operationNumber));
             }
+        }else {
+            operationNumber = BigDecimal.ZERO;
+            historyHandler.addActionToHistory(new Number(operationNumber));
         }
         BigDecimal resultNum = ((ExtraOperation) eOperation).calculate(operationNumber);
-        //historyHandler.changeLastNumber(resultNum); //тут есть вопросы
         historyHandler.setLastExtraResult(resultNum);
         responseNumber = resultNum;
         historyHandler.addActionToHistory(eOperation);
@@ -131,7 +132,6 @@ public class AppModel {
             responseNumber = lastNumber.getBigDecimalValue();
         }
         historyHandler.setEnterRepeated(true);
-//        historyHandler.setLastExtraResult(null);
         historyHandler.resetLastExtraResult();
     }
 
@@ -142,8 +142,10 @@ public class AppModel {
             historyHandler.addActionToHistory(number);
         }else if (lastExtraResult != null){
             historyHandler.changeLastNumber(lastExtraResult);
-        }else {
+        }else if (responseNumber!=null){
             historyHandler.changeLastNumber(responseNumber);
+        }else {
+            historyHandler.addActionToHistory(new Number(BigDecimal.ZERO));
         }
         BigDecimal operationResult = mOperationHandler.doOperation((MainOperation) mOperation);
         if (operationResult!=null){
@@ -151,7 +153,6 @@ public class AppModel {
         }else if (number!=null && (responseNumber==null)){
             responseNumber = number.getBigDecimalValue();
         }
-//        historyHandler.setLastExtraResult(null);
         historyHandler.resetLastExtraResult();
     }
 
