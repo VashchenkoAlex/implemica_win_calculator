@@ -287,7 +287,8 @@ public abstract class StringUtils {
         String[] parts = format.format(number).split("E");
         boolean result = false;
         if (parts.length>1){
-            result = Integer.parseInt(parts[1]) < -3 && parts[0].length()>16;
+            int i = Integer.parseInt(parts[1]);
+            result = i < -3 && parts[0].length() + i >16;
         }
         return result;
     }
