@@ -20,7 +20,7 @@ public class NumberBuilder {
     private Number number;
     private LinkedList<Digit> digitsChain = new LinkedList<>();
 
-    String toDo(Action action) {
+    BigDecimal toDo(Action action) {
 
         ActionType actionType = action.getType();
         if (DIGIT.equals(actionType) && isNotMaxDigits()) {
@@ -30,7 +30,7 @@ public class NumberBuilder {
         } else if (CLEAR_ENTERED.equals(actionType)) {
             clear();
         }
-        return getValue();
+        return number.getBigDecimalValue();
     }
 
     private void add(Digit digit) {
@@ -137,6 +137,9 @@ public class NumberBuilder {
     private boolean isNotMaxDigits() {
 
         int digitsCount = digitsChain.size();
+        if (!digitsChain.isEmpty() && ZERO.equals(digitsChain.get(0).getValue())){
+            --digitsCount;
+        }
         for (Digit d : digitsChain) {
             if (COMA.equals(d.getValue())) {
                 --digitsCount;

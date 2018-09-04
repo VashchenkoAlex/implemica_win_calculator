@@ -9,6 +9,7 @@ import static win_calculator.utils.StringUtils.*;
 public class DisplayHandler {
 
     private Label display;
+    private static final String COMA = ",";
 
     public void setDisplay(Label display) {
 
@@ -37,7 +38,7 @@ public class DisplayHandler {
 
         String text = display.getText();
         if (!"".equals(text) && isComaAbsent(text)) {
-            display.setText(optimizeStringWithComaAndZero(text + ","));
+            display.setText(text + COMA);
         }
     }
 
@@ -55,4 +56,5 @@ public class DisplayHandler {
 
         return !display.getText().equals(((Text) display.lookup(".text")).getText());
     }
+
 }

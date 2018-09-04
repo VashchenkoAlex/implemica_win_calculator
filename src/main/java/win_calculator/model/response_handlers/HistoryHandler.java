@@ -125,6 +125,9 @@ public class HistoryHandler {
     public void changeLastNumber(BigDecimal number){
 
         lastNumber = number;
+        if (enterRepeated){
+            addActionToHistory(new Number(number));
+        }
     }
 
     public void changePreviousNumber(BigDecimal number){

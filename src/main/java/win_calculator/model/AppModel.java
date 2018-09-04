@@ -144,6 +144,7 @@ public class AppModel {
             historyHandler.changeLastNumber(lastExtraResult);
         }else if (responseNumber!=null){
             historyHandler.changeLastNumber(responseNumber);
+            //historyHandler.addActionToHistory(new Number(responseNumber));
         }else {
             historyHandler.addActionToHistory(new Number(BigDecimal.ZERO));
         }

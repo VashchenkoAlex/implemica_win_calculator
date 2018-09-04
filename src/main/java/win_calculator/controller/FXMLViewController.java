@@ -29,6 +29,7 @@ import win_calculator.model.nodes.actions.main_operations.*;
 import win_calculator.utils.ActionType;
 import win_calculator.utils.ComboBoxOption;
 
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -310,58 +311,60 @@ public class FXMLViewController implements Initializable
 
     private void makeAction(Action action){
 
-        String[] results = handleAction(action);
-        displayHandler.setDisplayedText(results[0]);
-        if (results[1]!=null){
-            historyFieldHandler.setHistoryText(results[1]);
-        }
-    }
-
-    public String[] handleAction(Action action){
-
-        String[] results;
-        ActionType type = action.getType();
-        if (DIGIT.equals(type)||BACKSPACE.equals(type)|| CLEAR_ENTERED.equals(type)){
-            results = handleDigit(action);
-        }else {
-            results = handleOperation(action);
-        }
-        return results;
-    }
-
-    private String[] handleOperation(Action action){
-
+        ResponseDTO response;
         String[] results = new String[2];
-        Number currentNum = numberBuilder.finish();
         try {
-            ResponseDTO response = model.toDo(action,currentNum);
-            String responseNumber = response.getDisplayNumber();
-            if (responseNumber == null){
-                results[0] = "0";
-            }else {
-                results[0] = responseNumber;
-            }
+            response = handleAction(action);
+            results[0] = convertToString(response.getDisplayNumber());
             results[1] = response.getHistory();
-        } catch (MyException e) {
+        }catch (MyException e){
             results[0] = e.getMessage();
         }
-        lastAction = action;
-        return results;
+        displayHandler.setDisplayedText(results[0]);
+        if (results[1]==null){
+            results[1] = "";
+        }
+        historyFieldHandler.setHistoryText(results[1]);
     }
 
-    private String[] handleDigit(Action action){
+    public ResponseDTO handleAction(Action action) throws MyException {
 
-        String[] results = new String[2];
+        ResponseDTO response;
+        ActionType type = action.getType();
+        if (DIGIT.equals(type)||BACKSPACE.equals(type)|| CLEAR_ENTERED.equals(type)){
+            response = handleDigit(action);
+        }else {
+            response = handleOperation(action);
+        }
+        return response;
+    }
+
+    private ResponseDTO handleOperation(Action action) throws MyException {
+
+        ResponseDTO response;
+        Number currentNum = numberBuilder.finish();
+        response = model.toDo(action,currentNum);
+        if (response.getDisplayNumber() == null){
+            response.setDisplayNumber(BigDecimal.ZERO);
+        }
+        lastAction = action;
+        return response;
+    }
+
+    private ResponseDTO handleDigit(Action action){
+
+        ResponseDTO response;
+        String historyText = historyFieldHandler.getLastValue();
         if (lastAction!=null && EXTRA_OPERATION.equals(lastAction.getType())){
             try {
-                ResponseDTO responseDTO = model.toDo(new LastExtraCleaner(),null);
-                results[1] = responseDTO.getHistory();
+                response = model.toDo(new LastExtraCleaner(),null);
+                historyText = response.getHistory();
             } catch (MyException e) {
                 System.out.println(e.getMessage());
             }
         }
-        results[0] = addCapacity(replaceDotToComa(numberBuilder.toDo(action)));
+        response = new ResponseDTO(numberBuilder.toDo(action),historyText);
         lastAction = action;
-        return results;
+        return response;
     }
 }

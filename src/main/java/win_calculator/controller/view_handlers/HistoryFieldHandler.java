@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 public class HistoryFieldHandler {
 
     private Label historyField;
+    private String lastValue;
 
     public void setHistoryField(Label historyField) {
         this.historyField = historyField;
@@ -13,6 +14,14 @@ public class HistoryFieldHandler {
 
     public void setHistoryText(String text){
 
+        if (text==null){
+            text = "";
+        }
+        lastValue = text;
         historyField.setText(text);
+    }
+
+    public String getLastValue() {
+        return lastValue;
     }
 }
