@@ -25,7 +25,7 @@ public class DisplayHandler {
 
         if (!"".equals(string)) {
             if (!string.contains("e")){
-                string = prepareCapacity(string);
+                //string = prepareCapacity(string);
             }
             display.setText(string);
             fixFontSize();

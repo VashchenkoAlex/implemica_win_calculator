@@ -11,7 +11,6 @@ public abstract class StringUtils {
 
     private static final String COMA = ",";
     private static final String DOT = ".";
-    private static final String MINUS = "-";
     private static final String BRACKET = " )";
     private static final String SPACE = "  ";
     private static final int DIGITS = 3;
@@ -22,7 +21,9 @@ public abstract class StringUtils {
     private static final String IS_ZERO_FIRST_REGEX = "^0.+";
     private static final String BASIC_FORMAT_PATTERN = "#############,###.###############";
     private static final String E_PART_OF_FORMAT = "#E0";
-    private static final String SIXTEEN_DECIMAL_PART = "#.################";
+    private static final int SCALE = 15;
+    private static final int MAX_ROUND = 16;
+    private static final int MAX_DECIMAL = 17;
     private static final String FOURTEEN_DECIMAL_PART = "#.##############";
 
     private static final String E = "E";
@@ -188,7 +189,7 @@ public abstract class StringUtils {
     public static String convertToString(BigDecimal response) {
 
         String pattern = BASIC_FORMAT_PATTERN;
-        int scale = 15;
+        int scale = SCALE;
         String exponentSeparator = "e";
         response = response.setScale(9999, RoundingMode.HALF_UP).stripTrailingZeros();
         String result = response.abs().toString();
@@ -204,13 +205,13 @@ public abstract class StringUtils {
         } else if (result.contains(E)) {
             String[] parts = result.split(E);
             int expCount = Math.abs(Integer.parseInt(parts[1]));
-            response = response.setScale(15+expCount,RoundingMode.HALF_UP).stripTrailingZeros();
+            response = response.setScale(SCALE+expCount,RoundingMode.HALF_UP).stripTrailingZeros();
             unscaledLength = response.unscaledValue().toString().length();
             if (parts[1].contains("-")){
-                if (expCount > 17 - unscaledLength) {
+                if (expCount > MAX_DECIMAL - unscaledLength) {
                     pattern = "0." + addDigits(unscaledLength) + E_PART_OF_FORMAT;
                     scale = scale + expCount;
-                    if (unscaledLength < 2) {
+                    if (unscaledLength == 1) {
                         exponentSeparator = ",e";
                     }
                 } else {
@@ -237,7 +238,7 @@ public abstract class StringUtils {
         int count = response.abs().toBigInteger().toString().length();
         if (unscaledLength > 16) {
             if (result.matches(IS_ZERO_FIRST_REGEX)) {
-                pattern = SIXTEEN_DECIMAL_PART+E_PART_OF_FORMAT;
+                pattern = FOURTEEN_DECIMAL_PART +E_PART_OF_FORMAT;
             } else if (result.contains(DOT)) {
                 pattern = preparePattern(count);
             } else {
@@ -283,12 +284,12 @@ public abstract class StringUtils {
 
     private static boolean isCorrectExponent(BigDecimal number){
 
-        DecimalFormat format = new DecimalFormat("#.#################E0");
-        String[] parts = format.format(number).split("E");
+        DecimalFormat format = new DecimalFormat(FOURTEEN_DECIMAL_PART +E_PART_OF_FORMAT);
+        String[] parts = format.format(number).split(E);
         boolean result = false;
         if (parts.length>1){
-            int i = Integer.parseInt(parts[1]);
-            result = i < -3 && parts[0].length() + i >16;
+            int exponent = Math.abs(Integer.parseInt(parts[1]));
+            result = exponent > 3 && parts[0].length() + exponent >MAX_ROUND;
         }
         return result;
     }
