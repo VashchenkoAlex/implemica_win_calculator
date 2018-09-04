@@ -10,6 +10,9 @@ public class DisplayHandler {
 
     private Label display;
     private static final String COMA = ",";
+    private static final String ZERO = "0";
+    private static final double DEFAULT_FONT_SIZE = 47.0;
+    private static final String DISPLAY_TEXT_ID = ".text";
 
     public void setDisplay(Label display) {
 
@@ -18,20 +21,23 @@ public class DisplayHandler {
 
     private void clearDisplay() {
 
-        display.setText("0");
+        display.setText(ZERO);
     }
 
     public void setDisplayedText(String string) {
 
         if (!"".equals(string)) {
-            if (!string.contains("e")){
-                //string = prepareCapacity(string);
-            }
             display.setText(string);
             fixFontSize();
         } else {
             clearDisplay();
         }
+    }
+
+    public void addZero(){
+
+        setDisplayedText(display.getText()+ZERO);
+
     }
 
     public void addComa() {
@@ -44,7 +50,7 @@ public class DisplayHandler {
 
     private void fixFontSize() {
 
-        display.setFont(new Font(display.getFont().getName(), 47.0));
+        display.setFont(new Font(display.getFont().getName(), DEFAULT_FONT_SIZE));
         display.layout();
         while (isOverrun()) {
             display.setFont(new Font(display.getFont().getName(), display.getFont().getSize() - 1));
@@ -54,7 +60,7 @@ public class DisplayHandler {
 
     private boolean isOverrun() {
 
-        return !display.getText().equals(((Text) display.lookup(".text")).getText());
+        return !display.getText().equals(((Text) display.lookup(DISPLAY_TEXT_ID)).getText());
     }
 
 }

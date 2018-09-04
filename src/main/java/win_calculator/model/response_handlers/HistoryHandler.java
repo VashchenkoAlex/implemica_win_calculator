@@ -22,6 +22,7 @@ public class HistoryHandler {
     private BigDecimal resultNumber;
     private BigDecimal lastExtraResult;
     private static final String NEGATE_VALUE = "negate( ";
+    private static final String HISTORY_PATTERN = "################.###############";
 
     public String getHistoryString(){
 
@@ -34,8 +35,10 @@ public class HistoryHandler {
                 }else{
                     result = addExtraOperationToString(result,action.getValue());
                 }
+            }else if (NUMBER.equals(action.getType())){
+                result+=convertToString(((Number)action).getBigDecimalValue(),HISTORY_PATTERN);
             }else {
-                result+=optimizeStringForHistory(action.getValue());
+                result+=action.getValue();
             }
         }
         return result;

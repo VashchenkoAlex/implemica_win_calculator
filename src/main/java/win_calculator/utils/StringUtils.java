@@ -28,14 +28,6 @@ public abstract class StringUtils {
 
     private static final String E = "E";
 
-    private static String replaceDotToComa(String string) {
-        return string.replace(".", ",");
-    }
-
-    private static String replaceComaToDot(String string) {
-        return string.replace(",", ".");
-    }
-
     public static String addCapacity(String currentStr) {
 
         String result = "";
@@ -80,59 +72,10 @@ public abstract class StringUtils {
         return result;
     }
 
-    private static String removeCapacity(String currentString) {
-
-        return currentString.replaceAll("\\s", "");
-    }
-
     public static boolean isComaAbsent(String number) {
 
         return !number.contains(COMA);
     }
-
-    private static String cutLastZeros(String current) {
-
-        String result = current;
-        if (current.contains(COMA)) {
-            result = current.replaceAll("[0]+$", "");
-        }
-        return result;
-    } //TO DO TESTS
-
-    private static String cutLastComa(String currentStr) {
-        return currentStr.replaceAll(COMA + "$", "");
-    }
-
-    public static String prepareCapacity(String current) {
-
-        return addCapacity(removeCapacity(replaceDotToComa(transformSimpleNumberToE(current))));
-    } //TO DO TESTS
-
-    public static String optimizeStringForHistory(String current) {
-
-        String result;
-
-        if (!current.contains(E) && current.length() > 16 && !current.contains(DOT)) {
-            result = prepareEPlus(current);
-        } else {
-            result = cutLastComa(cutLastZeros(replaceDotToComa(transformSimpleNumberToE(current))));
-        }
-        return result;
-    }
-
-    private static String transformSimpleNumberToE(String current) {
-
-        String result = current;
-        if (current.matches(FIND_ZERO_E_REGEX)) {
-            result = "0";
-        } else if (current.contains("E")) {
-            String[] parts = current.split("E");
-            parts[0] = cutLastZeros(replaceDotToComa(parts[0]));
-            result = parts[0] + "e" + parts[1];
-        }
-        return result;
-    }
-
 
     private static ArrayList<String> cutMinus(String currentStr) {
 
@@ -186,9 +129,9 @@ public abstract class StringUtils {
         return result;
     }
 
-    public static String convertToString(BigDecimal response) {
+    public static String convertToString(BigDecimal response,String pattern) {
 
-        String pattern = BASIC_FORMAT_PATTERN;
+        String currentPattern = pattern;
         int scale = SCALE;
         String exponentSeparator = "e";
         response = response.setScale(9999, RoundingMode.HALF_UP).stripTrailingZeros();
@@ -196,11 +139,11 @@ public abstract class StringUtils {
         int unscaledLength = response.unscaledValue().toString().length();
         if (result.matches(IS_ZERO_FIRST_REGEX)) {
             if (result.matches(ARE_ZEROS_FIRST_REGEX) && isCorrectExponent(response)) {
-                pattern = "0." + addDigits(unscaledLength) + E_PART_OF_FORMAT;
+                currentPattern = "0." + addDigits(unscaledLength) + E_PART_OF_FORMAT;
                 scale += unscaledLength;
             } else {
                 ++scale;
-                pattern += "#";
+                currentPattern += "#";
             }
         } else if (result.contains(E)) {
             String[] parts = result.split(E);
@@ -209,25 +152,25 @@ public abstract class StringUtils {
             unscaledLength = response.unscaledValue().toString().length();
             if (parts[1].contains("-")){
                 if (expCount > MAX_DECIMAL - unscaledLength) {
-                    pattern = "0." + addDigits(unscaledLength) + E_PART_OF_FORMAT;
+                    currentPattern = "0." + addDigits(unscaledLength) + E_PART_OF_FORMAT;
                     scale = scale + expCount;
                     if (unscaledLength == 1) {
                         exponentSeparator = ",e";
                     }
                 } else {
-                    pattern = BASIC_FORMAT_PATTERN+"#";
+                    currentPattern = pattern+"#";
                     ++scale;
                 }
             }else if (parts[1].contains("+")){
                 int roundLength = response.abs().toBigInteger().toString().length();
                 if (roundLength>16){
-                    pattern = "0." + addDigits(unscaledLength) + E_PART_OF_FORMAT;
+                    currentPattern = "0." + addDigits(unscaledLength) + E_PART_OF_FORMAT;
                     scale = scale + expCount;
                     if (unscaledLength<2){
                         exponentSeparator = ",e+";
                     }
                 }else {
-                    pattern = BASIC_FORMAT_PATTERN+"#";
+                    currentPattern = pattern+"#";
                     ++scale;
                 }
             }
@@ -238,27 +181,20 @@ public abstract class StringUtils {
         int count = response.abs().toBigInteger().toString().length();
         if (unscaledLength > 16) {
             if (result.matches(IS_ZERO_FIRST_REGEX)) {
-                pattern = FOURTEEN_DECIMAL_PART +E_PART_OF_FORMAT;
+                currentPattern = FOURTEEN_DECIMAL_PART +E_PART_OF_FORMAT;
             } else if (result.contains(DOT)) {
-                pattern = preparePattern(count);
+                currentPattern = preparePattern(count);
             } else {
-                pattern = FOURTEEN_DECIMAL_PART+E_PART_OF_FORMAT;
+                currentPattern = FOURTEEN_DECIMAL_PART+E_PART_OF_FORMAT;
                 exponentSeparator = "e+";
             }
         }
-        DecimalFormat format = new DecimalFormat(pattern);
+        DecimalFormat format = new DecimalFormat(currentPattern);
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setExponentSeparator(exponentSeparator);
         format.setDecimalFormatSymbols(symbols);
         result = format.format(response);
         return result;
-    }
-
-    private static String prepareEPlus(String number) {
-
-        int count = number.length() - 1;
-        BigDecimal resultNumber = new BigDecimal(number).movePointLeft(count);
-        return cutLastZeros(replaceDotToComa(resultNumber.setScale(15, RoundingMode.HALF_UP).toString())) + "e+" + count;
     }
 
     private static String addDigits(int count) {

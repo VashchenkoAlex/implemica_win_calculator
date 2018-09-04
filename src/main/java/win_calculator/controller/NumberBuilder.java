@@ -16,7 +16,6 @@ public class NumberBuilder {
     private static final int MAX_DIGITS = 16;
     private static final String COMA = ".";
     private static final String ZERO = "0";
-    private boolean wasNotOperation = true;
     private Number number;
     private LinkedList<Digit> digitsChain = new LinkedList<>();
 
@@ -37,7 +36,6 @@ public class NumberBuilder {
         if (number == null) {
             number = new Number();
         }
-        wasNotOperation = false;
         if (COMA.equals(digit.getValue())) {
             addComa(digit);
         } else if (ZERO.equals(digit.getValue())) {
@@ -134,7 +132,7 @@ public class NumberBuilder {
         return !digitsChain.isEmpty();
     }
 
-    private boolean isNotMaxDigits() {
+    boolean isNotMaxDigits() {
 
         int digitsCount = digitsChain.size();
         if (!digitsChain.isEmpty() && ZERO.equals(digitsChain.get(0).getValue())){
@@ -145,6 +143,6 @@ public class NumberBuilder {
                 --digitsCount;
             }
         }
-        return digitsCount < MAX_DIGITS;
+        return digitsCount <= MAX_DIGITS;
     }
 }

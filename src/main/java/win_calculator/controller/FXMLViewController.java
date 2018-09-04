@@ -77,6 +77,8 @@ public class FXMLViewController implements Initializable
     private DisplayHandler displayHandler = new DisplayHandler();
     private NumberBuilder numberBuilder = new NumberBuilder();
     private Action lastAction;
+    private static final String ZERO = "0";
+    private static final String DISPLAY_PATTERN = "#############,###.###############";
 
     public void closeBtn(){
 
@@ -315,12 +317,17 @@ public class FXMLViewController implements Initializable
         String[] results = new String[2];
         try {
             response = handleAction(action);
-            results[0] = convertToString(response.getDisplayNumber());
+            if (ZERO.equals(action.getValue())){
+                if (numberBuilder.isNotMaxDigits()){
+                    displayHandler.addZero();
+                }
+            }else {
+                displayHandler.setDisplayedText(convertToString(response.getDisplayNumber(),DISPLAY_PATTERN));
+            }
             results[1] = response.getHistory();
         }catch (MyException e){
-            results[0] = e.getMessage();
+            displayHandler.setDisplayedText(e.getMessage());
         }
-        displayHandler.setDisplayedText(results[0]);
         if (results[1]==null){
             results[1] = "";
         }

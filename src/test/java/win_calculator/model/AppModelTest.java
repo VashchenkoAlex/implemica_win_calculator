@@ -24,6 +24,7 @@ class AppModelTest {
     private FXMLViewController controller = new FXMLViewController();
     private AppModel appModel = new AppModel();
     private static final HashMap<String,Action> actions = createMap();
+    private static final String DISPLAY_PATTERN = "#############,###.###############";
     private static HashMap<String,Action> createMap(){
 
         HashMap<String,Action> map = new HashMap<>();
@@ -182,8 +183,8 @@ class AppModelTest {
         //test different sign for Divide
         test("1 neg / 2 / 3 neg / 4 = =","0,0104166666666667","");
         test("2 / 3 neg / 4 / 5 neg = =","-0,0066666666666667","");
-        //test("101 neg / 102 / 103 neg / 104 = =","11 476 922 496","");
-        //test("102 / 103 neg / 104 / 105 neg = =","12 046 179 600","");
+        test("101 neg / 102 / 103 neg / 104 = =","8,888271227374158e-7","");
+        test("102 / 103 neg / 104 / 105 neg = =","-8,636763144391438e-7","");
     }
 
     @Test
@@ -419,7 +420,7 @@ class AppModelTest {
     private void test(String expression, String display,String history) throws MyException {
 
         ResponseDTO response = prepareTest(expression);
-        assertEquals(display,convertToString(response.getDisplayNumber()));
+        assertEquals(display,convertToString(response.getDisplayNumber(),DISPLAY_PATTERN));
         assertEquals(history,response.getHistory());
         controller.handleAction(new Clear());
     }
