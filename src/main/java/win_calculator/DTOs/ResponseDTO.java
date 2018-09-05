@@ -13,7 +13,11 @@ public class ResponseDTO {
 
     public BigDecimal getDisplayNumber() {
 
-        return displayNumber;
+        BigDecimal result = displayNumber;
+        if (result==null){
+            result = BigDecimal.ZERO;
+        }
+        return result;
     }
 
     public String getHistory() {

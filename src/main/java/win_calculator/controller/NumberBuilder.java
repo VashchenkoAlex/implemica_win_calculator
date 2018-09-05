@@ -143,6 +143,6 @@ public class NumberBuilder {
                 --digitsCount;
             }
         }
-        return digitsCount <= MAX_DIGITS;
+        return digitsCount < MAX_DIGITS;
     }
 }

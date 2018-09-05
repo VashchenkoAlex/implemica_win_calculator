@@ -11,7 +11,7 @@ public class Sqrt implements ExtraOperation {
     private static final String SYMBOL = "√( ";//"\uE94B(";
     private static final ActionType TYPE = ActionType.EXTRA_OPERATION;
     private static final String EXCEPTION_MSG = "Invalid input";
-    private static final int SCALE = 10000;
+    private static final int SCALE = 10050;
     @Override
     public BigDecimal calculate(BigDecimal number) throws MyException {
 

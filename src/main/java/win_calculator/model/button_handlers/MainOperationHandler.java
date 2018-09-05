@@ -8,6 +8,7 @@ import win_calculator.model.response_handlers.HistoryHandler;
 import java.math.BigDecimal;
 
 import static win_calculator.utils.ActionType.MAIN_OPERATION;
+import static win_calculator.utils.StringUtils.isOverflow;
 
 public class MainOperationHandler {
 
@@ -18,6 +19,7 @@ public class MainOperationHandler {
     private boolean enterRepeated;
     private boolean mOperationBefore = false;
     private MainOperation lastOperation;
+    private static final String OVERFLOW_MSG = "Overflow";
 
     public MainOperationHandler(HistoryHandler historyHandler) {
         this.historyHandler = historyHandler;
@@ -52,6 +54,9 @@ public class MainOperationHandler {
                 }else {
                     resultNumber = lastOperation.calculate(previousNumber, lastNumber);
                 }
+            }
+            if (isOverflow(resultNumber)){
+                throw new MyException(OVERFLOW_MSG);
             }
         }
     }

@@ -4,6 +4,8 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import java.math.BigDecimal;
+
 import static win_calculator.utils.StringUtils.*;
 
 public class DisplayHandler {
@@ -11,8 +13,10 @@ public class DisplayHandler {
     private Label display;
     private static final String COMA = ",";
     private static final String ZERO = "0";
+    private static final int MAX_DIGITS = 16;
     private static final double DEFAULT_FONT_SIZE = 47.0;
     private static final String DISPLAY_TEXT_ID = ".text";
+    private static final String DISPLAY_PATTERN = "#############,###.###############";
 
     public void setDisplay(Label display) {
 
@@ -24,6 +28,10 @@ public class DisplayHandler {
         display.setText(ZERO);
     }
 
+    public void sendNumberToDisplay(BigDecimal number){
+
+        setDisplayedText(convertToString(number,DISPLAY_PATTERN));
+    }
     public void setDisplayedText(String string) {
 
         if (!"".equals(string)) {
@@ -36,7 +44,7 @@ public class DisplayHandler {
 
     public void addZero(){
 
-        setDisplayedText(display.getText()+ZERO);
+        setDisplayedText(addCapacity(display.getText()+ZERO));
 
     }
 
@@ -63,4 +71,8 @@ public class DisplayHandler {
         return !display.getText().equals(((Text) display.lookup(DISPLAY_TEXT_ID)).getText());
     }
 
+    public boolean isNotMax(){
+
+        return display.getText().replace("0,","").replaceAll("[ ,]","").length() < MAX_DIGITS;
+    }
 }

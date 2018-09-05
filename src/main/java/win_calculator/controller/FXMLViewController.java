@@ -1,15 +1,12 @@
 package win_calculator.controller;
 
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.text.Text;
 import javafx.util.Callback;
 import win_calculator.DTOs.ResponseDTO;
 import win_calculator.controller.nodes.digits.*;
@@ -34,13 +31,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static win_calculator.utils.ActionType.*;
-import static win_calculator.utils.StringUtils.*;
 
 public class FXMLViewController implements Initializable
 {
-
-    @FXML
-    private Text menuBoxText;
 
     @FXML
     private AnchorPane rootPane;
@@ -49,14 +42,8 @@ public class FXMLViewController implements Initializable
     private ComboBox<ComboBoxOption> menuBox;
 
     @FXML
-    private void trimLabelPosition(ActionEvent event){
+    private void trimLabelPosition(){
     }
-
-    @FXML
-    private Pane menuBoxPane;
-
-    @FXML
-    private Button menu;
 
     @FXML
     private GridPane mainTable;
@@ -73,12 +60,11 @@ public class FXMLViewController implements Initializable
     private AppModel model = new AppModel();
     private HistoryFieldHandler historyFieldHandler = new HistoryFieldHandler();
     private CaptionHandler captionHandler = new CaptionHandler();
-    private StylesHandler stylesHandler = new StylesHandler();
+    //private StylesHandler stylesHandler = new StylesHandler();
     private DisplayHandler displayHandler = new DisplayHandler();
     private NumberBuilder numberBuilder = new NumberBuilder();
     private Action lastAction;
     private static final String ZERO = "0";
-    private static final String DISPLAY_PATTERN = "#############,###.###############";
 
     public void closeBtn(){
 
@@ -317,12 +303,16 @@ public class FXMLViewController implements Initializable
         String[] results = new String[2];
         try {
             response = handleAction(action);
-            if (ZERO.equals(action.getValue())){
-                if (numberBuilder.isNotMaxDigits()){
-                    displayHandler.addZero();
+            if (DIGIT.equals(action.getType())){
+                if (displayHandler.isNotMax()) {
+                    if (ZERO.equals(action.getValue())) {
+                        displayHandler.addZero();
+                    }else {
+                        displayHandler.sendNumberToDisplay(response.getDisplayNumber());
+                    }
                 }
             }else {
-                displayHandler.setDisplayedText(convertToString(response.getDisplayNumber(),DISPLAY_PATTERN));
+                displayHandler.sendNumberToDisplay(response.getDisplayNumber());
             }
             results[1] = response.getHistory();
         }catch (MyException e){
@@ -358,7 +348,7 @@ public class FXMLViewController implements Initializable
         return response;
     }
 
-    private ResponseDTO handleDigit(Action action){
+    private ResponseDTO handleDigit(Action digit){
 
         ResponseDTO response;
         String historyText = historyFieldHandler.getLastValue();
@@ -370,8 +360,8 @@ public class FXMLViewController implements Initializable
                 System.out.println(e.getMessage());
             }
         }
-        response = new ResponseDTO(numberBuilder.toDo(action),historyText);
-        lastAction = action;
+        response = new ResponseDTO(numberBuilder.toDo(digit),historyText);
+        lastAction = digit;
         return response;
     }
 }

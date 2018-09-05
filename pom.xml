@@ -121,7 +121,11 @@
             <artifactId>testfx-junit5</artifactId>
             <version>4.0.13-alpha</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.loadui</groupId>
+            <artifactId>testFx</artifactId>
+            <version>3.1.2</version>
+        </dependency>
 
     </dependencies>
 

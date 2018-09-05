@@ -10,7 +10,7 @@ public class Fraction implements ExtraOperation {
 
     private static final String VALUE = "1/( ";
     private static final ActionType TYPE = ActionType.EXTRA_OPERATION;
-    private static final int SCALE = 10000;
+    private static final int SCALE = 10050;
     private static final String EXCEPTION_MSG = "Cannot divide by zero";
 
     @Override
