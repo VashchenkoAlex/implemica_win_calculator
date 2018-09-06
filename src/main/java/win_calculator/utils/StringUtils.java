@@ -20,14 +20,11 @@ public abstract class StringUtils {
     private static final String ARE_ZEROS_FIRST_REGEX = "^0.0[0-9]+";
     private static final String IS_ZERO_FIRST_REGEX = "^0.+";
     private static final String E_PART_OF_FORMAT = "#E0";
-    private static final String DIGIT_PART = "#";
-    private static final int SCALE = 15;
-    private static final int MAX_SCALE = 10000;
+    private static final int SCALE = 16;
     private static final int MAX_ROUND = 16;
     private static final int MAX_DECIMAL = 17;
     private static final int MAX_EXPONENT = 9999;
     private static final String FOURTEEN_DECIMAL_PART = "#.##############";
-//    private static final String INTEGER_AND_DECIMAL_PART = "#,##0.0000000000000000";
     private static final String INTEGER_AND_DECIMAL_PART = "0.0000000000000000";
     private static final String E = "E";
     private static final String SIMPLE_E_SEPARATOR = "e";
@@ -75,50 +72,17 @@ public abstract class StringUtils {
 
     public static String convertToString(BigDecimal response, String pattern) {
 
-        String currentPattern = pattern;
-        int scale = SCALE;
-        BigDecimal number = response;//setNewScale(response, MAX_SCALE);
-        String result = number.abs().toString();
-        if (result.matches(IS_ZERO_FIRST_REGEX)) {
-            if (result.matches(ARE_ZEROS_FIRST_REGEX) && isCorrectExponent(number)) {
-                int unscaledLength = getUnscaledLength(number);
-                currentPattern = preparePattern(MAX_DECIMAL - unscaledLength) + E_PART_OF_FORMAT;
-                scale += unscaledLength;
-            } else {
-                ++scale;
-                currentPattern += DIGIT_PART;
-            }
-        } else if (containsE(number)) {
-            String[] parts = result.split(E);
-            int expCount = Math.abs(Integer.parseInt(parts[1]));
-            number = setNewScale(number, SCALE + expCount);
-            int unscaledLength = getUnscaledLength(number);
-            if (parts[1].contains(MINUS)) {
-                if (expCount > MAX_DECIMAL - unscaledLength) {
-                    currentPattern = preparePattern(MAX_DECIMAL - unscaledLength) + E_PART_OF_FORMAT;
-                    scale = scale + expCount;
-                } else {
-                    currentPattern = pattern + DIGIT_PART;
-                    ++scale;
-                }
-            } else if (parts[1].contains(PLUS)) {
-                if (getWholeLength(number) > MAX_ROUND) {
-                    currentPattern = preparePattern(MAX_DECIMAL - unscaledLength) + E_PART_OF_FORMAT;
-                    scale = scale + expCount;
-                } else {
-                    currentPattern = pattern + DIGIT_PART;
-                    ++scale;
-                }
-            }
-        }
+        BigDecimal number = response;
+        int scale = selectScale(number);//SCALE;
         number = setNewScale(number, scale);
         String eSeparator = selectSeparator(number);
-        String thePattern = selectPattern(number,currentPattern);
+        String thePattern = selectPattern(number, pattern);
         return initFormatter(thePattern, eSeparator).format(number);
     }
 
     private static String preparePattern(int count) {
 
+        count = MAX_DECIMAL - count;
         return INTEGER_AND_DECIMAL_PART.substring(0, INTEGER_AND_DECIMAL_PART.length() - count);
     }
 
@@ -163,7 +127,7 @@ public abstract class StringUtils {
     private static int getUnscaledLength(BigDecimal number) {
 
         int result = number.unscaledValue().toString().length();
-        if (result>MAX_ROUND){
+        if (result > MAX_ROUND) {
             result -= 1;
         }
         return result;
@@ -184,40 +148,84 @@ public abstract class StringUtils {
         return number.toString().contains(E);
     }
 
-    private static String selectSeparator(BigDecimal number){
+    private static String selectSeparator(BigDecimal number) {
 
         String separator = SIMPLE_E_SEPARATOR;
         int unscaledLength = getUnscaledLength(number);
         String numberStr = number.toString();
-        if (unscaledLength > MAX_ROUND && !containsE(number)){
+        if (unscaledLength > MAX_ROUND) {
             if (!numberStr.contains(DOT)) {
                 separator += PLUS;
             }
-        }else {
+        } else {
             if (unscaledLength < 2) {
                 separator = COMA + separator;
             }
-            if (numberStr.contains(PLUS)){
+            if (numberStr.contains(PLUS)) {
                 separator += PLUS;
             }
         }
         return separator;
     }
 
-    private static String selectPattern(BigDecimal number,String pattern){
+    private static String selectPattern(BigDecimal number, String pattern) {
 
         String currentPattern = pattern;
         int unscaledLength = getUnscaledLength(number);
         String numberStr = number.toString();
-        if (unscaledLength > MAX_ROUND && !containsE(number)) {
-            if (numberStr.matches(IS_ZERO_FIRST_REGEX)) {
-                currentPattern = FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT;
-            } else if (numberStr.contains(DOT)) {
-                currentPattern = "#,##"+preparePattern(getWholeLength(number));
-            } else {
-                currentPattern = FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT;
+        if (containsE(number) && !numberStr.matches(IS_ZERO_FIRST_REGEX)) {
+            String[] parts = numberStr.split(E);
+            int expCount = Math.abs(Integer.parseInt(parts[1]));
+            number = setNewScale(number, SCALE + expCount);
+            int unscaledLnth = getUnscaledLength(number);
+            if (parts[1].contains(MINUS)) {
+                if (expCount > MAX_DECIMAL - unscaledLnth) {
+                    currentPattern = preparePattern(unscaledLnth) + E_PART_OF_FORMAT;
+                }
+            } else if (parts[1].contains(PLUS)) {
+                if (getWholeLength(number) > MAX_ROUND) {
+                    currentPattern = preparePattern(unscaledLnth) + E_PART_OF_FORMAT;
+                }
+            }
+        } else if (numberStr.matches(IS_ZERO_FIRST_REGEX)) {
+            if (numberStr.matches(ARE_ZEROS_FIRST_REGEX) && isCorrectExponent(number)) {
+                int unscaledLnth = getUnscaledLength(number);
+                currentPattern = preparePattern(unscaledLnth) + E_PART_OF_FORMAT;
             }
         }
+
+        if (containsE(number) && getWholeLength(number) > MAX_ROUND) {
+            currentPattern = FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT;
+        } else {
+            if (unscaledLength > MAX_ROUND) {
+                if (numberStr.matches(IS_ZERO_FIRST_REGEX)) {
+                    currentPattern = FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT;
+                } else if (numberStr.contains(DOT)) {
+                    currentPattern = "#,##" + preparePattern(unscaledLength);
+                } else {
+                    currentPattern = FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT;
+                }
+            }
+        }
+
         return currentPattern;
+    }
+
+    private static int selectScale(BigDecimal number){
+
+        int scale = SCALE;
+        String result = number.abs().toString();
+        if (containsE(number) && !result.matches(IS_ZERO_FIRST_REGEX)) {
+            --scale;
+            String[] parts = result.split(E);
+            scale += Math.abs(Integer.parseInt(parts[1]));
+        } else if (result.matches(IS_ZERO_FIRST_REGEX)) {
+            if (result.matches(ARE_ZEROS_FIRST_REGEX) && isCorrectExponent(number)) {
+                scale += getUnscaledLength(number);
+            }
+        } else {
+            scale -= getWholeLength(number);
+        }
+        return scale;
     }
 }
