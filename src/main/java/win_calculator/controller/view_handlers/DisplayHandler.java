@@ -16,7 +16,7 @@ public class DisplayHandler {
     private static final int MAX_DIGITS = 16;
     private static final double DEFAULT_FONT_SIZE = 47.0;
     private static final String DISPLAY_TEXT_ID = ".text";
-    private static final String DISPLAY_PATTERN = "#############,###.###############";
+    private static final String DISPLAY_PATTERN = "#############,###.################";
 
     public void setDisplay(Label display) {
 

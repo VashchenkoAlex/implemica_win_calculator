@@ -299,10 +299,9 @@ public class FXMLViewController implements Initializable
 
     private void makeAction(Action action){
 
-        ResponseDTO response;
         String[] results = new String[2];
         try {
-            response = handleAction(action);
+            ResponseDTO response = handleAction(action);
             if (DIGIT.equals(action.getType())){
                 if (displayHandler.isNotMax()) {
                     if (ZERO.equals(action.getValue())) {

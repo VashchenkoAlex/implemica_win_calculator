@@ -5,6 +5,7 @@ import win_calculator.controller.nodes.digits.Number;
 
 import java.util.LinkedList;
 
+import static win_calculator.utils.ActionType.MAIN_OPERATION;
 import static win_calculator.utils.ActionType.NUMBER;
 
 public class History {
@@ -51,11 +52,29 @@ public class History {
 
     public void changeLastNumber(Number number){
 
-        for (int i = actions.size()-1; i >0 ; i--) {
-            if (NUMBER.equals(actions.get(i).getType())){
-                actions.set(i,number);
+        if (isChangingPossible()){
+            for (int i = actions.size()-1; i >0 ; i--) {
+                if (NUMBER.equals(actions.get(i).getType())){
+                    actions.set(i,number);
+                    break;
+                }
+            }
+        }else {
+            actions.add(number);
+        }
+
+    }
+
+    private boolean isChangingPossible(){
+
+        boolean result = false;
+        for (Action action :actions) {
+            if (NUMBER.equals(action.getType())){
+                result = true;
                 break;
             }
         }
+        result = result && !MAIN_OPERATION.equals(getLastAction().getType());
+        return result;
     }
 }

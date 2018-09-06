@@ -23,7 +23,7 @@ class AppModelTest {
 
     private FXMLViewController controller = new FXMLViewController();
     private static final HashMap<String,Action> actions = createMap();
-    private static final String DISPLAY_PATTERN = "#############,###.###############";
+    private static final String DISPLAY_PATTERN = "#############,###.################";
     private static final String IS_DIGIT_REGEX = "\\d+(,\\d+)?";
     private static HashMap<String,Action> createMap(){
 
@@ -120,18 +120,6 @@ class AppModelTest {
         test("101 + 102 + 103 + 104 = =","514","");
         test("102 + 103 + 104 + 105 = =","519","");
 
-        //test negative values for Plus
-        test("1 ± + 2 ± + 3 ± + 4 ± = =","-14","");
-        test("2 ± + 3 ± + 4 ± + 5 ± = =","-19","");
-        test("101 ± + 102 ± + 103 ± + 104 ± = =","-514","");
-        test("102 ± + 103 ± + 104 ± + 105 ± = =","-519","");
-
-        //test different sign for Plus
-        test("1 ± + 2 + 3 ± + 4 = =","6","");
-        test("2 + 3 ± + 4 + 5 ± = =","-7","");
-        test("101 ± + 102 + 103 ± + 104 = =","106","");
-        test("102 + 103 ± + 104 + 105 ± = =","-107","");
-
         //test positive values for Minus
         test("1 - 2 - 3 - 4 = =","-12","");
         test("2 - 3 - 4 - 5 = =","-15","");
@@ -202,11 +190,6 @@ class AppModelTest {
         test("4 sqrt + = =","6","");
         test("25 sqrt + = =","15","");
 
-        test("1 ± + = =","-3","");
-        test("1 ± - = =","1","");
-        test("1 ± * = =","-1","");
-        test("1 ± / = =","-1","");
-
         test("0 sqrt sqrt sqrt = =","0","");
         test("1 sqrt sqrt sqrt = =","1","");
         test("16 sqrt sqrt sqrt = =","1,414213562373095","");
@@ -218,11 +201,6 @@ class AppModelTest {
         test("1 sqr sqr sqr","1","sqr( sqr( sqr( 1 ) ) )");
         test("16 sqr sqr sqr = =","4 294 967 296","");
         test("16 sqr sqr sqr","4 294 967 296","sqr( sqr( sqr( 16 ) ) )");
-
-        test("0 ± ± ±","0","");
-        test("1 ± ± ± = =","-1","");
-        test("16 ± ± ± = =","-16","");
-        test("256 ± ± ± = =","-256","");
 
         test("5 sqrt sqr","5","sqr( √( 5 ) )");
         test("25 sqrt 16 sqrt + ","4","√( 16 )  +  ");
@@ -255,15 +233,58 @@ class AppModelTest {
     }
 
     @Test
+    void testNegate() throws MyException {
+
+        test("0 ± -","0","0  -  ");
+        test("± -","0","negate( 0 )  -  ");
+
+        test("20 ±","-20","");
+        test("20 + ±","-20","20  +  negate( 20 )");
+
+        test("1 ± + = =","-3","");
+        test("1 ± - = =","1","");
+        test("1 ± * = =","-1","");
+        test("1 ± / = =","-1","");
+
+        test("0 ± ± ±","0","");
+        test("1 ± ± ± = =","-1","");
+        test("16 ± ± ± = =","-16","");
+        test("256 ± ± ± = =","-256","");
+
+        test("1 ± +","-1","-1  +  ");
+        test("1 ± + 2","2",null);
+        test("1 ± + 2 ±","-2","-1  +  ");
+        test("1 ± + 2 ± +","-3","-1  +  -2  +  ");
+        test("1 ± + 2 ± + 3","3",null);
+        test("1 ± + 2 ± + 3 ±","-3","-1  +  -2  +  ");
+        test("1 ± + 2 ± + 3 ± +","-6","-1  +  -2  +  -3  +  ");
+        test("1 ± + 2 ± + 3 ± + 4","4",null);
+        test("1 ± + 2 ± + 3 ± + 4 ±","-4","-1  +  -2  +  -3  +  ");
+        test("1 ± + 2 ± + 3 ± + 4 ± =","-10","");
+        test("1 ± + 2 ± + 3 ± + 4 ± = =","-14","");
+        test("2 ± + 3 ± + 4 ± + 5 ± = =","-19","");
+        test("101 ± + 102 ± + 103 ± + 104 ± = =","-514","");
+        test("102 ± + 103 ± + 104 ± + 105 ± = =","-519","");
+
+        test("1 ± + 2 + 3 ± + 4 = =","6","");
+        test("2 + 3 ± + 4 + 5 ± = =","-7","");
+        test("101 ± + 102 + 103 ± + 104 = =","106","");
+        test("102 + 103 ± + 104 + 105 ± = =","-107","");
+    }
+
+    @Test
     void testPercent() throws MyException {
 
         test("%","0","0");
+        test("0 % % %","0","0");
+        test("1 % % %","0","0");
         test("1 %","0","0");
         test("20 %","0","0");
         test("1 %","0","0");
         test("20 %","0","0");
 
         test("20 + 0 %","0","20  +  0");
+        test("20 + 20 % = %","5,76","5,76");
 
         test("20 + 10 % = =","24","");
         test("20 + 10 %","2","20  +  2");
@@ -292,8 +313,6 @@ class AppModelTest {
         test("20 - 10 % - = =","-18","");
         test("20 * 10 % * = =","64 000","");
         test("20 / 10 % / = =","0,1","");
-
-        test("0 % % %","0","0");
     }
 
     @Test
@@ -442,7 +461,7 @@ class AppModelTest {
         for (String str :parsedActionStrings) {
             if (str.matches(IS_DIGIT_REGEX)){
                 for (char ch : str.toCharArray()) {
-                    controller.handleAction(actions.get(ch+""));
+                    response = controller.handleAction(actions.get(ch+""));
                 }
             }else {
                 response = controller.handleAction(actions.get(str));

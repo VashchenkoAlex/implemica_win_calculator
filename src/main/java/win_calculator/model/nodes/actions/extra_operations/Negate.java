@@ -6,9 +6,8 @@ import java.math.BigDecimal;
 
 public class Negate implements ExtraOperation {
 
-    private static final ActionType TYPE = ActionType.EXTRA_OPERATION;
+    private static final ActionType TYPE = ActionType.NEGATE;
     private static final String VALUE = "negate( ";
-    private static final String EXTRA_VALUE = "-";
 
     @Override
     public BigDecimal calculate(BigDecimal number){
@@ -24,9 +23,5 @@ public class Negate implements ExtraOperation {
     @Override
     public ActionType getType() {
         return TYPE;
-    }
-
-    public String getExtraValue() {
-        return EXTRA_VALUE;
     }
 }

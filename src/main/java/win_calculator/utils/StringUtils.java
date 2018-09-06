@@ -27,7 +27,8 @@ public abstract class StringUtils {
     private static final int MAX_DECIMAL = 17;
     private static final int MAX_EXPONENT = 9999;
     private static final String FOURTEEN_DECIMAL_PART = "#.##############";
-    private static final String INTEGER_AND_DECIMAL_PART = "#,##0.0000000000000000";
+//    private static final String INTEGER_AND_DECIMAL_PART = "#,##0.0000000000000000";
+    private static final String INTEGER_AND_DECIMAL_PART = "0.0000000000000000";
     private static final String E = "E";
     private static final String SIMPLE_E_SEPARATOR = "e";
 
@@ -55,13 +56,6 @@ public abstract class StringUtils {
         return resultStr + BRACKET;
     }
 
-    public static String addNegateToString(String currentStr, String symbol, String extraSymbol) {
-
-        String resultStr = "";
-
-        return resultStr;
-    }
-
     public static boolean isOverflow(BigDecimal number) {
 
         boolean result = false;
@@ -83,13 +77,12 @@ public abstract class StringUtils {
 
         String currentPattern = pattern;
         int scale = SCALE;
-        String eSeparator = SIMPLE_E_SEPARATOR;
-        BigDecimal number = setNewScale(response, MAX_SCALE);
+        BigDecimal number = response;//setNewScale(response, MAX_SCALE);
         String result = number.abs().toString();
         if (result.matches(IS_ZERO_FIRST_REGEX)) {
             if (result.matches(ARE_ZEROS_FIRST_REGEX) && isCorrectExponent(number)) {
                 int unscaledLength = getUnscaledLength(number);
-                currentPattern = "0." + addDigits(unscaledLength) + E_PART_OF_FORMAT;
+                currentPattern = preparePattern(MAX_DECIMAL - unscaledLength) + E_PART_OF_FORMAT;
                 scale += unscaledLength;
             } else {
                 ++scale;
@@ -102,22 +95,16 @@ public abstract class StringUtils {
             int unscaledLength = getUnscaledLength(number);
             if (parts[1].contains(MINUS)) {
                 if (expCount > MAX_DECIMAL - unscaledLength) {
-                    currentPattern = "0." + addDigits(unscaledLength) + E_PART_OF_FORMAT;
+                    currentPattern = preparePattern(MAX_DECIMAL - unscaledLength) + E_PART_OF_FORMAT;
                     scale = scale + expCount;
-                    if (unscaledLength == 1) {
-                        eSeparator = COMA + eSeparator;
-                    }
                 } else {
                     currentPattern = pattern + DIGIT_PART;
                     ++scale;
                 }
             } else if (parts[1].contains(PLUS)) {
                 if (getWholeLength(number) > MAX_ROUND) {
-                    currentPattern = "0." + addDigits(unscaledLength) + E_PART_OF_FORMAT;
+                    currentPattern = preparePattern(MAX_DECIMAL - unscaledLength) + E_PART_OF_FORMAT;
                     scale = scale + expCount;
-                    if (unscaledLength < 2) {
-                        eSeparator = COMA + eSeparator + PLUS;
-                    }
                 } else {
                     currentPattern = pattern + DIGIT_PART;
                     ++scale;
@@ -125,26 +112,9 @@ public abstract class StringUtils {
             }
         }
         number = setNewScale(number, scale);
-        if (getUnscaledLength(number) > MAX_ROUND && !containsE(number)) {
-            if (result.matches(IS_ZERO_FIRST_REGEX)) {
-                currentPattern = FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT;
-            } else if (result.contains(DOT)) {
-                currentPattern = preparePattern(getWholeLength(number));
-            } else {
-                currentPattern = FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT;
-                eSeparator += PLUS;
-            }
-        }
-        return initFormatter(currentPattern, eSeparator).format(number);
-    }
-
-    private static String addDigits(int count) {
-
-        StringBuilder result = new StringBuilder();
-        for (int i = 1; i < count - 1; i++) {
-            result.append(ZERO);
-        }
-        return result.toString();
+        String eSeparator = selectSeparator(number);
+        String thePattern = selectPattern(number,currentPattern);
+        return initFormatter(thePattern, eSeparator).format(number);
     }
 
     private static String preparePattern(int count) {
@@ -192,7 +162,11 @@ public abstract class StringUtils {
 
     private static int getUnscaledLength(BigDecimal number) {
 
-        return number.unscaledValue().toString().length();
+        int result = number.unscaledValue().toString().length();
+        if (result>MAX_ROUND){
+            result -= 1;
+        }
+        return result;
     }
 
     private static int getWholeLength(BigDecimal number) {
@@ -208,5 +182,42 @@ public abstract class StringUtils {
     private static boolean containsE(BigDecimal number) {
 
         return number.toString().contains(E);
+    }
+
+    private static String selectSeparator(BigDecimal number){
+
+        String separator = SIMPLE_E_SEPARATOR;
+        int unscaledLength = getUnscaledLength(number);
+        String numberStr = number.toString();
+        if (unscaledLength > MAX_ROUND && !containsE(number)){
+            if (!numberStr.contains(DOT)) {
+                separator += PLUS;
+            }
+        }else {
+            if (unscaledLength < 2) {
+                separator = COMA + separator;
+            }
+            if (numberStr.contains(PLUS)){
+                separator += PLUS;
+            }
+        }
+        return separator;
+    }
+
+    private static String selectPattern(BigDecimal number,String pattern){
+
+        String currentPattern = pattern;
+        int unscaledLength = getUnscaledLength(number);
+        String numberStr = number.toString();
+        if (unscaledLength > MAX_ROUND && !containsE(number)) {
+            if (numberStr.matches(IS_ZERO_FIRST_REGEX)) {
+                currentPattern = FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT;
+            } else if (numberStr.contains(DOT)) {
+                currentPattern = "#,##"+preparePattern(getWholeLength(number));
+            } else {
+                currentPattern = FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT;
+            }
+        }
+        return currentPattern;
     }
 }
