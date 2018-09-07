@@ -31,11 +31,13 @@ public class MainOperationHandler {
         setEnterRepeated(false);
         if (MAIN_OPERATION.equals(historyHandler.getLastActionType())){
             historyHandler.changeLastAction(operation);
+            historyHandler.removeLastNumberAtHistoryIfExists();
         }else {
             doCalculation();
             historyHandler.setResultNumber(resultNumber);
             historyHandler.addActionToHistory(operation);
         }
+        historyHandler.setMOperationBefore(true);
         lastOperation = operation;
         return resultNumber;
     }

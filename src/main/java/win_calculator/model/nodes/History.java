@@ -17,12 +17,12 @@ public class History {
         actions = new LinkedList<>();
     }
 
-    public void addAction(Action action){
+    public void addAction(Action action) {
 
         actions.add(action);
     }
 
-    public void setActions(LinkedList<Action> actions){
+    public void setActions(LinkedList<Action> actions) {
 
         this.actions = actions;
     }
@@ -32,49 +32,82 @@ public class History {
         return actions;
     }
 
-    public Action getLastAction(){
+    public Action getLastAction() {
 
-        if (actions.isEmpty()){
+        if (actions.isEmpty()) {
             return null;
-        }else {
+        } else {
             return actions.getLast();
         }
     }
 
-    public void changeLastAction(Action action){
+    public void changeLastMOperation(Action action) {
 
-        if (!actions.isEmpty()){
-            actions.set(actions.size()-1,action);
-        }else {
+        if (!actions.isEmpty() && isChangingMOperationPossible()) {
+            for (int i = actions.size() - 1; i > 0; i--) {
+                if (MAIN_OPERATION.equals(actions.get(i).getType())) {
+                    actions.set(i, action);
+                    break;
+                }
+            }
+        } else {
             actions.add(action);
         }
     }
 
-    public void changeLastNumber(Number number){
+    public void changeLastNumber(Number number) {
 
-        if (isChangingPossible()){
-            for (int i = actions.size()-1; i >0 ; i--) {
-                if (NUMBER.equals(actions.get(i).getType())){
-                    actions.set(i,number);
+        if (isChangingNumberPossible()) {
+            for (int i = actions.size() - 1; i > 0; i--) {
+                if (NUMBER.equals(actions.get(i).getType())) {
+                    actions.set(i, number);
                     break;
                 }
             }
-        }else {
+        } else {
             actions.add(number);
         }
 
     }
 
-    private boolean isChangingPossible(){
+    private boolean isChangingNumberPossible() {
 
         boolean result = false;
-        for (Action action :actions) {
-            if (NUMBER.equals(action.getType())){
+        for (Action action : actions) {
+            if (NUMBER.equals(action.getType())) {
                 result = true;
                 break;
             }
         }
         result = result && !MAIN_OPERATION.equals(getLastAction().getType());
         return result;
+    }
+
+    private boolean isChangingMOperationPossible() {
+
+        boolean result = false;
+        for (Action action : actions) {
+            if (MAIN_OPERATION.equals(action.getType())) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
+    public void changeNumberAtFirstPosition(Number number) {
+
+        if (NUMBER.equals(actions.getFirst().getType())) {
+            actions.set(0, number);
+        } else {
+            actions.addFirst(number);
+        }
+    }
+
+    public void removeLastNumberIfExists() {
+
+        if (NUMBER.equals(actions.getLast().getType())) {
+            actions.removeLast();
+        }
     }
 }

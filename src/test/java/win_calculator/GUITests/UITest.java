@@ -2,14 +2,18 @@ package win_calculator.GUITests;
 
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import org.junit.Before;
 import org.junit.jupiter.api.*;
 import org.testfx.framework.junit5.*;
 import org.testfx.matcher.control.LabeledMatchers;
 import win_calculator.MainApp;
+import win_calculator.exceptions.MyException;
+import win_calculator.model.nodes.actions.clear.Clear;
 
 import java.io.IOException;
 import java.util.HashMap;
 
+import static org.junit.gen5.api.Assertions.assertEquals;
 import static org.loadui.testfx.GuiTest.find;
 import static org.testfx.api.FxAssert.verifyThat;
 
@@ -97,7 +101,6 @@ class UITest extends ApplicationTest{
         test("2 + 3 - * 4 / 9 sqrt sqr * CE","0","2  +  3  ×  4  ÷  sqr( √( 9 ) )  ×  ");
         test("C","0","");
     }
-
 
     private void test(String expression, String display, String history){
 

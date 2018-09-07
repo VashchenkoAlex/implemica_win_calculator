@@ -33,8 +33,4 @@ public class ResponseDTO {
     public void setDisplayNumber(BigDecimal displayNumber) {
         this.displayNumber = displayNumber;
     }
-
-    public void setHistory(String history) {
-        this.history = history;
-    }
 }

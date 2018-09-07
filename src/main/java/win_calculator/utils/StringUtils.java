@@ -63,7 +63,7 @@ public abstract class StringUtils {
                 result = true;
             }
         } else {
-            if (number.toBigInteger().toString().length() > MAX_EXPONENT) {
+            if (number.toBigInteger().toString().length() > MAX_EXPONENT + 1) {
                 result = true;
             }
         }

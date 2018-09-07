@@ -21,7 +21,7 @@ public class HistoryHandler {
     private BigDecimal previousNumber;
     private BigDecimal resultNumber;
     private BigDecimal lastExtraResult;
-    private static final String HISTORY_PATTERN = "################.###############";
+    private static final String HISTORY_PATTERN = "################.################";
     private Action lastAction = new Clear();
 
     public String getHistoryString(){
@@ -89,7 +89,7 @@ public class HistoryHandler {
 
     public void changeLastAction(Action action){
 
-        history.changeLastAction(action);
+        history.changeLastMOperation(action);
     }
 
     public BigDecimal getPreviousNumber(){
@@ -129,7 +129,7 @@ public class HistoryHandler {
 
         lastNumber = number;
         if (enterRepeated){
-            addActionToHistory(new Number(number));
+            history.addAction(new Number(number));
         }else if (NEGATE.equals(lastAction.getType())){
             changeLastActionNumber(new Number(number));
         }
@@ -196,5 +196,27 @@ public class HistoryHandler {
     public void setLastAction(Action lastAction) {
 
         this.lastAction = lastAction;
+    }
+
+    public boolean isHistoryNotEmpty(){
+
+        return !history.getActions().isEmpty();
+    }
+
+    public void addZeroToHistory(){
+
+        Number number = new Number(BigDecimal.ZERO);
+        if (!isHistoryNotEmpty()){
+            history.addAction(number);
+        }else {
+            history.changeNumberAtFirstPosition(number);
+        }
+        lastNumber = BigDecimal.ZERO;
+        mOperationBefore = false;
+    }
+
+    public void removeLastNumberAtHistoryIfExists(){
+
+        history.removeLastNumberIfExists();
     }
 }

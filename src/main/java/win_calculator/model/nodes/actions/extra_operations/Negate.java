@@ -12,7 +12,13 @@ public class Negate implements ExtraOperation {
     @Override
     public BigDecimal calculate(BigDecimal number){
 
-        return number.negate();
+        BigDecimal result;
+        if (number.compareTo(BigDecimal.ZERO)>0){
+            result = number.negate();
+        }else {
+            result = number.abs();
+        }
+        return result;
     }
 
     @Override

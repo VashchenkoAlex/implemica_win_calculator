@@ -69,12 +69,12 @@ public class FXMLViewController implements Initializable
     public void closeBtn(){
 
         captionHandler.close();
-    } //DONE
+    }
 
     public void hideBtn(){
 
         captionHandler.hide();
-    } //DONE
+    }
 
     public void fullScreenBtnClick(){
 
@@ -193,13 +193,12 @@ public class FXMLViewController implements Initializable
     public void percentBtnClick(){
 
         makeAction(new Percent());
-
-    } //TO DO
+    }
 
     public void sqrtBtnClick(){
 
         makeAction(new Sqrt());
-    } //TO DO
+    }
 
     public void sqrBtnClick(){
 
@@ -299,12 +298,13 @@ public class FXMLViewController implements Initializable
 
     private void makeAction(Action action){
 
-        String[] results = new String[2];
+        String history = null;
         try {
+            ActionType lastActionType = getLastActionType();
             ResponseDTO response = handleAction(action);
             if (DIGIT.equals(action.getType())){
                 if (displayHandler.isNotMax()) {
-                    if (ZERO.equals(action.getValue())) {
+                    if (ZERO.equals(action.getValue()) && DIGIT.equals(lastActionType)) {
                         displayHandler.addZero();
                     }else {
                         displayHandler.sendNumberToDisplay(response.getDisplayNumber());
@@ -313,14 +313,14 @@ public class FXMLViewController implements Initializable
             }else {
                 displayHandler.sendNumberToDisplay(response.getDisplayNumber());
             }
-            results[1] = response.getHistory();
+            history = response.getHistory();
         }catch (MyException e){
             displayHandler.setDisplayedText(e.getMessage());
         }
-        if (results[1]==null){
-            results[1] = "";
+        if (history==null){
+            history = "";
         }
-        historyFieldHandler.setHistoryText(results[1]);
+        historyFieldHandler.setHistoryText(history);
     }
 
     public ResponseDTO handleAction(Action action) throws MyException {
@@ -362,5 +362,18 @@ public class FXMLViewController implements Initializable
         response = new ResponseDTO(numberBuilder.toDo(digit),historyText);
         lastAction = digit;
         return response;
+    }
+
+    private ActionType getLastActionType(){
+        ActionType result = CLEAR;
+        if (lastAction!=null){
+            result = lastAction.getType();
+        }
+        return result;
+    }
+
+    public String getDisplayText() {
+
+        return displayHandler.getDisplayText();
     }
 }
