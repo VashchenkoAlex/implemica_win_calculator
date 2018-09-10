@@ -58,7 +58,7 @@ public class History {
     public void changeLastNumber(Number number) {
 
         if (isChangingNumberPossible()) {
-            for (int i = actions.size() - 1; i > 0; i--) {
+            for (int i = actions.size() - 1; i >= 0; i--) {
                 if (NUMBER.equals(actions.get(i).getType())) {
                     actions.set(i, number);
                     break;

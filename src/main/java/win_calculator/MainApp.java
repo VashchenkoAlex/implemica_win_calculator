@@ -35,6 +35,7 @@ public class MainApp extends Application {
         stage.getIcons().add(new Image("/images/calc_logo.png"));
         stage.setOnCloseRequest(e -> Platform.exit());
         ResizeHandler.addResizeListener(stage);
+        ButtonPressHandler.addButtonPressListener(stage);
         stage.show();
         stage.toFront();
         //System.out.println("\uE700" + " Dropdown menu");

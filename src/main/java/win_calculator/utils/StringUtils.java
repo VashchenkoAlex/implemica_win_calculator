@@ -1,6 +1,7 @@
 package win_calculator.utils;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -56,6 +57,7 @@ public abstract class StringUtils {
     public static boolean isOverflow(BigDecimal number) {
 
         boolean result = false;
+        number = number.setScale(10002,RoundingMode.HALF_UP);
         String strNumber = number.toString();
         if (strNumber.contains(E)) {
             String[] numberParts = strNumber.split(E);
@@ -98,6 +100,13 @@ public abstract class StringUtils {
         return result;
     }
 
+    private static int getExponent(BigDecimal number){
+
+        DecimalFormat formatter = new DecimalFormat(FOURTEEN_DECIMAL_PART+E_PART_OF_FORMAT);
+        String[] parts = formatter.format(number).split(E);
+        return Math.abs(Integer.parseInt(parts[1]));
+    }
+
     public static String addCapacity(String string) {
 
         String[] parts = {string, ""};
@@ -130,6 +139,9 @@ public abstract class StringUtils {
         if (result > MAX_ROUND) {
             result -= 1;
         }
+        if (result > MAX_EXPONENT){
+            result = MAX_DECIMAL;
+        }
         return result;
     }
 
@@ -140,6 +152,9 @@ public abstract class StringUtils {
 
     private static BigDecimal setNewScale(BigDecimal number, int scale) {
 
+        if (getExponent(number) > MAX_EXPONENT && number.unscaledValue().abs().compareTo(BigInteger.ONE)==0){
+            number = BigDecimal.ZERO;
+        }
         return number.setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros();
     }
 
@@ -221,7 +236,7 @@ public abstract class StringUtils {
             scale += Math.abs(Integer.parseInt(parts[1]));
         } else if (result.matches(IS_ZERO_FIRST_REGEX)) {
             if (result.matches(ARE_ZEROS_FIRST_REGEX) && isCorrectExponent(number)) {
-                scale += getUnscaledLength(number);
+                scale += getExponent(number) - 1;
             }
         } else {
             scale -= getWholeLength(number);

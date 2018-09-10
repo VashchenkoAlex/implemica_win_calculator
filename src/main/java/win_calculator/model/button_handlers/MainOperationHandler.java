@@ -34,7 +34,6 @@ public class MainOperationHandler {
             historyHandler.removeLastNumberAtHistoryIfExists();
         }else {
             doCalculation();
-            historyHandler.setResultNumber(resultNumber);
             historyHandler.addActionToHistory(operation);
         }
         historyHandler.setMOperationBefore(true);
@@ -60,6 +59,9 @@ public class MainOperationHandler {
             if (isOverflow(resultNumber)){
                 throw new MyException(OVERFLOW_MSG);
             }
+            historyHandler.setResultNumber(resultNumber);
+        }else {
+            resultNumber = null;
         }
     }
     public BigDecimal doEnter() throws MyException {

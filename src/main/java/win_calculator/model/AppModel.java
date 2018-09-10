@@ -18,6 +18,7 @@ import win_calculator.model.button_handlers.PercentHandler;
 import java.math.BigDecimal;
 
 import static win_calculator.utils.ActionType.CLEAR;
+import static win_calculator.utils.ActionType.EXTRA_OPERATION;
 import static win_calculator.utils.ActionType.MAIN_OPERATION;
 
 public class AppModel {
@@ -98,27 +99,31 @@ public class AppModel {
 
     private void processPercent(Action percent, Number number) {
 
-        if (number != null) {
-            historyHandler.setLastNumber(number.getBigDecimalValue());
-        } else if (responseNumber != null) {
-            historyHandler.setLastNumber(responseNumber);
-        }
-        BigDecimal result = percentHandler.doOperation((Percent) percent);
+        BigDecimal result = percentHandler.doOperation((Percent) percent, number);
         responseNumber = result;
-        if (!BigDecimal.ZERO.equals(responseNumber)) {
-            BigDecimal tempNumber = new BigDecimal(historyHandler.getPreviousNumber().toString());
+        if (!BigDecimal.ZERO.equals(responseNumber) && !"0.00".equals(result.toString())) {
+            BigDecimal tempNumber;
+            if (historyHandler.getPreviousNumber()!=null){
+                tempNumber = new BigDecimal(historyHandler.getPreviousNumber().toString());
+            }else {
+                tempNumber = new BigDecimal(historyHandler.getLastNumber().toString());
+            }
             if (historyHandler.isPercentLast()) {
                 historyHandler.changeLastActionNumber(new Number(result));
             } else {
-                historyHandler.addActionToHistory(new Number(result));
+                historyHandler.changeLastActionNumber(new Number(result));
             }
             historyHandler.setEnterRepeated(false);
             historyHandler.changeLastNumber(result);
             historyHandler.changePreviousNumber(tempNumber);
+            historyHandler.addActionToHistory(percent);
         } else if (!"0".equals(historyHandler.getHistoryString())) {
-            historyHandler.addActionToHistory(new Number(BigDecimal.ZERO));
+            if (MAIN_OPERATION.equals(historyHandler.getLastActionType()) || EXTRA_OPERATION.equals(historyHandler.getLastActionType())) {
+                historyHandler.addActionToHistory(new Number(BigDecimal.ZERO));
+            } else {
+                historyHandler.addZeroToHistory();
+            }
         }
-        historyHandler.addActionToHistory(percent);
     }
 
     private void processEnter(Number number) throws MyException {
@@ -139,7 +144,6 @@ public class AppModel {
             responseNumber = lastNumber.getBigDecimalValue();
         }
         historyHandler.setEnterRepeated(true);
-//        historyHandler.setMOperationBefore(false);
         historyHandler.resetLastExtraResult();
         historyHandler.setLastAction(new Clear());
     }
@@ -149,19 +153,23 @@ public class AppModel {
         BigDecimal lastExtraResult = historyHandler.getLastExtraResult();
         if (number != null) {
             historyHandler.addActionToHistory(number);
+            responseNumber = number.getBigDecimalValue();
+            if (historyHandler.isEnterRepeated()) {
+                historyHandler.resetResultNumber();
+            }
+            if (!historyHandler.isMOperationBefore()) {
+                historyHandler.resetPreviousNumber();
+            }
         } else if (lastExtraResult != null) {
             historyHandler.changeLastNumber(lastExtraResult);
         } else if (responseNumber != null) {
             historyHandler.changeLastNumber(responseNumber);
         } else {
             historyHandler.addZeroToHistory();
-//            historyHandler.addActionToHistory(new Number(BigDecimal.ZERO));
         }
         BigDecimal operationResult = mOperationHandler.doOperation((MainOperation) mOperation);
         if (operationResult != null) {
             responseNumber = operationResult;
-        } else if (number != null && (responseNumber == null)) {
-            responseNumber = number.getBigDecimalValue();
         }
         historyHandler.resetLastExtraResult();
     }
@@ -175,7 +183,7 @@ public class AppModel {
 
         if (number == null && historyHandler.lastActionNotNumber()) {
             if (responseNumber != null) {
-                if (MAIN_OPERATION.equals(historyHandler.getLastActionType())||CLEAR.equals(historyHandler.getLastActionType())) {
+                if (MAIN_OPERATION.equals(historyHandler.getLastActionType()) || CLEAR.equals(historyHandler.getLastActionType())) {
                     historyHandler.addActionToHistory(new Number(responseNumber));
                 }
             } else {
@@ -185,13 +193,18 @@ public class AppModel {
             responseNumber = ((Negate) negate).calculate(responseNumber);
             historyHandler.addActionToHistory(negate);
 
-        } else if (number!=null){
+        } else if (number != null) {
             responseNumber = ((Negate) negate).calculate(number.getBigDecimalValue());
             historyHandler.setLastNumber(responseNumber);
             historyHandler.setLastAction(negate);
-        }else if (historyHandler.isHistoryNotEmpty()){
+        } else{
             responseNumber = ((Negate) negate).calculate(historyHandler.getLastNumber());
-            historyHandler.changeLastActionNumber(new Number(responseNumber));
+            historyHandler.changeLastNumber(responseNumber);
+            if (historyHandler.isHistoryNotEmpty()) {
+                historyHandler.changeLastActionNumber(new Number(responseNumber));
+            }else {
+                historyHandler.addActionToHistory(new Number(responseNumber));
+            }
         }
 
     }

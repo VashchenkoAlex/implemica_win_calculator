@@ -219,4 +219,14 @@ public class HistoryHandler {
 
         history.removeLastNumberIfExists();
     }
+
+    public void resetResultNumber(){
+
+        resultNumber = null;
+    }
+
+    public void resetPreviousNumber(){
+
+        previousNumber = null;
+    }
 }
