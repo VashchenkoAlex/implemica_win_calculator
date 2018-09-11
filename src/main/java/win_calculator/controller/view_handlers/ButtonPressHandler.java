@@ -30,16 +30,16 @@ public class ButtonPressHandler {
         map.put("Multiply","#buttonMultiply");
         map.put("Divide","#buttonDivide");
         map.put("Slash","#buttonDivide");
-        map.put("%","buttonPercent");
+        map.put("%","#buttonPercent");
         map.put("@","#buttonSqrt");
         map.put("Q","#buttonSqr");
-        map.put("R","buttonFraction");
+        map.put("R","#buttonFraction");
         map.put("Delete","#buttonClearEntered");
         map.put("C","#buttonClear");
-        map.put("Backspace","buttonBackSpace");
-        map.put("Equals","buttonEnter");
-        map.put("Enter","buttonEnter");
-        map.put("F9","buttonNegate");
+        map.put("Backspace","#buttonBackSpace");
+        map.put("Equals","#buttonEnter");
+        map.put("Enter","#buttonEnter");
+        map.put("F9","#buttonNegate");
         return map;
     }
     public static void addButtonPressListener(Stage stage){

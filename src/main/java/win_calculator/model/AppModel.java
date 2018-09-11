@@ -17,9 +17,8 @@ import win_calculator.model.button_handlers.PercentHandler;
 
 import java.math.BigDecimal;
 
-import static win_calculator.utils.ActionType.CLEAR;
-import static win_calculator.utils.ActionType.EXTRA_OPERATION;
-import static win_calculator.utils.ActionType.MAIN_OPERATION;
+import static win_calculator.utils.ActionType.*;
+import static win_calculator.utils.AppUtils.checkOnOverflow;
 
 public class AppModel {
 
@@ -84,37 +83,33 @@ public class AppModel {
             operationNumber = new BigDecimal(number.getValue());
         } else if (responseNumber != null) {
             operationNumber = responseNumber;
-            if (MAIN_OPERATION.equals(historyHandler.getLastActionType())) {
+            if (MAIN_OPERATION.equals(historyHandler.getLastActionType())||historyHandler.isEnterRepeated()) {
                 historyHandler.addActionToHistory(new Number(operationNumber));
             }
         } else {
             operationNumber = BigDecimal.ZERO;
             historyHandler.addActionToHistory(new Number(operationNumber));
         }
-        BigDecimal resultNum = ((ExtraOperation) eOperation).calculate(operationNumber);
+        BigDecimal resultNum = checkOnOverflow(((ExtraOperation) eOperation).calculate(operationNumber));
         historyHandler.setLastExtraResult(resultNum);
         responseNumber = resultNum;
         historyHandler.addActionToHistory(eOperation);
     }
 
-    private void processPercent(Action percent, Number number) {
+    private void processPercent(Action percent, Number number) throws MyException {
 
-        BigDecimal result = percentHandler.doOperation((Percent) percent, number);
+        BigDecimal result = checkOnOverflow(percentHandler.doOperation((Percent) percent, number));
         responseNumber = result;
         if (!BigDecimal.ZERO.equals(responseNumber) && !"0.00".equals(result.toString())) {
             BigDecimal tempNumber;
             if (historyHandler.getPreviousNumber()!=null){
-                tempNumber = new BigDecimal(historyHandler.getPreviousNumber().toString());
+                tempNumber = historyHandler.getPreviousNumber();
             }else {
-                tempNumber = new BigDecimal(historyHandler.getLastNumber().toString());
+                tempNumber = historyHandler.getLastNumber();
             }
-            if (historyHandler.isPercentLast()) {
-                historyHandler.changeLastActionNumber(new Number(result));
-            } else {
-                historyHandler.changeLastActionNumber(new Number(result));
-            }
+            historyHandler.changeLastActionNumber(new Number(result));
             historyHandler.setEnterRepeated(false);
-            historyHandler.changeLastNumber(result);
+            historyHandler.changeLastNumberAtActions(result);
             historyHandler.changePreviousNumber(tempNumber);
             historyHandler.addActionToHistory(percent);
         } else if (!"0".equals(historyHandler.getHistoryString())) {
@@ -161,9 +156,9 @@ public class AppModel {
                 historyHandler.resetPreviousNumber();
             }
         } else if (lastExtraResult != null) {
-            historyHandler.changeLastNumber(lastExtraResult);
+            historyHandler.changeLastNumberAtActions(lastExtraResult);
         } else if (responseNumber != null) {
-            historyHandler.changeLastNumber(responseNumber);
+            historyHandler.changeLastNumberAtActions(responseNumber);
         } else {
             historyHandler.addZeroToHistory();
         }
@@ -191,8 +186,8 @@ public class AppModel {
                 historyHandler.addActionToHistory(new Number(responseNumber));
             }
             responseNumber = ((Negate) negate).calculate(responseNumber);
+            historyHandler.changeLastNumber(responseNumber);
             historyHandler.addActionToHistory(negate);
-
         } else if (number != null) {
             responseNumber = ((Negate) negate).calculate(number.getBigDecimalValue());
             historyHandler.setLastNumber(responseNumber);
@@ -200,12 +195,9 @@ public class AppModel {
         } else{
             responseNumber = ((Negate) negate).calculate(historyHandler.getLastNumber());
             historyHandler.changeLastNumber(responseNumber);
-            if (historyHandler.isHistoryNotEmpty()) {
-                historyHandler.changeLastActionNumber(new Number(responseNumber));
-            }else {
-                historyHandler.addActionToHistory(new Number(responseNumber));
+            if (historyHandler.isHistoryContainNegate()){
+                historyHandler.addActionToHistory(negate);
             }
         }
-
     }
 }

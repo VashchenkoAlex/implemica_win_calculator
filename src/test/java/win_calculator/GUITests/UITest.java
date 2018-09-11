@@ -1,49 +1,59 @@
 package win_calculator.GUITests;
 
+import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.*;
 import org.testfx.framework.junit5.*;
 import org.testfx.matcher.control.LabeledMatchers;
+import org.testfx.util.WaitForAsyncUtils;
 import win_calculator.MainApp;
 
 import java.io.IOException;
 import java.util.HashMap;
 
+import static javafx.scene.input.KeyCode.SHIFT;
 import static org.loadui.testfx.GuiTest.find;
 import static org.testfx.api.FxAssert.verifyThat;
 
 class UITest extends ApplicationTest{
 
     private MainApp app = new MainApp();
-    private static final HashMap<String,String> actions = createMap();
-    private static HashMap<String,String> createMap(){
+    private static final HashMap<String,TestButton> actions = createMap();
+    private static HashMap<String,TestButton> createMap(){
 
-        HashMap<String,String> map = new HashMap<>();
-        map.put("0","#buttonZero");
-        map.put("1","#buttonOne");
-        map.put("2","#buttonTwo");
-        map.put("3","#buttonThree");
-        map.put("4","#buttonFour");
-        map.put("5","#buttonFive");
-        map.put("6","#buttonSix");
-        map.put("7","#buttonSeven");
-        map.put("8","#buttonEight");
-        map.put("9","#buttonNine");
-        map.put(",","#buttonComa");
-        map.put("+","#buttonPlus");
-        map.put("-","#buttonMinus");
-        map.put("*","#buttonMultiply");
-        map.put("/","#buttonDivide");
-        map.put("%","buttonPercent");
-        map.put("sqrt","#buttonSqrt");
-        map.put("sqr","#buttonSqr");
-        map.put("1/x","buttonFraction");
-        map.put("CE","#buttonClearEntered");
-        map.put("C","#buttonClear");
-        map.put("<-","buttonBackSpace");
-        map.put("=","buttonEnter");
-        map.put("±","buttonNegate");
+        HashMap<String, TestButton> map = new HashMap<>();
+        map.put("0",new TestButton("#buttonZero",KeyCode.DIGIT0));
+        map.put("1",new TestButton("#buttonOne",KeyCode.DIGIT1));
+        map.put("2",new TestButton("#buttonTwo",KeyCode.DIGIT2));
+        map.put("3",new TestButton("#buttonThree",KeyCode.DIGIT3));
+        map.put("4",new TestButton("#buttonFour",KeyCode.DIGIT4));
+        map.put("5",new TestButton("#buttonFive",KeyCode.DIGIT5));
+        map.put("6",new TestButton("#buttonSix",KeyCode.DIGIT6));
+        map.put("7",new TestButton("#buttonSeven",KeyCode.DIGIT7));
+        map.put("8",new TestButton("#buttonEight",KeyCode.DIGIT8));
+        map.put("9",new TestButton("#buttonNine",KeyCode.DIGIT9));
+        map.put(",",new TestButton("#buttonComa",KeyCode.COMMA));
+        map.put("+",new TestButton("#buttonPlus",KeyCode.ADD));
+        map.put("-",new TestButton("#buttonMinus",KeyCode.SUBTRACT));
+        map.put("*",new TestButton("#buttonMultiply",KeyCode.MULTIPLY));
+        map.put("/",new TestButton("#buttonDivide",KeyCode.DIVIDE));
+        map.put("%",new TestButton("#buttonPercent",
+                new KeyCodeCombination(KeyCode.DIGIT5,KeyCombination.SHIFT_DOWN).getCode()));
+        map.put("sqrt",new TestButton("#buttonSqrt",
+                new KeyCodeCombination(KeyCode.DIGIT2,KeyCombination.SHIFT_DOWN).getCode()));
+        map.put("sqr",new TestButton("#buttonSqr",KeyCode.Q));
+        map.put("1/x",new TestButton("#buttonFraction",KeyCode.R));
+        map.put("CE",new TestButton("#buttonClearEntered",KeyCode.DELETE));
+        map.put("C",new TestButton("#buttonClearEntered",KeyCode.C));
+        map.put("<-",new TestButton("#buttonBackSpace",KeyCode.BACK_SPACE));
+        map.put("=",new TestButton("#buttonEnter",KeyCode.ENTER));
+        map.put("±",new TestButton("#buttonNegate",KeyCode.F9));
         return map;
     }
 
@@ -98,6 +108,28 @@ class UITest extends ApplicationTest{
         test("C","0","");
     }
 
+    @Test
+    void testKeyboard(){
+
+        testKey("1 2 + 3 4 - 5 6 * 7 8 / 9 0 = ", "-8,666666666666667","");
+        testKey("1 , , , 2 + 3 4 - 5 6 * 7 8 / 9 0 = ", "-18,02666666666667","");
+        testKey("1 , , , 2 + 3 4 - 5 6 * 7 8 / 9 0 = C", "0","");
+        testKey("1 + 2 + 3 + 4 =", "10","");
+
+        testKey("9 8 7 6 5 4 3 2 1 0 + 2 4 6 8 0 1 3 5 7 9 % - 2 4 6 8 1 3 5 7 9 * 1 2 3 / 4 5 8 9 0 = ", "-8979834690,108306","");
+        testKey("9876543210 % % + 36487136 - 374138274 * 93755 / 3890 = % %", "-897983,4690108306","");
+        testKey(" 9876543210 % %  =", "987654,321","");
+        testKey(" 9876543210 ± ± ± ± ± ± ± ± % %  = ", "987654,321","");
+        testKey(" 9876543210 ±  % %  = ", "-987654,321","");
+        testKey(" 9876543210 ± ± % % % % % % % %  = ", "0,000000987654321","");
+
+        testKey(" . 00000001", "0,00000001","");
+        testKey("", "0","");
+        testKey(" . 00000001 ±", "-0,00000001","");
+        testKey(" . 000 . . . 00001 = = = =", "0,00000001","");
+        testKey(" . 00000001 % % %", "0,00000000000001","");
+    }
+
     private void test(String expression, String display, String history){
 
         String[] buttons = expression.split(" ");
@@ -111,8 +143,32 @@ class UITest extends ApplicationTest{
 
     private void clickOn(String btnName){
 
-        Button button = find(actions.get(btnName));
+        Button button = find(actions.get(btnName).getId());
         this.interact(button::fire);
+    }
+
+    private void pressOn(String key){
+
+        WaitForAsyncUtils.waitForFxEvents();
+        TestButton testButton = actions.get(key);
+        Button button = find(testButton.getId());
+        KeyCode keyCode = testButton.getKeyCode();
+        Platform.runLater(()-> Event.fireEvent(button, new KeyEvent(KeyEvent.KEY_PRESSED,
+                "","",keyCode,false,false,false,false)));
+        Platform.runLater(()-> Event.fireEvent(button, new KeyEvent(KeyEvent.KEY_RELEASED,
+                "","",keyCode,false,false,false,false)));
+    }
+
+    private void testKey(String expression, String display, String history){
+
+        String[] buttons = expression.split(" ");
+        for (String btnName : buttons) {
+            pressOn(btnName);
+        }
+        WaitForAsyncUtils.waitForFxEvents();
+        verifyThat("#display",LabeledMatchers.hasText(display));
+        verifyThat("#historyField",LabeledMatchers.hasText(history));
+        pressOn("C");
     }
 
 }
@@ -201,7 +257,7 @@ class UITest extends ApplicationTest{
 //        };
 //        //click exit
 //        WaitForAsyncUtils.waitForFxEvents();
-//        Button close = find("#close");
+//        TestButton close = find("#close");
 //        Platform.runLater(close::fire);
 //        WaitForAsyncUtils.waitForFxEvents();
 //        assertTrue(invoked[0]);
@@ -238,23 +294,6 @@ class UITest extends ApplicationTest{
 //
 //    @Test
 //    public void testKeyBoard() throws Exception {
-//        testAppKeyEvent("12 + 34 - 56 * 78 / 90 = ", "-2,533333333333333");
-//        testAppKeyEvent("1 . . . 2 + 34 - 56 * 78 / 90 = ", "-13,33333333333333");
-//        testAppKeyEvent("1 . . . 2 + 34 - 56 * 78 / 90 = AC", "0");
-//        testAppKeyEvent("1 + 2 + 3 + 4 =", "10");
-//
-//        testAppKeyEvent("9876543210 % % + 36487136 - 374138274 * 93755 / 3890 = ", "-8979834690,108306");
-//        testAppKeyEvent("9876543210 % % + 36487136 - 374138274 * 93755 / 3890 = % %", "-897983,4690108306");
-//        testAppKeyEvent(" 9876543210 % %  =", "987654,321");
-//        testAppKeyEvent(" 9876543210 ± ± ± ± ± ± ± ± % %  = ", "987654,321");
-//        testAppKeyEvent(" 9876543210 ±  % %  = ", "-987654,321");
-//        testAppKeyEvent(" 9876543210 ± ± % % % % % % % %  = ", "0,000000987654321");
-//
-//        testAppKeyEvent(" . 00000001", "0,00000001");
-//        testAppKeyEvent("", "0");
-//        testAppKeyEvent(" . 00000001 ±", "-0,00000001");
-//        testAppKeyEvent(" . 000 . . . 00001 = = = =", "0,00000001");
-//        testAppKeyEvent(" . 00000001 % % %", "0,00000000000001");
 //    }
 //
 //    @Test

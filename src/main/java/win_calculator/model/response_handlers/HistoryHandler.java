@@ -24,32 +24,31 @@ public class HistoryHandler {
     private static final String HISTORY_PATTERN = "################.################";
     private Action lastAction = new Clear();
 
-    public String getHistoryString(){
+    public String getHistoryString() {
 
         LinkedList<Action> actions = history.getActions();
         String result = "";
         for (Action action : actions) {
-            if (EXTRA_OPERATION.equals(action.getType())){
-                result = addExtraOperationToString(result,action.getValue());
-            }else if (NUMBER.equals(action.getType())){
-                result+=convertToString(((Number)action).getBigDecimalValue(),HISTORY_PATTERN);
-            }else if (NEGATE.equals(action.getType())){
-                result = addExtraOperationToString(result,action.getValue());
-            }
-            else {
-                result+=action.getValue();
+            if (EXTRA_OPERATION.equals(action.getType())) {
+                result = addExtraOperationToString(result, action.getValue());
+            } else if (NUMBER.equals(action.getType())) {
+                result += convertToString(((Number) action).getBigDecimalValue(), HISTORY_PATTERN);
+            } else if (NEGATE.equals(action.getType())) {
+                result = addExtraOperationToString(result, action.getValue());
+            } else {
+                result += action.getValue();
             }
         }
         return result;
     }
 
-    public void addActionToHistory(Action action){
+    public void addActionToHistory(Action action) {
 
         history.addAction(action);
-        if (MAIN_OPERATION.equals(action.getType())){
+        if (MAIN_OPERATION.equals(action.getType())) {
             setMOperationBefore(true);
-        }else {
-            if (NUMBER.equals(action.getType()) && !NEGATE.equals(lastAction.getType())){
+        } else {
+            if (NUMBER.equals(action.getType()) && !NEGATE.equals(lastAction.getType())) {
                 previousNumber = lastNumber;
                 lastNumber = new BigDecimal(action.getValue());
             }
@@ -57,7 +56,7 @@ public class HistoryHandler {
         lastAction = action;
     }
 
-    public void clearHistory(){
+    public void clearHistory() {
 
         history = new History();
         resultNumber = null;
@@ -72,32 +71,32 @@ public class HistoryHandler {
         this.history = history;
     }
 
-    public ActionType getLastActionType(){
+    public ActionType getLastActionType() {
 
         ActionType result = null;
         Action action = lastAction;
-        if (action!=null){
+        if (action != null) {
             result = action.getType();
         }
         return result;
     }
 
-    public BigDecimal getLastNumber(){
+    public BigDecimal getLastNumber() {
 
         return lastNumber;
     }
 
-    public void changeLastAction(Action action){
+    public void changeLastAction(Action action) {
 
         history.changeLastMOperation(action);
     }
 
-    public BigDecimal getPreviousNumber(){
+    public BigDecimal getPreviousNumber() {
 
         return previousNumber;
     }
 
-    public boolean isMOperationBefore(){
+    public boolean isMOperationBefore() {
 
         return mOperationBefore;
     }
@@ -119,46 +118,46 @@ public class HistoryHandler {
         this.resultNumber = resultNumber;
     }
 
-    public void setLastNumber(BigDecimal number){
+    public void setLastNumber(BigDecimal number) {
 
         previousNumber = lastNumber;
-        lastNumber = new BigDecimal(number.toString());
+        lastNumber = number;
     }
 
-    public void changeLastNumber(BigDecimal number){
+    public void changeLastNumberAtActions(BigDecimal number) {
 
         lastNumber = number;
-        if (enterRepeated){
+        if (enterRepeated && !NEGATE.equals(lastAction.getType())) {
             history.addAction(new Number(number));
-        }else if (NEGATE.equals(lastAction.getType())){
+        } else if (!enterRepeated && NEGATE.equals(lastAction.getType())) {
             changeLastActionNumber(new Number(number));
         }
     }
 
-    public void changePreviousNumber(BigDecimal number){
+    public void changeLastNumber(BigDecimal lastNumber) {
+
+        this.lastNumber = lastNumber;
+    }
+
+    public void changePreviousNumber(BigDecimal number) {
 
         previousNumber = number;
     }
 
-    public BigDecimal getResultNumber(){
+    public BigDecimal getResultNumber() {
 
         return resultNumber;
     }
 
-    public boolean isPercentLast(){
-
-        return PERCENT.equals(lastAction.getType());
-    }
-
-    public void changeLastActionNumber(Number number){
+    public void changeLastActionNumber(Number number) {
 
         history.changeLastNumber(number);
     }
 
-    public void rejectLastNumberWithExtraOperations(){
+    public void rejectLastNumberWithExtraOperations() {
 
         LinkedList<Action> actions = new LinkedList<>(history.getActions());
-        for (int i = actions.size()-1; i>0 && EXTRA_OPERATION.equals(actions.getLast().getType());i--) {
+        for (int i = actions.size() - 1; i > 0 && EXTRA_OPERATION.equals(actions.getLast().getType()); i--) {
             actions.removeLast();
         }
         actions.removeLast();
@@ -176,18 +175,18 @@ public class HistoryHandler {
         this.lastExtraResult = lastExtraResult;
     }
 
-    public void resetLastExtraResult(){
-        if (lastExtraResult!=null){
-            lastNumber = new BigDecimal(lastExtraResult.toString());
+    public void resetLastExtraResult() {
+        if (lastExtraResult != null) {
+            lastNumber = lastExtraResult;
         }
         lastExtraResult = null;
     }
 
-    public boolean lastActionNotNumber(){
+    public boolean lastActionNotNumber() {
 
         ActionType type = getLastActionType();
         boolean result = true;
-        if (type!=null){
+        if (type != null) {
             result = !NUMBER.equals(type) && !NEGATE.equals(type);
         }
         return result;
@@ -198,35 +197,40 @@ public class HistoryHandler {
         this.lastAction = lastAction;
     }
 
-    public boolean isHistoryNotEmpty(){
+    private boolean isHistoryNotEmpty() {
 
         return !history.getActions().isEmpty();
     }
 
-    public void addZeroToHistory(){
+    public void addZeroToHistory() {
 
         Number number = new Number(BigDecimal.ZERO);
-        if (!isHistoryNotEmpty()){
+        if (!isHistoryNotEmpty()) {
             history.addAction(number);
-        }else {
+        } else {
             history.changeNumberAtFirstPosition(number);
         }
         lastNumber = BigDecimal.ZERO;
         mOperationBefore = false;
     }
 
-    public void removeLastNumberAtHistoryIfExists(){
+    public void removeLastNumberAtHistoryIfExists() {
 
         history.removeLastNumberIfExists();
     }
 
-    public void resetResultNumber(){
+    public void resetResultNumber() {
 
         resultNumber = null;
     }
 
-    public void resetPreviousNumber(){
+    public void resetPreviousNumber() {
 
         previousNumber = null;
+    }
+
+    public boolean isHistoryContainNegate() {
+
+        return history.isContainNegate();
     }
 }
