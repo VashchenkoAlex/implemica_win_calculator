@@ -2,10 +2,10 @@ package win_calculator;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.gen5.api.Assertions.assertEquals;
-import static win_calculator.utils.StringUtils.addCapacity;
+import static win_calculator.utils.AppUtils.addCapacity;
 
 
-class StringUtilsTest {
+class AppUtilsTest {
 
     @Test
     void addCapacityTest() {

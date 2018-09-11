@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 import static org.junit.gen5.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
-import static win_calculator.utils.StringUtils.convertToString;
+import static win_calculator.utils.AppUtils.convertToString;
 
 class AppModelTest {
 
@@ -318,6 +318,7 @@ class AppModelTest {
 
         test("1 / 3 * 3 +", "1", "1  ÷  3  ×  3  +  ");
         test("1 / 3 * 3 - 1 =", "0", "");
+//        test("1 / 3 * 10000000000 - 3333333333 * 10000000000 - 3333333333 * 10000000000 - 3333333333 * 10000000000 - 3333333333 * 10000000000 - 3333333333 * 10000000000 - 3333333333 * 3 - 1 =", "0", "");
         test("25 + 25 + 25 * 25 * 25 = =", "1 171 875", "");
         test("9876543210 + 123456789 / 123456789 * 123456789 - 123456789 ± =", "10 123 456 788", "");
         test("5 / 3 * 3 =", "5", "");

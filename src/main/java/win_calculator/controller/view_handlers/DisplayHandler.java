@@ -6,7 +6,7 @@ import javafx.scene.text.Text;
 
 import java.math.BigDecimal;
 
-import static win_calculator.utils.StringUtils.*;
+import static win_calculator.utils.AppUtils.*;
 
 public class DisplayHandler {
 

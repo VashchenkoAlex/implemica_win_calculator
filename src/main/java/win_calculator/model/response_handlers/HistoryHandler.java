@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.LinkedList;
 
 import static win_calculator.utils.ActionType.*;
-import static win_calculator.utils.StringUtils.*;
+import static win_calculator.utils.AppUtils.*;
 
 public class HistoryHandler {
 

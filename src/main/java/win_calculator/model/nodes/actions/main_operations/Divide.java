@@ -34,7 +34,7 @@ public class Divide implements MainOperation {
             throw new MyException(UNDEFINED_EXCEPTION_MSG);
         }
         try{
-            result = firstNumber.divide(secondNumber,SCALE,RoundingMode.HALF_DOWN);
+            result = firstNumber.divide(secondNumber,SCALE,RoundingMode.HALF_UP);
         }catch (ArithmeticException e){
             throw new MyException(CANNOT_DIVIDE_EXCEPTION_MSG);
         }

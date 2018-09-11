@@ -309,6 +309,8 @@ public class FXMLViewController implements Initializable
                     }else {
                         displayHandler.sendNumberToDisplay(response.getDisplayNumber());
                     }
+                }else if (!DIGIT.equals(lastActionType)){
+                    displayHandler.sendNumberToDisplay(response.getDisplayNumber());
                 }
             }else {
                 displayHandler.sendNumberToDisplay(response.getDisplayNumber());

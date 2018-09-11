@@ -1,10 +1,6 @@
 package win_calculator.DTOs;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.RoundingMode;
-
-import static win_calculator.utils.StringUtils.*;
 
 public class ResponseDTO {
 
