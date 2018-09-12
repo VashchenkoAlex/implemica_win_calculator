@@ -175,12 +175,12 @@ public class FXMLViewController implements Initializable
 
     public void minusBtnClick(){
 
-        makeAction(new Minus());
+        makeAction(new Subtract());
     }
 
     public void plusBtnClick(){
 
-        makeAction(new Plus());
+        makeAction(new Add());
     }
 
     public void enterBtnClick(){
@@ -372,10 +372,5 @@ public class FXMLViewController implements Initializable
             result = lastAction.getType();
         }
         return result;
-    }
-
-    public String getDisplayText() {
-
-        return displayHandler.getDisplayText();
     }
 }

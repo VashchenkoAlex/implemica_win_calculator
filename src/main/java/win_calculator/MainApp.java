@@ -6,9 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import win_calculator.model.AppModel;
 import win_calculator.controller.view_handlers.*;
-import win_calculator.controller.view_handlers.DisplayHandler;
 
 import java.io.IOException;
 

@@ -2,12 +2,12 @@ package win_calculator.model.nodes;
 
 import win_calculator.model.nodes.actions.Action;
 import win_calculator.controller.nodes.digits.Number;
+import win_calculator.model.nodes.actions.clear.Clear;
 import win_calculator.utils.ActionType;
 
 import java.util.LinkedList;
 
 import static win_calculator.utils.ActionType.MAIN_OPERATION;
-import static win_calculator.utils.ActionType.NEGATE;
 import static win_calculator.utils.ActionType.NUMBER;
 
 public class History {
@@ -37,7 +37,7 @@ public class History {
     private Action getLastAction() {
 
         if (actions.isEmpty()) {
-            return null;
+            return new Clear();
         } else {
             return actions.getLast();
         }
@@ -113,14 +113,14 @@ public class History {
         }
     }
 
-    public boolean isContainNegate(){
+    public boolean isContain(ActionType expectedType){
 
         boolean result = false;
         ActionType type;
         if (!actions.isEmpty()) {
             for (int i = actions.size() - 1; i > 0; i--) {
                 type = actions.get(i).getType();
-                if (NEGATE.equals(type)){
+                if (expectedType.equals(type)){
                     result = true;
                 }
                 if (MAIN_OPERATION.equals(type)){

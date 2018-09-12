@@ -2,21 +2,27 @@ package win_calculator.GUITests;
 
 import javafx.scene.input.KeyCode;
 
-public class TestButton {
+class TestButton {
 
     private String id;
     private KeyCode keyCode;
+    private boolean shiftPressed;
 
-    public TestButton(String id, KeyCode keyCode) {
+    TestButton(String id, KeyCode keyCode, boolean shiftPressed) {
         this.id = id;
         this.keyCode = keyCode;
+        this.shiftPressed = shiftPressed;
     }
 
-    public String getId() {
+    String getId() {
         return id;
     }
 
-    public KeyCode getKeyCode() {
+    KeyCode getKeyCode() {
         return keyCode;
+    }
+
+    boolean isShiftPressed() {
+        return shiftPressed;
     }
 }

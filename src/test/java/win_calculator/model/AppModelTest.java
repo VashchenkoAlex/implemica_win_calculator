@@ -41,8 +41,8 @@ class AppModelTest {
         map.put("8", new EightDigit());
         map.put("9", new NineDigit());
         map.put(",", new Coma());
-        map.put("+", new Plus());
-        map.put("-", new Minus());
+        map.put("+", new Add());
+        map.put("-", new Subtract());
         map.put("*", new Multiply());
         map.put("/", new Divide());
         map.put("%", new Percent());
@@ -60,7 +60,7 @@ class AppModelTest {
     @Test
     void testMainOperations() throws MyException {
 
-        //test Plus
+        //test Add
         test("+", "0", "0  +  ");
         test("+ =", "0", "");
         test("+ 2 =", "2", "");
@@ -131,7 +131,7 @@ class AppModelTest {
         test("1 - * / + + - + 2 ± +", "-1", "1  +  -2  +  ");
         test("2 ± + + + +", "-2", "-2  +  ");
 
-        //Test Minus
+        //Test Subtract
         test("-", "0", "0  -  ");
         test("- =", "0", "");
         test("- 2 =", "-2", "");
@@ -395,9 +395,11 @@ class AppModelTest {
         test("5 sqrt sqr", "5", "sqr( √( 5 ) )");
         test("25 sqrt 16 sqrt + ", "4", "√( 16 )  +  ");
 
-        test("25 sqrt + - * / ", "5", "√( 25 )  \u00F7  ");
+        test("25 sqrt + - * / ", "5", "√( 25 )  ÷  ");
 
         test("25 sqrt + 16 sqrt = =", "13", "");
+        test("25 sqrt + 16 sqrt = sqrt", "3", "√( 9 )");
+        test("25 sqrt + 16 sqrt = sqrt sqr", "9", "sqr( √( 9 ) )");
         test("25 sqrt + 16 sqrt + = =", "27", "");
 
         test("25 sqrt - 16 sqrt = =", "-3", "");
@@ -588,6 +590,10 @@ class AppModelTest {
         test("12345 / 2 % =", "50", "");
         test("2 / 12345 %", "246,9", "2  ÷  246,9");
         test("2 / 12345 % =", "0,0081004455245038", "");
+
+        test("25 + sqrt %","1,25","25  +  1,25");
+        test("25 + sqrt ± %","-1,25","25  +  -1,25");
+        test("25 sqr + sqrt ± % % %","-6 103,515625","sqr( 25 )  +  -6103,515625");
     }
 
     @Test

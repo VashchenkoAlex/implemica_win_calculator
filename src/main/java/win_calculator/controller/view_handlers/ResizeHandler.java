@@ -29,7 +29,7 @@ public class ResizeHandler {
         }
     }
 
-    public static void addListenerDeeply(Node node, EventHandler<MouseEvent> listener) {
+    private static void addListenerDeeply(Node node, EventHandler<MouseEvent> listener) {
         node.addEventHandler(MouseEvent.MOUSE_MOVED, listener);
         node.addEventHandler(MouseEvent.MOUSE_PRESSED, listener);
         node.addEventHandler(MouseEvent.MOUSE_DRAGGED, listener);
@@ -51,7 +51,7 @@ public class ResizeHandler {
         private double startX = 0;
         private double startY = 0;
 
-        public ResizeListener(Stage stage) {
+        ResizeListener(Stage stage) {
             this.stage = stage;
         }
 

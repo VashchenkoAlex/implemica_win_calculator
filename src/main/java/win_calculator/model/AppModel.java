@@ -83,7 +83,8 @@ public class AppModel {
             operationNumber = new BigDecimal(number.getValue());
         } else if (responseNumber != null) {
             operationNumber = responseNumber;
-            if (MAIN_OPERATION.equals(historyHandler.getLastActionType())||historyHandler.isEnterRepeated()) {
+            if (MAIN_OPERATION.equals(historyHandler.getLastActionType()) || (historyHandler.isEnterRepeated()
+                    && !EXTRA_OPERATION.equals(historyHandler.getLastActionType()))) {
                 historyHandler.addActionToHistory(new Number(operationNumber));
             }
         } else {
@@ -102,11 +103,12 @@ public class AppModel {
         responseNumber = result;
         if (!BigDecimal.ZERO.equals(responseNumber) && !"0.00".equals(result.toString())) {
             BigDecimal tempNumber;
-            if (historyHandler.getPreviousNumber()!=null){
+            if (historyHandler.getPreviousNumber() != null) {
                 tempNumber = historyHandler.getPreviousNumber();
-            }else {
+            } else {
                 tempNumber = historyHandler.getLastNumber();
             }
+            historyHandler.rejectLastNumberWithExtraOperations();
             historyHandler.changeLastActionNumber(new Number(result));
             historyHandler.setEnterRepeated(false);
             historyHandler.changeLastNumberAtActions(result);
@@ -192,10 +194,10 @@ public class AppModel {
             responseNumber = ((Negate) negate).calculate(number.getBigDecimalValue());
             historyHandler.setLastNumber(responseNumber);
             historyHandler.setLastAction(negate);
-        } else{
+        } else {
             responseNumber = ((Negate) negate).calculate(historyHandler.getLastNumber());
             historyHandler.changeLastNumber(responseNumber);
-            if (historyHandler.isHistoryContainNegate()){
+            if (historyHandler.isHistoryContainNegate()) {
                 historyHandler.addActionToHistory(negate);
             }
         }

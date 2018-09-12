@@ -156,15 +156,24 @@ public class HistoryHandler {
 
     public void rejectLastNumberWithExtraOperations() {
 
-        LinkedList<Action> actions = new LinkedList<>(history.getActions());
-        for (int i = actions.size() - 1; i > 0 && EXTRA_OPERATION.equals(actions.getLast().getType()); i--) {
+        if (isHistoryNotEmpty() && isRejectionPossible()) {
+            LinkedList<Action> actions = new LinkedList<>(history.getActions());
+            ActionType type;
+            for (int i = actions.size() - 1; i > 0; i--) {
+                type = actions.getLast().getType();
+                if (EXTRA_OPERATION.equals(type) || NEGATE.equals(type)) {
+                    actions.removeLast();
+                }
+                if (MAIN_OPERATION.equals(type)) {
+                    break;
+                }
+            }
             actions.removeLast();
+            history.setActions(actions);
+            lastNumber = null;
+            previousNumber = null;
+            setLastExtraResult(null);
         }
-        actions.removeLast();
-        history.setActions(actions);
-        lastNumber = null;
-        previousNumber = null;
-        setLastExtraResult(null);
     }
 
     public BigDecimal getLastExtraResult() {
@@ -202,6 +211,7 @@ public class HistoryHandler {
         return !history.getActions().isEmpty();
     }
 
+
     public void addZeroToHistory() {
 
         Number number = new Number(BigDecimal.ZERO);
@@ -231,6 +241,43 @@ public class HistoryHandler {
 
     public boolean isHistoryContainNegate() {
 
-        return history.isContainNegate();
+        return history.isContain(NEGATE);
+    }
+
+    private boolean isRejectionPossible() {
+
+        return history.isContain(NEGATE) || history.isContain(EXTRA_OPERATION);
+    }
+
+    public BigDecimal[] selectNumbersForPercent(Number number) {
+
+        BigDecimal firstNumber = BigDecimal.ZERO;
+        BigDecimal secondNumber = BigDecimal.ZERO;
+        if (number != null) {
+            secondNumber = number.getBigDecimalValue();
+            if (resultNumber != null) {
+                firstNumber = resultNumber;
+            } else if (mOperationBefore && !NUMBER.equals(getLastActionType())) {
+                firstNumber = lastNumber;
+            } else {
+                firstNumber = previousNumber;
+            }
+        } else if (resultNumber != null) {
+            firstNumber = resultNumber;
+            secondNumber = resultNumber;
+        } else if (NEGATE.equals(getLastActionType())) {
+            firstNumber = previousNumber;
+            secondNumber = lastNumber;
+        } else if (lastNumber != null) {
+            firstNumber = lastNumber;
+            if (previousNumber != null && PERCENT.equals(getLastActionType())) {
+                secondNumber = previousNumber;
+            } else if (lastExtraResult != null) {
+                secondNumber = lastExtraResult;
+            } else {
+                secondNumber = lastNumber;
+            }
+        }
+        return new BigDecimal[]{firstNumber, secondNumber};
     }
 }

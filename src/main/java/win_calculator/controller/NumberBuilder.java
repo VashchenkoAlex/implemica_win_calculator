@@ -132,7 +132,7 @@ public class NumberBuilder {
         return !digitsChain.isEmpty();
     }
 
-    boolean isNotMaxDigits() {
+    private boolean isNotMaxDigits() {
 
         int digitsCount = digitsChain.size();
         if (!digitsChain.isEmpty() && ZERO.equals(digitsChain.get(0).getValue())){

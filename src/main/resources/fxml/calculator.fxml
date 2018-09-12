@@ -5,7 +5,6 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.geometry.Insets?>
 <?import javafx.stage.Stage?>
 <?import javafx.scene.Scene?>
@@ -14,8 +13,6 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.control.cell.ComboBoxListCell?>
 <?import win_calculator.utils.ComboBoxOption?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.TextFlow?>
 <?import javafx.scene.text.Font?>
 <Stage title="Calculator"
        xmlns:fx="http://javafx.com/fxml/1"
@@ -134,12 +131,12 @@
                                 </GridPane>
                                 <GridPane fx:id="mainButtonsGrid" styleClass="mainButtonsGrid" hgap="3.0" vgap="3.0"  GridPane.columnIndex="0" GridPane.rowIndex="4" AnchorPane.leftAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                     <children>
-                                        <Button fx:id="buttonPercent" styleClass="actionButton" text="" GridPane.columnIndex="0" GridPane.rowIndex="0" onAction="#percentBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <Button fx:id="percentBtn" styleClass="actionButton" text="" GridPane.columnIndex="0" GridPane.rowIndex="0" onAction="#percentBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                             </GridPane.margin>
                                         </Button>
-                                        <Button fx:id="buttonSqrt" styleClass="actionButton" text="" GridPane.columnIndex="1" GridPane.rowIndex="0" onAction="#sqrtBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <Button fx:id="sqrtBtn" styleClass="actionButton" text="" GridPane.columnIndex="1" GridPane.rowIndex="0" onAction="#sqrtBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                             </GridPane.margin>
@@ -189,7 +186,7 @@
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                             </GridPane.margin>
                                         </Button>
-                                        <Button fx:id="buttonMultiply" styleClass="mainActionButton" text="" GridPane.columnIndex="3" GridPane.rowIndex="2" onAction="#multiplyBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <Button fx:id="multiplyBtn" styleClass="mainActionButton" text="" GridPane.columnIndex="3" GridPane.rowIndex="2" onAction="#multiplyBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                             </GridPane.margin>
@@ -229,7 +226,7 @@
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                             </GridPane.margin>
                                         </Button>
-                                        <Button fx:id="buttonPlus" styleClass="mainActionButton" text="" GridPane.columnIndex="3" GridPane.rowIndex="4" onAction="#plusBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <Button fx:id="addBtn" styleClass="mainActionButton" text="" GridPane.columnIndex="3" GridPane.rowIndex="4" onAction="#plusBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                             </GridPane.margin>
@@ -249,7 +246,7 @@
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                             </GridPane.margin>
                                         </Button>
-                                        <Button fx:id="buttonEnter" styleClass="mainActionButton" text="" GridPane.columnIndex="3" GridPane.rowIndex="5" onAction="#enterBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <Button fx:id="equalsBtn" styleClass="mainActionButton" text="" GridPane.columnIndex="3" GridPane.rowIndex="5" onAction="#enterBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                             </GridPane.margin>

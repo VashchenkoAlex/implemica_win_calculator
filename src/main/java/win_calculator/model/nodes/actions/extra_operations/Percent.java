@@ -4,7 +4,6 @@ import win_calculator.model.nodes.actions.Action;
 import win_calculator.utils.ActionType;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class Percent implements Action {
 

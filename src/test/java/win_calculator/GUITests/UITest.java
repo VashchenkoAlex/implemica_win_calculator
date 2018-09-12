@@ -4,8 +4,6 @@ import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.*;
@@ -17,7 +15,6 @@ import win_calculator.MainApp;
 import java.io.IOException;
 import java.util.HashMap;
 
-import static javafx.scene.input.KeyCode.SHIFT;
 import static org.loadui.testfx.GuiTest.find;
 import static org.testfx.api.FxAssert.verifyThat;
 
@@ -28,32 +25,31 @@ class UITest extends ApplicationTest{
     private static HashMap<String,TestButton> createMap(){
 
         HashMap<String, TestButton> map = new HashMap<>();
-        map.put("0",new TestButton("#buttonZero",KeyCode.DIGIT0));
-        map.put("1",new TestButton("#buttonOne",KeyCode.DIGIT1));
-        map.put("2",new TestButton("#buttonTwo",KeyCode.DIGIT2));
-        map.put("3",new TestButton("#buttonThree",KeyCode.DIGIT3));
-        map.put("4",new TestButton("#buttonFour",KeyCode.DIGIT4));
-        map.put("5",new TestButton("#buttonFive",KeyCode.DIGIT5));
-        map.put("6",new TestButton("#buttonSix",KeyCode.DIGIT6));
-        map.put("7",new TestButton("#buttonSeven",KeyCode.DIGIT7));
-        map.put("8",new TestButton("#buttonEight",KeyCode.DIGIT8));
-        map.put("9",new TestButton("#buttonNine",KeyCode.DIGIT9));
-        map.put(",",new TestButton("#buttonComa",KeyCode.COMMA));
-        map.put("+",new TestButton("#buttonPlus",KeyCode.ADD));
-        map.put("-",new TestButton("#buttonMinus",KeyCode.SUBTRACT));
-        map.put("*",new TestButton("#buttonMultiply",KeyCode.MULTIPLY));
-        map.put("/",new TestButton("#buttonDivide",KeyCode.DIVIDE));
-        map.put("%",new TestButton("#buttonPercent",
-                new KeyCodeCombination(KeyCode.DIGIT5,KeyCombination.SHIFT_DOWN).getCode()));
-        map.put("sqrt",new TestButton("#buttonSqrt",
-                new KeyCodeCombination(KeyCode.DIGIT2,KeyCombination.SHIFT_DOWN).getCode()));
-        map.put("sqr",new TestButton("#buttonSqr",KeyCode.Q));
-        map.put("1/x",new TestButton("#buttonFraction",KeyCode.R));
-        map.put("CE",new TestButton("#buttonClearEntered",KeyCode.DELETE));
-        map.put("C",new TestButton("#buttonClearEntered",KeyCode.C));
-        map.put("<-",new TestButton("#buttonBackSpace",KeyCode.BACK_SPACE));
-        map.put("=",new TestButton("#buttonEnter",KeyCode.ENTER));
-        map.put("±",new TestButton("#buttonNegate",KeyCode.F9));
+        map.put("0",new TestButton("#buttonZero",KeyCode.DIGIT0,false));
+        map.put("1",new TestButton("#buttonOne",KeyCode.DIGIT1,false));
+        map.put("2",new TestButton("#buttonTwo",KeyCode.DIGIT2,false));
+        map.put("3",new TestButton("#buttonThree",KeyCode.DIGIT3,false));
+        map.put("4",new TestButton("#buttonFour",KeyCode.DIGIT4,false));
+        map.put("5",new TestButton("#buttonFive",KeyCode.DIGIT5,false));
+        map.put("6",new TestButton("#buttonSix",KeyCode.DIGIT6,false));
+        map.put("7",new TestButton("#buttonSeven",KeyCode.DIGIT7,false));
+        map.put("8",new TestButton("#buttonEight",KeyCode.DIGIT8,false));
+        map.put("9",new TestButton("#buttonNine",KeyCode.DIGIT9,false));
+        map.put(",",new TestButton("#buttonComa",KeyCode.COMMA,false));
+        map.put("+",new TestButton("#addBtn",KeyCode.ADD,false));
+        map.put("-",new TestButton("#buttonMinus",KeyCode.SUBTRACT,false));
+        map.put("*",new TestButton("#multiplyBtn",KeyCode.DIGIT8,true));
+        map.put("n*",new TestButton("#multiplyBtn",KeyCode.MULTIPLY,false));
+        map.put("/",new TestButton("#buttonDivide",KeyCode.DIVIDE,false));
+        map.put("%",new TestButton("#percentBtn",KeyCode.DIGIT5,true));
+        map.put("sqrt",new TestButton("#sqrtBtn",KeyCode.DIGIT2,true));
+        map.put("sqr",new TestButton("#buttonSqr",KeyCode.Q,false));
+        map.put("1/x",new TestButton("#buttonFraction",KeyCode.R,false));
+        map.put("CE",new TestButton("#buttonClearEntered",KeyCode.DELETE,false));
+        map.put("C",new TestButton("#buttonClearEntered",KeyCode.C,false));
+        map.put("<-",new TestButton("#buttonBackSpace",KeyCode.BACK_SPACE,false));
+        map.put("=",new TestButton("#equalsBtn",KeyCode.ENTER,false));
+        map.put("±",new TestButton("#buttonNegate",KeyCode.F9,false));
         return map;
     }
 
@@ -111,23 +107,29 @@ class UITest extends ApplicationTest{
     @Test
     void testKeyboard(){
 
+        testKey("2 0 + %","4","20  +  4");
         testKey("1 2 + 3 4 - 5 6 * 7 8 / 9 0 = ", "-8,666666666666667","");
         testKey("1 , , , 2 + 3 4 - 5 6 * 7 8 / 9 0 = ", "-18,02666666666667","");
         testKey("1 , , , 2 + 3 4 - 5 6 * 7 8 / 9 0 = C", "0","");
         testKey("1 + 2 + 3 + 4 =", "10","");
 
-        testKey("9 8 7 6 5 4 3 2 1 0 + 2 4 6 8 0 1 3 5 7 9 % - 2 4 6 8 1 3 5 7 9 * 1 2 3 / 4 5 8 9 0 = ", "-8979834690,108306","");
-        testKey("9876543210 % % + 36487136 - 374138274 * 93755 / 3890 = % %", "-897983,4690108306","");
-        testKey(" 9876543210 % %  =", "987654,321","");
-        testKey(" 9876543210 ± ± ± ± ± ± ± ± % %  = ", "987654,321","");
-        testKey(" 9876543210 ±  % %  = ", "-987654,321","");
-        testKey(" 9876543210 ± ± % % % % % % % %  = ", "0,000000987654321","");
+        testKey("1 2 3 ± + 4 5 % - 6 7 sqr * 8 9 0 sqrt / 2 4 1/x = + 6 8 - 0 1 * 3 5 / 7 9 + 2 , 4 = - 6 8 * 1 3 / 5 7 =", "-337 673,2047848424","");
+        testKey("9 8 7 6 5 4 3 2 1 0 + 1 3 5 7 9 1 3 5 % - 2 4 6 8 0 * 1 2 3 4 / 4 3 2 1 = sqr sqrt", "383 010 928 309 372,9","√( sqr( 383010928309372,9 ) )");
+        testKey("9 8 7 6 5 4 3 2 1 0 + % =", "9,754610676665143e+17","");
+        testKey("9 8 7 6 5 4 3 2 1 0 ± ± ± ± ± ± ± ± + % % = =", "1,926836657386991e+26","");
+        testKey("9 8 7 6 5 4 3 2 1 0 ± % = ", "0","");
+        testKey("1 2 3 4 5 6 7 8 9 0 sqr + sqrt ± % % %", "-4,371241896208856e+57","sqr( 1234567890 )  +  -4,371241896208856e+57");
 
-        testKey(" . 00000001", "0,00000001","");
         testKey("", "0","");
-        testKey(" . 00000001 ±", "-0,00000001","");
-        testKey(" . 000 . . . 00001 = = = =", "0,00000001","");
-        testKey(" . 00000001 % % %", "0,00000000000001","");
+        testKey(", 0 0 0 0 0 0 0 1", "0,00000001","");
+        testKey(", 0 0 0 0 0 0 1 ±", "-0,0000001","");
+        testKey(", 0 0 0 , , , 0 0 0 0 1 = = = =", "0,00000001","");
+        testKey(", 0 0 0 0 0 0 0 1 - % % %", "0,00000000000001","");
+        testKey("1 2 3 4 5 6 7 8 9 0 , 0 1 2 3 4 5 6 7 *", "0,00000000000001","");
+        testKey("1 2 3 4 5 6 7 8 9 0 , 0 1 2 3 4 5 6 7 <- <- <- <- /", "0,00000000000001","");
+        testKey("1 2 3 4 5 6 7 8 9 0 , 5 6 7 ± <- <- <- <- /", "0,00000000000001","");
+        testKey("1 2 3 4 5 6 7 8 9 0 , 5 6 7 ± sqr <- <- <- <- /", "0,00000000000001","");
+        testKey("2 5 6 7 8 9 0 , 1 3 4 ± <- <- <- <- sqr sqrt sqrt sqrt", "0,00000000000001","");
     }
 
     private void test(String expression, String display, String history){
@@ -152,11 +154,15 @@ class UITest extends ApplicationTest{
         WaitForAsyncUtils.waitForFxEvents();
         TestButton testButton = actions.get(key);
         Button button = find(testButton.getId());
-        KeyCode keyCode = testButton.getKeyCode();
+        boolean shiftPressed = testButton.isShiftPressed();
+        if (shiftPressed){
+            Platform.runLater(()->Event.fireEvent(button,new KeyEvent(KeyEvent.KEY_PRESSED,"","",
+                    KeyCode.SHIFT,false,false,false,false)));
+        }
         Platform.runLater(()-> Event.fireEvent(button, new KeyEvent(KeyEvent.KEY_PRESSED,
-                "","",keyCode,false,false,false,false)));
+                "","",testButton.getKeyCode(),shiftPressed,false,false,false)));
         Platform.runLater(()-> Event.fireEvent(button, new KeyEvent(KeyEvent.KEY_RELEASED,
-                "","",keyCode,false,false,false,false)));
+                "","",testButton.getKeyCode(),shiftPressed,false,false,false)));
     }
 
     private void testKey(String expression, String display, String history){

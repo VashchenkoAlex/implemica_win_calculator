@@ -75,9 +75,4 @@ public class DisplayHandler {
 
         return display.getText().replace("0,","").replaceAll("[ ,]","").length() < MAX_DIGITS;
     }
-
-    public String getDisplayText(){
-
-        return display.getText();
-    }
 }
