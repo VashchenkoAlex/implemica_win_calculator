@@ -16,15 +16,17 @@ public class NumberBuilder {
     private static final int MAX_DIGITS = 16;
     private static final String COMA = ".";
     private static final String ZERO = "0";
+    private boolean positive = true;
     private Number number;
     private LinkedList<Digit> digitsChain = new LinkedList<>();
+    private LinkedList<Digit> previousChain;
 
     BigDecimal toDo(Action action) {
 
         ActionType actionType = action.getType();
         if (DIGIT.equals(actionType) && isNotMaxDigits()) {
             add((Digit) action);
-        } else if (BACKSPACE.equals(actionType)&& !digitsChain.isEmpty()) {
+        } else if (BACKSPACE.equals(actionType)) {
             backSpace();
         } else if (CLEAR_ENTERED.equals(actionType)) {
             clear();
@@ -53,6 +55,7 @@ public class NumberBuilder {
             finishedNumber = new Number(number.getBigDecimalValue());
             number = new Number();
         }
+        previousChain = digitsChain;
         digitsChain = new LinkedList<>();
         return finishedNumber;
     }
@@ -61,12 +64,25 @@ public class NumberBuilder {
 
         number = new Number();
         digitsChain = new LinkedList<>();
+        previousChain = null;
+        positive = true;
     }
 
     private void backSpace() {
 
-        cutLastDigit();
-        number.setBigDecimalValue(new BigDecimal(getValue()));
+        if (digitsChain.isEmpty() && !previousChain.isEmpty()) {
+            digitsChain = previousChain;
+            cutLastDigit();
+            BigDecimal value = new BigDecimal(getValue());
+            if (!positive && value.compareTo(BigDecimal.ZERO) > 0) {
+                value = value.negate();
+            }
+            number.setBigDecimalValue(value);
+        } else if (!digitsChain.isEmpty()) {
+            cutLastDigit();
+            number.setBigDecimalValue(new BigDecimal(getValue()));
+        }
+
     }
 
     private void addDigit(Digit digit) {
@@ -135,7 +151,7 @@ public class NumberBuilder {
     private boolean isNotMaxDigits() {
 
         int digitsCount = digitsChain.size();
-        if (!digitsChain.isEmpty() && ZERO.equals(digitsChain.get(0).getValue())){
+        if (!digitsChain.isEmpty() && ZERO.equals(digitsChain.get(0).getValue())) {
             --digitsCount;
         }
         for (Digit d : digitsChain) {
@@ -144,5 +160,9 @@ public class NumberBuilder {
             }
         }
         return digitsCount < MAX_DIGITS;
+    }
+
+    void changeIsPositive() {
+        positive = !positive;
     }
 }

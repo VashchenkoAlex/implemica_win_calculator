@@ -669,9 +669,9 @@ class AppModelTest {
         test("333 / 1000000000000000 = =", "3,33e-28", "");
         test("333 / 1000000000000000 = =", "3,33e-28", "");
 
-        test("1 / 1000000000000000 " + enterInLoop(100), "1,e-1500", "");
-        test("1 / 1000000000000000 " + enterInLoop(666), "1,e-9990", "");
-        test("1 / 10 " + enterInLoop(9999), "1,e-9999", "");
+        test("1 / 1000000000000000 " + addEquals(100), "1,e-1500", "");
+        test("1 / 1000000000000000 " + addEquals(666), "1,e-9990", "");
+        test("1 / 10 " + addEquals(9999), "1,e-9999", "");
 
         test("0,0000000000000023 * 0,1 =", "2,3e-16", "");
         test("0,0000000000000234 * 0,1 =", "2,34e-15", "");
@@ -713,15 +713,15 @@ class AppModelTest {
         test("1000000000000000 * 10 * 10 / 10 /", "1,e+16", "1000000000000000  ×  10  ×  10  ÷  10  ÷  ");
         test("1000000000000000 + = = = = = = = = =", "1,e+16", "");
         test("1000000000000000 + = = = = = = = = = + 1 =", "1,e+16", "");
-        test("1000000000000000 * 10 " + enterInLoop(500), "1,e+515", "");
-        test("1000000000000000 * 10 " + enterInLoop(5000), "1,e+5015", "");
-        test("1000000000000000 * 10 " + enterInLoop(9983), "1,e+9998", "");
-        test("1000000000000000 * 10 " + enterInLoop(9984), "1,e+9999", "");
+        test("1000000000000000 * 10 " + addEquals(500), "1,e+515", "");
+        test("1000000000000000 * 10 " + addEquals(5000), "1,e+5015", "");
+        test("1000000000000000 * 10 " + addEquals(9983), "1,e+9998", "");
+        test("1000000000000000 * 10 " + addEquals(9984), "1,e+9999", "");
 
         test("1000000000000000 * =", "1,e+30", "");
         test("1000000000000000 * = *", "1,e+30", "1,e+30  ×  ");
         test("256 sqr sqr sqr = =", "1,844674407370955e+19", "");
-        test("9999999999999999 + " + enterInLoop(20), "2,1e+17", "");
+        test("9999999999999999 + " + addEquals(20), "2,1e+17", "");
     }
 
     @Test
@@ -748,11 +748,11 @@ class AppModelTest {
         test("+ / 0 -");
         test(", = + / , , -");
         test(", , , , , = = , , , , , = = + - * / , , , , , -");
-        test("1 / 10 " + enterInLoop(10000));
-        test("1 * 10 " + enterInLoop(10000));
-        test("1 / 1000000000000000 " + enterInLoop(667));
-        test("1 * 0,000000000000001 " + enterInLoop(667));
-        test("1000000000000000 * " + enterInLoop(667));
+        test("1 / 10 " + addEquals(10000));
+        test("1 * 10 " + addEquals(10000));
+        test("1 / 1000000000000000 " + addEquals(667));
+        test("1 * 0,000000000000001 " + addEquals(667));
+        test("1000000000000000 * " + addEquals(667));
         test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr sqr");
 
     }
@@ -788,7 +788,7 @@ class AppModelTest {
         return response;
     }
 
-    private String enterInLoop(int count) {
+    private String addEquals(int count) {
 
         StringBuilder result = new StringBuilder("=");
         for (int i = 1; i < count; i++) {

@@ -25,31 +25,31 @@ class UITest extends ApplicationTest{
     private static HashMap<String,TestButton> createMap(){
 
         HashMap<String, TestButton> map = new HashMap<>();
-        map.put("0",new TestButton("#buttonZero",KeyCode.DIGIT0,false));
-        map.put("1",new TestButton("#buttonOne",KeyCode.DIGIT1,false));
-        map.put("2",new TestButton("#buttonTwo",KeyCode.DIGIT2,false));
-        map.put("3",new TestButton("#buttonThree",KeyCode.DIGIT3,false));
-        map.put("4",new TestButton("#buttonFour",KeyCode.DIGIT4,false));
-        map.put("5",new TestButton("#buttonFive",KeyCode.DIGIT5,false));
-        map.put("6",new TestButton("#buttonSix",KeyCode.DIGIT6,false));
-        map.put("7",new TestButton("#buttonSeven",KeyCode.DIGIT7,false));
-        map.put("8",new TestButton("#buttonEight",KeyCode.DIGIT8,false));
-        map.put("9",new TestButton("#buttonNine",KeyCode.DIGIT9,false));
-        map.put(",",new TestButton("#buttonComa",KeyCode.COMMA,false));
+        map.put("0",new TestButton("#zeroBtn",KeyCode.DIGIT0,false));
+        map.put("1",new TestButton("#oneBtn",KeyCode.DIGIT1,false));
+        map.put("2",new TestButton("#twoBtn",KeyCode.DIGIT2,false));
+        map.put("3",new TestButton("#threeBtn",KeyCode.DIGIT3,false));
+        map.put("4",new TestButton("#fourBtn",KeyCode.DIGIT4,false));
+        map.put("5",new TestButton("#fiveBtn",KeyCode.DIGIT5,false));
+        map.put("6",new TestButton("#sixBtn",KeyCode.DIGIT6,false));
+        map.put("7",new TestButton("#sevenBtn",KeyCode.DIGIT7,false));
+        map.put("8",new TestButton("#eightBtn",KeyCode.DIGIT8,false));
+        map.put("9",new TestButton("#nineBtn",KeyCode.DIGIT9,false));
+        map.put(",",new TestButton("#comaBtn",KeyCode.COMMA,false));
         map.put("+",new TestButton("#addBtn",KeyCode.ADD,false));
-        map.put("-",new TestButton("#buttonMinus",KeyCode.SUBTRACT,false));
+        map.put("-",new TestButton("#subtractBtn",KeyCode.SUBTRACT,false));
         map.put("*",new TestButton("#multiplyBtn",KeyCode.DIGIT8,true));
         map.put("n*",new TestButton("#multiplyBtn",KeyCode.MULTIPLY,false));
-        map.put("/",new TestButton("#buttonDivide",KeyCode.DIVIDE,false));
+        map.put("/",new TestButton("#divideBtn",KeyCode.DIVIDE,false));
         map.put("%",new TestButton("#percentBtn",KeyCode.DIGIT5,true));
         map.put("sqrt",new TestButton("#sqrtBtn",KeyCode.DIGIT2,true));
-        map.put("sqr",new TestButton("#buttonSqr",KeyCode.Q,false));
-        map.put("1/x",new TestButton("#buttonFraction",KeyCode.R,false));
-        map.put("CE",new TestButton("#buttonClearEntered",KeyCode.DELETE,false));
-        map.put("C",new TestButton("#buttonClearEntered",KeyCode.C,false));
-        map.put("<-",new TestButton("#buttonBackSpace",KeyCode.BACK_SPACE,false));
+        map.put("sqr",new TestButton("#sqrBtn",KeyCode.Q,false));
+        map.put("1/x",new TestButton("#fractionBtn",KeyCode.R,false));
+        map.put("CE",new TestButton("#clearEnteredBtn",KeyCode.DELETE,false));
+        map.put("C",new TestButton("#clearBtn",KeyCode.C,false));
+        map.put("<-",new TestButton("#backSpaceBtn",KeyCode.BACK_SPACE,false));
         map.put("=",new TestButton("#equalsBtn",KeyCode.ENTER,false));
-        map.put("±",new TestButton("#buttonNegate",KeyCode.F9,false));
+        map.put("±",new TestButton("#negateBtn",KeyCode.F9,false));
         return map;
     }
 
@@ -60,8 +60,9 @@ class UITest extends ApplicationTest{
     }
 
     @Test
-    void TestButtons(){
+    void TestNumberButtons(){
 
+        test("C","0","");
         test(", , ,", "0,","");
         test("1 , , ,", "1,","");
         test("1 , , , 2", "1,2","");
@@ -89,6 +90,7 @@ class UITest extends ApplicationTest{
         test("1 2 3 4 5 6 7 8 9 0 , 0 9 8 7 6 5 4","1 234 567 890,098765","");
         test("1 2 3 4 5 6 7 8 9 0 , 0 9 8 7 6 5 4 ,","1 234 567 890,098765","");
         test("1 2 3 4 5 6 7 8 9 0 , 0 9 8 7 6 5 4 , C","0","");
+
         test("2","2","");
         test("2 +","2","2  +  ");
         test("2 + 3","3","2  +  ");
@@ -103,6 +105,7 @@ class UITest extends ApplicationTest{
         test("2 + 3 - * 4 / 9 sqrt sqr * CE","0","2  +  3  ×  4  ÷  sqr( √( 9 ) )  ×  ");
         test("C","0","");
     }
+
 
     @Test
     void testKeyboard(){
@@ -120,14 +123,20 @@ class UITest extends ApplicationTest{
         testKey("9 8 7 6 5 4 3 2 1 0 ± % = ", "0","");
         testKey("1 2 3 4 5 6 7 8 9 0 sqr + sqrt ± % % %", "-4,371241896208856e+57","sqr( 1234567890 )  +  -4,371241896208856e+57");
 
-        testKey("", "0","");
         testKey(", 0 0 0 0 0 0 0 1", "0,00000001","");
         testKey(", 0 0 0 0 0 0 1 ±", "-0,0000001","");
         testKey(", 0 0 0 , , , 0 0 0 0 1 = = = =", "0,00000001","");
-        testKey(", 0 0 0 0 0 0 0 1 - % % %", "0,00000000000001","");
-        testKey("1 2 3 4 5 6 7 8 9 0 , 0 1 2 3 4 5 6 7 *", "0,00000000000001","");
-        testKey("1 2 3 4 5 6 7 8 9 0 , 0 1 2 3 4 5 6 7 <- <- <- <- /", "0,00000000000001","");
-        testKey("1 2 3 4 5 6 7 8 9 0 , 5 6 7 ± <- <- <- <- /", "0,00000000000001","");
+        testKey(", 0 0 0 0 0 0 0 1 - % % %", "1,e-38","0,00000001  -  1,e-38");
+        testKey("1 2 3 4 5 6 7 8 9 0 , 0 1 2 3 4 5 6 7 *", "1 234 567 890,012345","1234567890,012345  ×  ");
+    }
+
+    @Test
+    void testBackSpace(){
+
+        testKey("2 5 ± <-","-2","");
+        testKey("1 2 3 4 ± <- <- <-","-1","");
+        testKey("1 2 3 4 5 6 7 8 9 0 , 0 1 2 3 4 5 6 7 <- <- <- <- /", "1 234 567 890,01","1234567890,01  ÷  ");
+        testKey("1 2 3 4 5 6 7 8 9 0 , 5 6 7 ± <- <- <- <- /", "-1 234 567 890","-1234567890  ÷  ");
         testKey("1 2 3 4 5 6 7 8 9 0 , 5 6 7 ± sqr <- <- <- <- /", "0,00000000000001","");
         testKey("2 5 6 7 8 9 0 , 1 3 4 ± <- <- <- <- sqr sqrt sqrt sqrt", "0,00000000000001","");
     }
@@ -138,6 +147,7 @@ class UITest extends ApplicationTest{
         for (String btnName : buttons) {
             clickOn(btnName);
         }
+        WaitForAsyncUtils.waitForFxEvents();
         verifyThat("#display",LabeledMatchers.hasText(display));
         verifyThat("#historyField",LabeledMatchers.hasText(history));
         clickOn("C");
@@ -145,6 +155,7 @@ class UITest extends ApplicationTest{
 
     private void clickOn(String btnName){
 
+        WaitForAsyncUtils.waitForFxEvents();
         Button button = find(actions.get(btnName).getId());
         this.interact(button::fire);
     }

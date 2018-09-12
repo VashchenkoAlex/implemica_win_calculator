@@ -15,33 +15,30 @@ public class ButtonPressHandler {
     private static HashMap<String,String> createButtonsMap(){
 
         HashMap<String,String> map = new HashMap<>();
-        map.put("0","#buttonZero");
-        map.put("1","#buttonOne");
-        map.put("2","#buttonTwo");
-        map.put("3","#buttonThree");
-        map.put("4","#buttonFour");
-        map.put("5","#buttonFive");
-        map.put("6","#buttonSix");
-        map.put("7","#buttonSeven");
-        map.put("8","#buttonEight");
-        map.put("9","#buttonNine");
-        map.put("Comma","#buttonComa");
+        map.put("0","#zeroBtn");
+        map.put("1","#oneBtn");
+        map.put("2","#twoBtn");
+        map.put("3","#threeBtn");
+        map.put("4","#fourBtn");
+        map.put("5","#fiveBtn");
+        map.put("6","#sixBtn");
+        map.put("7","#sevenBtn");
+        map.put("8","#eightBtn");
+        map.put("9","#nineBtn");
+        map.put("Comma","#comaBtn");
         map.put("Add","#addBtn");
-        map.put("Subtract","#buttonMinus");
-        map.put("Subtract","#buttonMinus");
+        map.put("Subtract","#subtractBtn");
         map.put("Multiply","#multiplyBtn");
-        map.put("Divide","#buttonDivide");
-        map.put("Slash","#buttonDivide");
-//        map.put("%",);
-//        map.put("@","#buttonSqrt");
-        map.put("Q","#buttonSqr");
-        map.put("R","#buttonFraction");
-        map.put("Delete","#buttonClearEntered");
-        map.put("C","#buttonClear");
-        map.put("Backspace","#buttonBackSpace");
+        map.put("Divide","#divideBtn");
+        map.put("Slash","#divideBtn");
+        map.put("Q","#sqrBtn");
+        map.put("R","#fractionBtn");
+        map.put("Delete","#clearEnteredBtn");
+        map.put("C","#clearBtn");
+        map.put("Backspace","#backSpaceBtn");
         map.put("Equals","#equalsBtn");
         map.put("Enter","#equalsBtn");
-        map.put("F9","#buttonNegate");
+        map.put("F9","#negateBtn");
         return map;
     }
 

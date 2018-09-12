@@ -340,6 +340,9 @@ public class FXMLViewController implements Initializable
     private ResponseDTO handleOperation(Action action) throws MyException {
 
         ResponseDTO response;
+        if (NEGATE.equals(action.getType())){
+            numberBuilder.changeIsPositive();
+        }
         Number currentNum = numberBuilder.finish();
         response = model.toDo(action,currentNum);
         if (response.getDisplayNumber() == null){
