@@ -86,27 +86,27 @@
                                 </Label>
                                 <GridPane fx:id="memoryButtonsGrid" styleClass="memoryButtonsGrid" minHeight="30.0" minWidth="320" GridPane.columnIndex="0" GridPane.rowIndex="3">
                                     <children>
-                                        <Button fx:id="buttonClearAllMemory" styleClass="memoryButton" text="MC" GridPane.columnIndex="0" GridPane.rowIndex="0" onAction="#clearMemoryBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <Button fx:id="clearAllMemoryBtn" styleClass="memoryButton" text="MC" GridPane.columnIndex="0" GridPane.rowIndex="0" onAction="#clearMemoryBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="5.0" />
                                             </GridPane.margin>
                                         </Button>
-                                        <Button fx:id="buttonMemoryRecall" styleClass="memoryButton" text="MR" GridPane.columnIndex="1" GridPane.rowIndex="0" onAction="#memoryRecallBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <Button fx:id="memoryRecallBtn" styleClass="memoryButton" text="MR" GridPane.columnIndex="1" GridPane.rowIndex="0" onAction="#memoryRecallBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="5.0" />
                                             </GridPane.margin>
                                         </Button>
-                                        <Button fx:id="buttonMemoryAdd" styleClass="memoryButton" text="M+" GridPane.columnIndex="2" GridPane.rowIndex="0" onAction="#memoryAddBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <Button fx:id="memoryAddBtn" styleClass="memoryButton" text="M+" GridPane.columnIndex="2" GridPane.rowIndex="0" onAction="#memoryAddBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="5.0" />
                                             </GridPane.margin>
                                         </Button>
-                                        <Button fx:id="buttonMemorySubtract" styleClass="memoryButton" text="M-" GridPane.columnIndex="3" GridPane.rowIndex="0" onAction="#memorySubtractBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <Button fx:id="memorySubtractBtn" styleClass="memoryButton" text="M-" GridPane.columnIndex="3" GridPane.rowIndex="0" onAction="#memorySubtractBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="5.0" />
                                             </GridPane.margin>
                                         </Button>
-                                        <Button fx:id="buttonMemoryStore" styleClass="memoryButton" text="MS" GridPane.columnIndex="4" GridPane.rowIndex="0" onAction="#memoryStoreBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <Button fx:id="memoryStoreBtn" styleClass="memoryButton" text="MS" GridPane.columnIndex="4" GridPane.rowIndex="0" onAction="#memoryStoreBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="5.0" />
                                             </GridPane.margin>
@@ -206,7 +206,7 @@
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                             </GridPane.margin>
                                         </Button>
-                                        <Button fx:id="subtractBtn" styleClass="mainActionButton" text="" GridPane.columnIndex="3" GridPane.rowIndex="3" onAction="#minusBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <Button fx:id="subtractBtn" styleClass="mainActionButton" text="" GridPane.columnIndex="3" GridPane.rowIndex="3" onAction="#subtractBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                             </GridPane.margin>
@@ -226,7 +226,7 @@
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                             </GridPane.margin>
                                         </Button>
-                                        <Button fx:id="addBtn" styleClass="mainActionButton" text="" GridPane.columnIndex="3" GridPane.rowIndex="4" onAction="#plusBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <Button fx:id="addBtn" styleClass="mainActionButton" text="" GridPane.columnIndex="3" GridPane.rowIndex="4" onAction="#addBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                             </GridPane.margin>
@@ -246,7 +246,7 @@
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                             </GridPane.margin>
                                         </Button>
-                                        <Button fx:id="equalsBtn" styleClass="mainActionButton" text="" GridPane.columnIndex="3" GridPane.rowIndex="5" onAction="#enterBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <Button fx:id="equalsBtn" styleClass="mainActionButton" text="" GridPane.columnIndex="3" GridPane.rowIndex="5" onAction="#equalsBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                             </GridPane.margin>

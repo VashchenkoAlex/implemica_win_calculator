@@ -1,7 +1,6 @@
 package win_calculator.model;
 
 import win_calculator.DTOs.ResponseDTO;
-import win_calculator.controller.view_handlers.MemoryHandler;
 import win_calculator.exceptions.MyException;
 import win_calculator.model.nodes.actions.Action;
 import win_calculator.controller.nodes.digits.Number;
@@ -10,7 +9,6 @@ import win_calculator.model.nodes.actions.extra_operations.ExtraOperation;
 import win_calculator.model.nodes.actions.extra_operations.Negate;
 import win_calculator.model.nodes.actions.extra_operations.Percent;
 import win_calculator.model.nodes.actions.main_operations.MainOperation;
-import win_calculator.model.nodes.actions.memory.MemoryAction;
 import win_calculator.model.response_handlers.HistoryHandler;
 import win_calculator.model.button_handlers.MainOperationHandler;
 import win_calculator.model.button_handlers.PercentHandler;
@@ -25,7 +23,6 @@ public class AppModel {
     private HistoryHandler historyHandler = new HistoryHandler();
     private MainOperationHandler mOperationHandler = new MainOperationHandler(historyHandler);
     private PercentHandler percentHandler = new PercentHandler(historyHandler);
-    private MemoryHandler memoryHandler = new MemoryHandler();
     private BigDecimal responseNumber;
     private Number lastNumber;
 
@@ -56,12 +53,14 @@ public class AppModel {
                 processClear();
                 break;
             }
-            case MEMORY: {
-                processMemoryOperation(action, number);
+            case CLEAR_ENTERED: {
+                historyHandler.rejectLastNumberWithExtraOperations();
+                responseNumber = null;
                 break;
             }
             case CLEAR_EXTRA: {
                 historyHandler.rejectLastNumberWithExtraOperations();
+                break;
             }
         }
         return new ResponseDTO(responseNumber, historyHandler.getHistoryString());
@@ -147,7 +146,6 @@ public class AppModel {
 
     private void processMainOperation(Action mOperation, Number number) throws MyException {
 
-        BigDecimal lastExtraResult = historyHandler.getLastExtraResult();
         if (number != null) {
             historyHandler.addActionToHistory(number);
             responseNumber = number.getBigDecimalValue();
@@ -157,10 +155,10 @@ public class AppModel {
             if (!historyHandler.isMOperationBefore()) {
                 historyHandler.resetPreviousNumber();
             }
-        } else if (lastExtraResult != null) {
-            historyHandler.changeLastNumberAtActions(lastExtraResult);
         } else if (responseNumber != null) {
-            historyHandler.changeLastNumberAtActions(responseNumber);
+            if (!historyHandler.hasExtraOperations()) {
+                historyHandler.changeLastNumberAtActions(responseNumber);
+            }
         } else {
             historyHandler.addZeroToHistory();
         }
@@ -169,11 +167,6 @@ public class AppModel {
             responseNumber = operationResult;
         }
         historyHandler.resetLastExtraResult();
-    }
-
-    private void processMemoryOperation(Action action, Number number) {
-
-        responseNumber = memoryHandler.doAction((MemoryAction) action, number).getBigDecimalValue();
     }
 
     private void processNegate(Action negate, Number number) {
@@ -190,10 +183,6 @@ public class AppModel {
             responseNumber = ((Negate) negate).calculate(responseNumber);
             historyHandler.changeLastNumber(responseNumber);
             historyHandler.addActionToHistory(negate);
-        } else if (number != null) {
-            responseNumber = ((Negate) negate).calculate(number.getBigDecimalValue());
-            historyHandler.setLastNumber(responseNumber);
-            historyHandler.setLastAction(negate);
         } else {
             responseNumber = ((Negate) negate).calculate(historyHandler.getLastNumber());
             historyHandler.changeLastNumber(responseNumber);

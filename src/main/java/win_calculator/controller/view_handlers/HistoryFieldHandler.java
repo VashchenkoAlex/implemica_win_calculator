@@ -14,9 +14,6 @@ public class HistoryFieldHandler {
 
     public void setHistoryText(String text){
 
-        if (text==null){
-            text = "";
-        }
         lastValue = text;
         historyField.setText(text);
     }

@@ -39,6 +39,11 @@ public class ButtonPressHandler {
         map.put("Equals","#equalsBtn");
         map.put("Enter","#equalsBtn");
         map.put("F9","#negateBtn");
+        map.put("L","#clearAllMemoryBtn");
+        map.put("M","#memoryStoreBtn");
+        map.put("O","#memoryRecallBtn");
+        map.put("P","#memoryAddBtn");
+        map.put("S","#memorySubtractBtn");
         return map;
     }
 

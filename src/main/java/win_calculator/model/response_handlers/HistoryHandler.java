@@ -48,7 +48,7 @@ public class HistoryHandler {
         if (MAIN_OPERATION.equals(action.getType())) {
             setMOperationBefore(true);
         } else {
-            if (NUMBER.equals(action.getType()) && !NEGATE.equals(lastAction.getType())) {
+            if (NUMBER.equals(action.getType()) ) {
                 previousNumber = lastNumber;
                 lastNumber = new BigDecimal(action.getValue());
             }
@@ -279,5 +279,10 @@ public class HistoryHandler {
             }
         }
         return new BigDecimal[]{firstNumber, secondNumber};
+    }
+
+    public boolean hasExtraOperations(){
+
+        return history.isContain(EXTRA_OPERATION);
     }
 }

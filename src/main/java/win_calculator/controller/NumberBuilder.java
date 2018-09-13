@@ -28,9 +28,10 @@ public class NumberBuilder {
             add((Digit) action);
         } else if (BACKSPACE.equals(actionType)) {
             backSpace();
-        } else if (CLEAR_ENTERED.equals(actionType)) {
-            clear();
         }
+//        else if (NEGATE.equals(actionType)) {
+//            negate();
+//        }
         return number.getBigDecimalValue();
     }
 
@@ -50,14 +51,17 @@ public class NumberBuilder {
 
     Number finish() {
 
-        Number finishedNumber = null;
-        if (isChainNotEmpty()) {
-            finishedNumber = new Number(number.getBigDecimalValue());
-            number = new Number();
-        }
+        prepareNumber();
         previousChain = digitsChain;
         digitsChain = new LinkedList<>();
-        return finishedNumber;
+        Number result;
+        if (number != null && number.getBigDecimalValue() != null) {
+            result = number;
+        } else {
+            result = null;
+        }
+        number = new Number();
+        return result;
     }
 
     public void clear() {
@@ -65,12 +69,12 @@ public class NumberBuilder {
         number = new Number();
         digitsChain = new LinkedList<>();
         previousChain = null;
-        positive = true;
+        resetPositive();
     }
 
     private void backSpace() {
 
-        if (digitsChain.isEmpty() && !previousChain.isEmpty()) {
+        if (digitsChain.isEmpty() && isPreviousChainNotEmpty()) {
             digitsChain = previousChain;
             cutLastDigit();
             BigDecimal value = new BigDecimal(getValue());
@@ -80,7 +84,11 @@ public class NumberBuilder {
             number.setBigDecimalValue(value);
         } else if (!digitsChain.isEmpty()) {
             cutLastDigit();
-            number.setBigDecimalValue(new BigDecimal(getValue()));
+            BigDecimal value = new BigDecimal(getValue());
+            if (!positive && value.compareTo(BigDecimal.ZERO) > 0) {
+                value = value.negate();
+            }
+            number.setBigDecimalValue(value);
         }
 
     }
@@ -148,6 +156,11 @@ public class NumberBuilder {
         return !digitsChain.isEmpty();
     }
 
+    private boolean isPreviousChainNotEmpty() {
+
+        return previousChain != null && !previousChain.isEmpty();
+    }
+
     private boolean isNotMaxDigits() {
 
         int digitsCount = digitsChain.size();
@@ -162,7 +175,56 @@ public class NumberBuilder {
         return digitsCount < MAX_DIGITS;
     }
 
-    void changeIsPositive() {
+    private void changeIsPositive() {
         positive = !positive;
+    }
+
+    BigDecimal negate(boolean wasMemoryAction) {
+
+        changeIsPositive();
+        if (wasMemoryAction){
+
+        }else {
+            prepareNumber();
+        }
+        return number.getBigDecimalValue();
+    }
+
+    private void resetPositive() {
+
+        positive = true;
+    }
+
+    boolean containsNumber() {
+
+        return isChainNotEmpty() || isPreviousChainNotEmpty() || (number != null && number.getBigDecimalValue() != null);
+    }
+
+    private void prepareNumber() {
+
+        if (digitsChain.isEmpty() && isPreviousChainNotEmpty()) {
+            digitsChain = previousChain;
+            BigDecimal value = new BigDecimal(getValue());
+            if (!positive && value.compareTo(BigDecimal.ZERO) > 0) {
+                value = value.negate();
+            }
+            number = new Number(value);
+        } else if (isChainNotEmpty()) {
+            BigDecimal value = number.getBigDecimalValue();
+            if (!positive && value.compareTo(BigDecimal.ZERO) > 0) {
+                value = value.negate();
+            }
+            number = new Number(value);
+        }
+    }
+
+    public void setNumber(Number number){
+
+        this.number = number;
+    }
+
+    public Number getNumber(){
+
+        return number;
     }
 }

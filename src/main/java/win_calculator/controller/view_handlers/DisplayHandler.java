@@ -3,9 +3,12 @@ package win_calculator.controller.view_handlers;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import win_calculator.model.nodes.actions.Action;
+import win_calculator.utils.ActionType;
 
 import java.math.BigDecimal;
 
+import static win_calculator.utils.ActionType.DIGIT;
 import static win_calculator.utils.AppUtils.*;
 
 public class DisplayHandler {
@@ -28,7 +31,7 @@ public class DisplayHandler {
         display.setText(ZERO);
     }
 
-    public void sendNumberToDisplay(BigDecimal number){
+    private void sendNumberToDisplay(BigDecimal number){
 
         setDisplayedText(convertToString(number,DISPLAY_PATTERN));
     }
@@ -42,7 +45,7 @@ public class DisplayHandler {
         }
     }
 
-    public void addZero(){
+    private void addZero(){
 
         setDisplayedText(addCapacity(display.getText()+ZERO));
 
@@ -71,8 +74,25 @@ public class DisplayHandler {
         return !display.getText().equals(((Text) display.lookup(DISPLAY_TEXT_ID)).getText());
     }
 
-    public boolean isNotMax(){
+    private boolean isNotMax(){
 
         return display.getText().replace("0,","").replaceAll("[ ,]","").length() < MAX_DIGITS;
+    }
+
+    public void sendToDisplay(Action action, BigDecimal number, ActionType previousActionType){
+
+        if (DIGIT.equals(action.getType())){
+            if (isNotMax()) {
+                if (ZERO.equals(action.getValue()) && DIGIT.equals(previousActionType)) {
+                    addZero();
+                }else {
+                    sendNumberToDisplay(number);
+                }
+            }else if (!DIGIT.equals(previousActionType)){
+                sendNumberToDisplay(number);
+            }
+        }else {
+            sendNumberToDisplay(number);
+        }
     }
 }

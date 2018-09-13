@@ -18,6 +18,9 @@ public class ResponseDTO {
 
     public String getHistory() {
 
+        if (history == null){
+            history = "";
+        }
         return history;
     }
 

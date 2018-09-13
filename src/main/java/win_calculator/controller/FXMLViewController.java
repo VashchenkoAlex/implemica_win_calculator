@@ -25,15 +25,16 @@ import win_calculator.model.nodes.actions.extra_operations.*;
 import win_calculator.model.nodes.actions.main_operations.*;
 import win_calculator.utils.ActionType;
 import win_calculator.utils.ComboBoxOption;
+import win_calculator.utils.MemoryType;
 
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static win_calculator.utils.ActionType.*;
+import static win_calculator.utils.MemoryType.STORE;
 
-public class FXMLViewController implements Initializable
-{
+public class FXMLViewController implements Initializable {
 
     @FXML
     private AnchorPane rootPane;
@@ -42,7 +43,7 @@ public class FXMLViewController implements Initializable
     private ComboBox<ComboBoxOption> menuBox;
 
     @FXML
-    private void trimLabelPosition(){
+    private void trimLabelPosition() {
     }
 
     @FXML
@@ -62,186 +63,187 @@ public class FXMLViewController implements Initializable
     private CaptionHandler captionHandler = new CaptionHandler();
     //private StylesHandler stylesHandler = new StylesHandler();
     private DisplayHandler displayHandler = new DisplayHandler();
+    private MemoryHandler memoryHandler = new MemoryHandler();
     private NumberBuilder numberBuilder = new NumberBuilder();
-    private Action lastAction;
-    private static final String ZERO = "0";
+    private ActionType lastActionType;
+    private String lastHistoryText;
 
-    public void closeBtn(){
+    public void closeBtn() {
 
         captionHandler.close();
     }
 
-    public void hideBtn(){
+    public void hideBtn() {
 
         captionHandler.hide();
     }
 
-    public void fullScreenBtnClick(){
+    public void fullScreenBtnClick() {
 
         captionHandler.fullScreen();
     }
 
-    public void menuBox(){
+    public void menuBox() {
 
     } //TO DO
 
-    public void historyBtn(){
+    public void historyBtn() {
 
     } //TO DO
 
     // -------- CLEAR_ENTERED BUTTONS ------------------
-    public void clearEnteredBtnClick(){
+    public void clearEnteredBtnClick() {
 
         makeAction(new ClearDisplay());
     } //TO DO TESTS
 
-    public void clearBtnClick(){
+    public void clearBtnClick() {
 
         makeAction(new Clear());
     }
 
-    public void backspaceBtnClick(){
+    public void backspaceBtnClick() {
 
         makeAction(new BaskSpace());
     } //TO DO TESTS
 
     // -------- DIGIT BUTTONS -----------------
-    public void oneBtnClick(){
+    public void oneBtnClick() {
 
         makeAction(new OneDigit());
     }
 
-    public void twoBtnClick(){
+    public void twoBtnClick() {
 
         makeAction(new TwoDigit());
     }
 
-    public void threeBtnClick(){
+    public void threeBtnClick() {
 
         makeAction(new ThreeDigit());
     }
 
-    public void fourBtnClick(){
+    public void fourBtnClick() {
 
         makeAction(new FourDigit());
     }
 
-    public void fiveBtnClick(){
+    public void fiveBtnClick() {
 
         makeAction(new FiveDigit());
     }
 
-    public void sixBtnClick(){
+    public void sixBtnClick() {
 
         makeAction(new SixDigit());
     }
 
-    public void sevenBtnClick(){
+    public void sevenBtnClick() {
 
         makeAction(new SevenDigit());
     }
 
-    public void eightBtnClick(){
+    public void eightBtnClick() {
 
         makeAction(new EightDigit());
     }
 
-    public void nineBtnClick(){
+    public void nineBtnClick() {
 
         makeAction(new NineDigit());
     }
 
-    public void zeroBtnClick(){
+    public void zeroBtnClick() {
 
         makeAction(new ZeroDigit());
     }
 
-    public void comaBtnClick(){
+    public void comaBtnClick() {
 
         makeAction(new Coma());
         displayHandler.addComa();
     }
 
     // -------- MAIN OPERATIONS BUTTONS ----------
-    public void divideBtnClick(){
+    public void divideBtnClick() {
 
         makeAction(new Divide());
     }
 
-    public void multiplyBtnClick(){
+    public void multiplyBtnClick() {
 
         makeAction(new Multiply());
     }
 
-    public void minusBtnClick(){
+    public void subtractBtnClick() {
 
         makeAction(new Subtract());
     }
 
-    public void plusBtnClick(){
+    public void addBtnClick() {
 
         makeAction(new Add());
     }
 
-    public void enterBtnClick(){
+    public void equalsBtnClick() {
 
         makeAction(new Enter());
     }
 
     //---------- ADVANCED OPERATIONS BUTTONS ----------------
 
-    public void percentBtnClick(){
+    public void percentBtnClick() {
 
         makeAction(new Percent());
     }
 
-    public void sqrtBtnClick(){
+    public void sqrtBtnClick() {
 
         makeAction(new Sqrt());
     }
 
-    public void sqrBtnClick(){
+    public void sqrBtnClick() {
 
         makeAction(new Sqr());
-    } //TO DO
+    }
 
-    public void fractionBtnOneClick(){
+    public void fractionBtnOneClick() {
 
         makeAction(new Fraction());
-    } //TO DO
+    }
 
-    public void negateBtnClick(){
+    public void negateBtnClick() {
 
         makeAction(new Negate());
-    } //TO DO
+    }
 
     //---------- MEMORY BUTTONS ------------------
-    public void clearMemoryBtnClick(){
+    public void clearMemoryBtnClick() {
 
-        makeAction(new ClearMemoryAction());
+        makeAction(new ClearMemory());
     } //TO DO
 
-    public void memoryRecallBtnClick(){
+    public void memoryRecallBtnClick() {
 
         makeAction(new RecallMemory());
     } //TO DO
 
-    public void memoryAddBtnClick(){
+    public void memoryAddBtnClick() {
 
-        makeAction(new AddToMemoryAction());
+        makeAction(new AddToMemory());
     } //TO DO
 
-    public void memorySubtractBtnClick(){
+    public void memorySubtractBtnClick() {
 
-        makeAction(new SubtractMemoryAction());
+        makeAction(new SubtractMemory());
     } //TO DO
 
-    public void memoryStoreBtnClick(){
+    public void memoryStoreBtnClick() {
 
-        makeAction(new MemoryStoreAction());
+        makeAction(new StoreMemory());
     } //TO DO
 
-    public void memoryShowBtnClick(){
+    public void memoryShowBtnClick() {
 
         //makeAction(new ShowMemoryAction());
     } //TO DO
@@ -260,23 +262,23 @@ public class FXMLViewController implements Initializable
         captionHandler.setStage(rootPane);
     }
 
-    private void setCellFactoryMenuBox(){
+    private void setCellFactoryMenuBox() {
         menuBox.setCellFactory(new Callback<ListView<ComboBoxOption>, ListCell<ComboBoxOption>>() {
             @Override
             public ListCell<ComboBoxOption> call(ListView<ComboBoxOption> param) {
-                return new ListCell<ComboBoxOption>(){
+                return new ListCell<ComboBoxOption>() {
                     @Override
-                    protected void updateItem(ComboBoxOption item,boolean empty){
-                        super.updateItem(item,empty);
-                        if (empty){
+                    protected void updateItem(ComboBoxOption item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
                             setText("");
                             setGraphic(null);
-                        }else {
+                        } else {
                             setText(item.getLabel());
-                            if (item.isOption().equals("NOT_OPTION")){
+                            if (item.isOption().equals("NOT_OPTION")) {
                                 setId("notOption");
                                 setDisable(true);
-                            }else{
+                            } else {
                                 setId("option");
                             }
                         }
@@ -286,7 +288,7 @@ public class FXMLViewController implements Initializable
         });
     }
 
-    private void setSizeMainTableColumns(){
+    private void setSizeMainTableColumns() {
 
         ObservableList<RowConstraints> rows = mainTable.getRowConstraints();
         rows.get(0).setPercentHeight(5);
@@ -296,31 +298,16 @@ public class FXMLViewController implements Initializable
         rows.get(4).setPercentHeight(77);
     }
 
-    private void makeAction(Action action){
+    private void makeAction(Action action) {
 
         String history = null;
         try {
-            ActionType lastActionType = getLastActionType();
+            ActionType previousActionType = lastActionType;
             ResponseDTO response = handleAction(action);
-            if (DIGIT.equals(action.getType())){
-                if (displayHandler.isNotMax()) {
-                    if (ZERO.equals(action.getValue()) && DIGIT.equals(lastActionType)) {
-                        displayHandler.addZero();
-                    }else {
-                        displayHandler.sendNumberToDisplay(response.getDisplayNumber());
-                    }
-                }else if (!DIGIT.equals(lastActionType)){
-                    displayHandler.sendNumberToDisplay(response.getDisplayNumber());
-                }
-            }else {
-                displayHandler.sendNumberToDisplay(response.getDisplayNumber());
-            }
+            displayHandler.sendToDisplay(action, response.getDisplayNumber(), previousActionType);
             history = response.getHistory();
-        }catch (MyException e){
+        } catch (MyException e) {
             displayHandler.setDisplayedText(e.getMessage());
-        }
-        if (history==null){
-            history = "";
         }
         historyFieldHandler.setHistoryText(history);
     }
@@ -329,51 +316,99 @@ public class FXMLViewController implements Initializable
 
         ResponseDTO response;
         ActionType type = action.getType();
-        if (DIGIT.equals(type)||BACKSPACE.equals(type)|| CLEAR_ENTERED.equals(type)){
+        if (DIGIT.equals(type)) {
             response = handleDigit(action);
-        }else {
+        } else if (CLEAR_ENTERED.equals(type)) {
+            response = handleClearEntered(action);
+        } else if (BACKSPACE.equals(type)) {
+            response = handleBackSpace(action);
+        } else if (NEGATE.equals(type) && numberBuilder.containsNumber()) {
+            response = handleNegate();
+        } else if (MEMORY.equals(type)) {
+            response = handleMemory((MemoryAction) action);
+        } else {
             response = handleOperation(action);
         }
+        lastHistoryText = response.getHistory();
         return response;
     }
 
     private ResponseDTO handleOperation(Action action) throws MyException {
 
-        ResponseDTO response;
-        if (NEGATE.equals(action.getType())){
-            numberBuilder.changeIsPositive();
+        Number currentNum;
+        if (MEMORY.equals(lastActionType) && numberBuilder.containsNumber()){
+            currentNum = numberBuilder.getNumber();
+        }else {
+            currentNum = numberBuilder.finish();
         }
-        Number currentNum = numberBuilder.finish();
-        response = model.toDo(action,currentNum);
-        if (response.getDisplayNumber() == null){
+        ResponseDTO response = model.toDo(action, currentNum);
+        if (!NEGATE.equals(action.getType())) {
+            numberBuilder.clear();
+        }
+        if (response.getDisplayNumber() == null) {
             response.setDisplayNumber(BigDecimal.ZERO);
         }
-        lastAction = action;
+        lastActionType = action.getType();
         return response;
     }
 
-    private ResponseDTO handleDigit(Action digit){
+    private ResponseDTO handleDigit(Action digit) {
 
         ResponseDTO response;
         String historyText = historyFieldHandler.getLastValue();
-        if (lastAction!=null && EXTRA_OPERATION.equals(lastAction.getType())){
+        if (EXTRA_OPERATION.equals(lastActionType)) {
             try {
-                response = model.toDo(new LastExtraCleaner(),null);
+                response = model.toDo(new LastExtraCleaner(), null);
                 historyText = response.getHistory();
             } catch (MyException e) {
                 System.out.println(e.getMessage());
             }
         }
-        response = new ResponseDTO(numberBuilder.toDo(digit),historyText);
-        lastAction = digit;
+        response = new ResponseDTO(numberBuilder.toDo(digit), historyText);
+        lastActionType = digit.getType();
         return response;
     }
 
-    private ActionType getLastActionType(){
-        ActionType result = CLEAR;
-        if (lastAction!=null){
-            result = lastAction.getType();
+    private boolean isBackSpacePossible() {
+
+        return !MAIN_OPERATION.equals(lastActionType) && !EXTRA_OPERATION.equals(lastActionType);
+    }
+
+    private ResponseDTO handleMemory(MemoryAction action) {
+
+        MemoryType memoryType = action.getMemoryType();
+        Number currentNum = new Number(BigDecimal.ZERO);
+        if (STORE.equals(memoryType)) {
+            currentNum = numberBuilder.finish();
         }
-        return result;
+        Number result = memoryHandler.doAction(action, currentNum);
+        if (result != null) {
+            currentNum = result;
+            numberBuilder.setNumber(result);
+        }
+        return new ResponseDTO(currentNum.getBigDecimalValue(), lastHistoryText);
+    }
+
+    private ResponseDTO handleNegate() {
+
+        numberBuilder.negate(MEMORY.equals(lastActionType));
+        return new ResponseDTO(numberBuilder.finish().getBigDecimalValue(), null);
+    }
+
+    private ResponseDTO handleBackSpace(Action action) {
+
+        ResponseDTO response;
+        if (isBackSpacePossible()) {
+            response = handleDigit(action);
+        } else {
+            response = new ResponseDTO(null, null);
+        }
+        return response;
+    }
+
+    private ResponseDTO handleClearEntered(Action action) throws MyException {
+
+        numberBuilder.clear();
+        return model.toDo(action, null);
     }
 }

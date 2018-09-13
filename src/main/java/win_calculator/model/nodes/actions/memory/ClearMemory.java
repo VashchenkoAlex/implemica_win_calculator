@@ -5,7 +5,7 @@ import win_calculator.utils.MemoryType;
 
 import static win_calculator.utils.MemoryType.CLEAR;
 
-public class ClearMemoryAction implements MemoryAction {
+public class ClearMemory implements MemoryAction {
 
     private static final String VALUE = " MR ";
     private static final ActionType TYPE = ActionType.MEMORY;

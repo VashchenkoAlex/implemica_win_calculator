@@ -3,13 +3,14 @@ package win_calculator.model.nodes.actions.memory;
 import win_calculator.utils.ActionType;
 import win_calculator.utils.MemoryType;
 
+import static win_calculator.utils.MemoryType.RECALL;
 import static win_calculator.utils.MemoryType.STORE;
 
 public class RecallMemory implements MemoryAction {
 
     private static final String VALUE = " MR ";
     private static final ActionType TYPE = ActionType.MEMORY;
-    private static final MemoryType MEMORY_TYPE = STORE;
+    private static final MemoryType MEMORY_TYPE = RECALL;
 
     @Override
     public MemoryType getMemoryType() {

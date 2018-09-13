@@ -224,7 +224,6 @@ public abstract class AppUtils {
                 currentPattern = preparePattern(getUnscaledLength(number)) + E_PART_OF_FORMAT;
             }
         }
-
         if (containsE(number) && getWholeLength(number) > MAX_ROUND) {
             currentPattern = FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT;
         } else {

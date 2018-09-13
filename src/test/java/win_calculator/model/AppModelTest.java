@@ -12,6 +12,7 @@ import win_calculator.model.nodes.actions.clear.ClearDisplay;
 import win_calculator.model.nodes.actions.enter.Enter;
 import win_calculator.model.nodes.actions.extra_operations.*;
 import win_calculator.model.nodes.actions.main_operations.*;
+import win_calculator.model.nodes.actions.memory.*;
 
 import java.util.HashMap;
 
@@ -54,6 +55,11 @@ class AppModelTest {
         map.put("<-", new BaskSpace());
         map.put("=", new Enter());
         map.put("±", new Negate());
+        map.put("MC",new ClearMemory());
+        map.put("MS",new StoreMemory());
+        map.put("MR",new RecallMemory());
+        map.put("M+",new AddToMemory());
+        map.put("M-",new SubtractMemory());
         return map;
     }
 
@@ -434,9 +440,12 @@ class AppModelTest {
         test("± -", "0", "negate( 0 )  -  ");
         test("5 ± ±", "5", "");
         test("5 ± ± ± -", "-5", "-5  -  ");
+        test("5 ± ± ± - =", "0", "");
         test("5 ± ± ± - 6 - ±", "11", "-5  -  6  -  negate( -11 )");
         test("5 ± ± ± - 6 - ± ±", "-11", "-5  -  6  -  negate( negate( -11 ) )");
         test("5 ± ± ± - 6 - ± ± ±", "11", "-5  -  6  -  negate( negate( negate( -11 ) ) )");
+
+        test("9 ± ± sqrt -","3","√( 9 )  -  ");
 
         test("20 ±", "-20", "");
         test("20 + ±", "-20", "20  +  negate( 20 )");
@@ -455,11 +464,11 @@ class AppModelTest {
         test("256 ± ± ± = =", "-256", "");
 
         test("1 ± +", "-1", "-1  +  ");
-        test("1 ± + 2 ±", "-2", "-1  +  ");
+        test("1 ± + 2 ±", "-2", "");
         test("1 ± + 2 ± +", "-3", "-1  +  -2  +  ");
-        test("1 ± + 2 ± + 3 ±", "-3", "-1  +  -2  +  ");
+        test("1 ± + 2 ± + 3 ±", "-3", "");
         test("1 ± + 2 ± + 3 ± +", "-6", "-1  +  -2  +  -3  +  ");
-        test("1 ± + 2 ± + 3 ± + 4 ±", "-4", "-1  +  -2  +  -3  +  ");
+        test("1 ± + 2 ± + 3 ± + 4 ±", "-4", "");
         test("1 ± + 2 ± + 3 ± + 4 ± =", "-10", "");
         test("1 ± + 2 ± + 3 ± + 4 ± = =", "-14", "");
         test("2 ± + 3 ± + 4 ± + 5 ± = =", "-19", "");
@@ -728,20 +737,66 @@ class AppModelTest {
     void testClear() throws MyException {
 
         test("5 - 3 = C - 2 -", "-2", "0  -  2  -  ");
-        test("5 - 2333 CE", "0", null);
-
+//        test("5 MS + 3 = C - MR -", "-5", "0  -  5  -  ");
     }
 
     @Test
     void testClearEntered() throws MyException {
 
-//        test("5 ± ± ± - 6 - ± ± ± CE 25 -", "-11", "-5  -  6  -  25  -  ");
+        test("5 - 2333 CE", "0", "5  -  ");
+        test("9 ± ± sqrt - CE","0","√( 9 )  -  ");
+        test("9 ± ± sqrt - 2 = CE","0","");
+        test("5 ± ± ± - 6 - ± ± ± CE", "0", "-5  -  6  -  ");
+        test("5 ± ± ± - 6 - ± ± ± CE 25 -", "-36", "-5  -  6  -  25  -  ");
+    }
+
+    @Test
+    void testBackSpace() throws MyException {
+
+        test(", <-","0","");
+        test("5 <-","0","");
+        test("5 , <-","5","");
+        test("5 , ± <-","-5","");
+        test("25 ± <-","-2","");
+        test("1234 <- <- <-","1","");
+        test("1234 ± <- <- <-","-1","");
+
+        test("987 <- <- sqrt 2 -","2","2  -  ");
+        test("987 <- <- sqrt ± -","-3","negate( √( 9 ) )  -  ");
+        test("987 <- <- sqrt + 2 -","5","√( 9 )  +  2  -  ");
+        test("987 ± <- <- + 10 % -","-9,9","-9  +  -0,9  -  ");
+        test("1234 ± <- <- / 2 -","-6","-12  ÷  2  -  ");
+
+        test("1234567890 <- <- <- <- <- <- <- <- <- <-", "0","");
+        test("1234567890,01234567 <- <- <- <- <- <- <- <- <- <- <- <- <- <- <- <- <- <- <-", "0","");
+        test("1234567890,01234567 <- <- <- <- /", "1 234 567 890,01","1234567890,01  ÷  ");
+        test("1234567890,567 ± <- <- <- <- /", "-1 234 567 890","-1234567890  ÷  ");
+        test("1234567890,567 ± sqr <- <- <- <- /", "1,524157876419052e+18","sqr( -1234567890,567 )  ÷  ");
+        test("1234567890,567 ± sqr <- <- <- <- / =", "1","");
+        test("2567890,134 ± <- <- <- <- sqr sqrt sqrt sqrt", "40,03078475546843","√( √( √( sqr( -2567890 ) ) ) )");
+        test("9 ± ± sqrt - <- +","3","√( 9 )  +  ");
+        test("9 ± ± 1/x - <- +","0,1111111111111111","1/( 9 )  +  ");
+        test("25 - 200 <- % +","20","25  -  5  +  ");
+    }
+
+    @Test
+    void testMemory() throws MyException {
+
+        test("20 MS","20","");
+        test("20 MS + 10 + MR","20","20  +  10  +  ");
+        test("20 MS + 10 + MR =","50","");
+        test("20 MS + 10 + MR = <-","50","");
+        test("20 MS + 10 + MR 5 =","35","");
+        test("20 MS + 10 + MR ±","-20","");
+        test("20 MS + 10 + MR 1/x","0,05","");
+        test("20 MS + 10 + MR %","6","20  +  10  +  6");
     }
 
     @Test
     void testInvalidValues() throws MyException {
 
         test("/ =");
+        test("1 / 0 =");
         test("1 ± sqrt");
         test("0 1/x");
         test("/ , , -");

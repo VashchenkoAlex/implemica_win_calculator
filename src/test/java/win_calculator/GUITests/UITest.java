@@ -50,6 +50,11 @@ class UITest extends ApplicationTest{
         map.put("<-",new TestButton("#backSpaceBtn",KeyCode.BACK_SPACE,false));
         map.put("=",new TestButton("#equalsBtn",KeyCode.ENTER,false));
         map.put("±",new TestButton("#negateBtn",KeyCode.F9,false));
+        map.put("MC",new TestButton("#clearAllMemoryBtn",KeyCode.L,false));
+        map.put("MS",new TestButton("#memoryStoreBtn",KeyCode.M,false));
+        map.put("MR",new TestButton("#memoryRecallBtn",KeyCode.O,false));
+        map.put("M+",new TestButton("#memoryAddBtn",KeyCode.P,false));
+        map.put("M-",new TestButton("#memorySubtractBtn",KeyCode.S,false));
         return map;
     }
 
@@ -104,11 +109,6 @@ class UITest extends ApplicationTest{
         test("2 + 3 - * 4 / 9 sqrt sqr *","2,222222222222222","2  +  3  ×  4  ÷  sqr( √( 9 ) )  ×  ");
         test("2 + 3 - * 4 / 9 sqrt sqr * CE","0","2  +  3  ×  4  ÷  sqr( √( 9 ) )  ×  ");
         test("C","0","");
-    }
-
-
-    @Test
-    void testKeyboard(){
 
         testKey("2 0 + %","4","20  +  4");
         testKey("1 2 + 3 4 - 5 6 * 7 8 / 9 0 = ", "-8,666666666666667","");
@@ -128,17 +128,21 @@ class UITest extends ApplicationTest{
         testKey(", 0 0 0 , , , 0 0 0 0 1 = = = =", "0,00000001","");
         testKey(", 0 0 0 0 0 0 0 1 - % % %", "1,e-38","0,00000001  -  1,e-38");
         testKey("1 2 3 4 5 6 7 8 9 0 , 0 1 2 3 4 5 6 7 *", "1 234 567 890,012345","1234567890,012345  ×  ");
+        testKey("2 5 ± <-","-2","");
+        testKey("1 2 3 4 ± <- <- <-","-1","");
+        testKey("1 2 3 4 ± <- <- / 2 -","-6","-12  ÷  2  -  ");
+
+        testKey("1 2 3 4 5 6 7 8 9 0 , 0 1 2 3 4 5 6 7 <- <- <- <- /", "1 234 567 890,01","1234567890,01  ÷  ");
+        testKey("1 2 3 4 5 6 7 8 9 0 , 5 6 7 ± <- <- <- <- /", "-1 234 567 890","-1234567890  ÷  ");
+        testKey("1 2 3 4 5 6 7 8 9 0 , 5 6 7 ± sqr <- <- <- <- /", "1,524157876419052e+18","sqr( -1234567890,567 )  ÷  ");
+        testKey("2 5 6 7 8 9 0 , 1 3 4 ± <- <- <- <- sqr sqrt sqrt sqrt", "40,03078475546843","√( √( √( sqr( -2567890 ) ) ) )");
+
     }
 
     @Test
-    void testBackSpace(){
+    void prepareCases(){
 
-        testKey("2 5 ± <-","-2","");
-        testKey("1 2 3 4 ± <- <- <-","-1","");
-        testKey("1 2 3 4 5 6 7 8 9 0 , 0 1 2 3 4 5 6 7 <- <- <- <- /", "1 234 567 890,01","1234567890,01  ÷  ");
-        testKey("1 2 3 4 5 6 7 8 9 0 , 5 6 7 ± <- <- <- <- /", "-1 234 567 890","-1234567890  ÷  ");
-        testKey("1 2 3 4 5 6 7 8 9 0 , 5 6 7 ± sqr <- <- <- <- /", "0,00000000000001","");
-        testKey("2 5 6 7 8 9 0 , 1 3 4 ± <- <- <- <- sqr sqrt sqrt sqrt", "0,00000000000001","");
+
     }
 
     private void test(String expression, String display, String history){
