@@ -12,6 +12,7 @@ import win_calculator.model.nodes.actions.main_operations.MainOperation;
 import win_calculator.model.response_handlers.HistoryHandler;
 import win_calculator.model.button_handlers.MainOperationHandler;
 import win_calculator.model.button_handlers.PercentHandler;
+import win_calculator.utils.ActionType;
 
 import java.math.BigDecimal;
 
@@ -129,7 +130,8 @@ public class AppModel {
             responseNumber = number.getBigDecimalValue();
         } else {
             BigDecimal resultNumber = historyHandler.getResultNumber();
-            if (!historyHandler.isEnterRepeated() && resultNumber != null && MAIN_OPERATION.equals(historyHandler.getLastActionType())) {
+            ActionType lastActionType = historyHandler.getLastActionType();
+            if (!historyHandler.isEnterRepeated() && resultNumber != null && (MAIN_OPERATION.equals(lastActionType)||MEMORY.equals(lastActionType))) {
                 historyHandler.setLastNumber(resultNumber);
             }
         }
@@ -166,6 +168,7 @@ public class AppModel {
         if (operationResult != null) {
             responseNumber = operationResult;
         }
+        historyHandler.setEnterRepeated(false);
         historyHandler.resetLastExtraResult();
     }
 

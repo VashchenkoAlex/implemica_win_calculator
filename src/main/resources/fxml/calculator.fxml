@@ -10,9 +10,7 @@
 <?import javafx.scene.Scene?>
 <?import java.net.URL?>
 <?import javafx.collections.FXCollections?>
-<?import javafx.scene.text.Text?>
-<?import javafx.scene.control.cell.ComboBoxListCell?>
-<?import win_calculator.utils.ComboBoxOption?>
+<?import win_calculator.utils.MenuListOption?>
 <?import javafx.scene.text.Font?>
 <Stage title="Calculator"
        xmlns:fx="http://javafx.com/fxml/1"
@@ -36,35 +34,37 @@
                         <Label text="Calculator" styleClass="captionText" AnchorPane.topAnchor="8.0" AnchorPane.leftAnchor="10.0"/>
                         <AnchorPane styleClass="flowPane" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="30.0">
                             <children>
-                                <Text fx:id="menuBoxText" styleClass="menuBoxText" text="" AnchorPane.topAnchor="18.0" AnchorPane.leftAnchor="15.0"/>
-                                <ComboBox fx:id="menuBox" styleClass="menu" promptText="" minWidth="250.0" onAction="#trimLabelPosition" onMouseClicked="#menuBox" AnchorPane.topAnchor="5.0" AnchorPane.leftAnchor="1.0">
-                                    <buttonCell>
-                                        <ComboBoxListCell/>
-                                    </buttonCell>
-                                    <items>
-                                        <FXCollections fx:factory="observableArrayList">
-                                            <ComboBoxOption fx:value="CALCULATOR"/>
-                                            <ComboBoxOption fx:value="STANDARD"/>
-                                            <ComboBoxOption fx:value="SCIENTIFIC"/>
-                                            <ComboBoxOption fx:value="PROGRAMMER"/>
-                                            <ComboBoxOption fx:value="DATE_CALCULATION"/>
-                                            <ComboBoxOption fx:value="CONVERTER"/>
-                                            <ComboBoxOption fx:value="CURRENCY"/>
-                                            <ComboBoxOption fx:value="VOLUME"/>
-                                            <ComboBoxOption fx:value="LENGTH"/>
-                                            <ComboBoxOption fx:value="WEIGHT_AND_MASS"/>
-                                            <ComboBoxOption fx:value="TEMPERATURE"/>
-                                            <ComboBoxOption fx:value="ENERGY"/>
-                                            <ComboBoxOption fx:value="AREA"/>
-                                            <ComboBoxOption fx:value="SPEED"/>
-                                            <ComboBoxOption fx:value="TIME"/>
-                                            <ComboBoxOption fx:value="POWER"/>
-                                            <ComboBoxOption fx:value="DATA"/>
-                                            <ComboBoxOption fx:value="PRESSURE"/>
-                                            <ComboBoxOption fx:value="ANGLE"/>
-                                        </FXCollections>
-                                    </items>
-                                </ComboBox>
+                                <Button fx:id="menuBtn" text="" styleClass="menu" onAction="#dropMenu" AnchorPane.topAnchor="5.0" AnchorPane.leftAnchor="0.0"/>
+                                <!--<Text fx:id="menuBoxText" styleClass="menuBoxText" text="" AnchorPane.topAnchor="18.0" AnchorPane.leftAnchor="15.0"/>-->
+
+                                <!--<ComboBox fx:id="menuBox" styleClass="menu" promptText="" minWidth="250.0" onMousePressed="#dropMenu" onMouseClicked="#menuBox" AnchorPane.topAnchor="5.0" AnchorPane.leftAnchor="1.0">-->
+                                    <!--<buttonCell>-->
+                                        <!--<ComboBoxListCell fx:id="menuListCell"/>-->
+                                    <!--</buttonCell>-->
+                                    <!--<items >-->
+                                        <!--<FXCollections fx:factory="observableArrayList">-->
+                                            <!--<MenuListOption fx:value="CALCULATOR"/>-->
+                                            <!--<MenuListOption fx:value="STANDARD"/>-->
+                                            <!--<MenuListOption fx:value="SCIENTIFIC"/>-->
+                                            <!--<MenuListOption fx:value="PROGRAMMER"/>-->
+                                            <!--<MenuListOption fx:value="DATE_CALCULATION"/>-->
+                                            <!--<MenuListOption fx:value="CONVERTER"/>-->
+                                            <!--<MenuListOption fx:value="CURRENCY"/>-->
+                                            <!--<MenuListOption fx:value="VOLUME"/>-->
+                                            <!--<MenuListOption fx:value="LENGTH"/>-->
+                                            <!--<MenuListOption fx:value="WEIGHT_AND_MASS"/>-->
+                                            <!--<MenuListOption fx:value="TEMPERATURE"/>-->
+                                            <!--<MenuListOption fx:value="ENERGY"/>-->
+                                            <!--<MenuListOption fx:value="AREA"/>-->
+                                            <!--<MenuListOption fx:value="SPEED"/>-->
+                                            <!--<MenuListOption fx:value="TIME"/>-->
+                                            <!--<MenuListOption fx:value="POWER"/>-->
+                                            <!--<MenuListOption fx:value="DATA"/>-->
+                                            <!--<MenuListOption fx:value="PRESSURE"/>-->
+                                            <!--<MenuListOption fx:value="ANGLE"/>-->
+                                        <!--</FXCollections>-->
+                                    <!--</items>-->
+                                <!--</ComboBox>-->
                                 <Label fx:id="mainMessage" styleClass="mainMessage" text="Standard" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="0.0"/>
                             </children>
                         </AnchorPane>
@@ -111,7 +111,7 @@
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="5.0" />
                                             </GridPane.margin>
                                         </Button>
-                                        <Button fx:id="buttonMemory" styleClass="memoryButton" text="Mˇ" GridPane.columnIndex="5" GridPane.rowIndex="0" onAction="#memoryShowBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <Button fx:id="memoryShowBtn" styleClass="memoryButton" text="Mˇ" GridPane.columnIndex="5" GridPane.rowIndex="0" onAction="#memoryShowBtnClick" maxHeight="Infinity" maxWidth="Infinity">
                                             <GridPane.margin>
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="5.0" />
                                             </GridPane.margin>
@@ -280,6 +280,37 @@
                             </rowConstraints>
                         </GridPane>
                     </children>
+                    <AnchorPane fx:id="menuListContainer" minWidth="1.0" minHeight="1.0">
+                        <children>
+                            <!--<ListView fx:id="" minWidth="1.0" prefWidth="1.0" minHeight="1.0" prefHeight="1.0" AnchorPane.topAnchor="33.0" AnchorPane.leftAnchor="2.0">-->
+                                <!--<items>-->
+                                    <!--<FXCollections fx:factory="observableArrayList">-->
+                                        <!--<MenuListOption fx:value="CALCULATOR"/>-->
+                                        <!--<MenuListOption fx:value="STANDARD"/>-->
+                                        <!--<MenuListOption fx:value="SCIENTIFIC"/>-->
+                                        <!--<MenuListOption fx:value=""/>-->
+                                        <!--<MenuListOption fx:value=""/>-->
+                                        <!--<MenuListOption fx:value=""/>-->
+                                        <!--<MenuListOption fx:value=""/>-->
+                                        <!--<MenuListOption fx:value=""/>-->
+                                        <!--<MenuListOption fx:value=""/>-->
+                                        <!--<MenuListOption fx:value=""/>-->
+                                        <!--<MenuListOption fx:value=""/>-->
+                                        <!--<MenuListOption fx:value=""/>-->
+                                        <!--<MenuListOption fx:value=""/>-->
+                                        <!--<MenuListOption fx:value=""/>-->
+                                        <!--<MenuListOption fx:value=""/>-->
+                                        <!--<MenuListOption fx:value=""/>-->
+                                        <!--<MenuListOption fx:value=""/>-->
+                                        <!--<MenuListOption fx:value=""/>-->
+                                        <!--<MenuListOption fx:value=""/>-->
+                                    <!--</FXCollections>-->
+                                <!--</items>-->
+                            <!--</ListView>-->
+                            <!--<Button fx:id="menuBtnPressed" text="" onAction="#turnMenu" minWidth="1.0" prefWidth="1.0" AnchorPane.topAnchor="36.0" AnchorPane.leftAnchor="2.0"/>-->
+
+                        </children>
+                    </AnchorPane>
                 </AnchorPane>
             </root>
             <stylesheets>

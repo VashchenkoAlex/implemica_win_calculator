@@ -179,15 +179,12 @@ public class NumberBuilder {
         positive = !positive;
     }
 
-    BigDecimal negate(boolean wasMemoryAction) {
+    void negate(boolean wasMemoryAction) {
 
         changeIsPositive();
-        if (wasMemoryAction){
-
-        }else {
+        if (!wasMemoryAction){
             prepareNumber();
         }
-        return number.getBigDecimalValue();
     }
 
     private void resetPositive() {
@@ -215,6 +212,11 @@ public class NumberBuilder {
                 value = value.negate();
             }
             number = new Number(value);
+        }else if (number != null && number.getBigDecimalValue() != null){
+            BigDecimal value = number.getBigDecimalValue();
+            if (!positive && value.compareTo(BigDecimal.ZERO) > 0){
+                number.setBigDecimalValue(value.negate());
+            }
         }
     }
 
@@ -224,6 +226,10 @@ public class NumberBuilder {
     }
 
     public Number getNumber(){
+
+        if (number != null && number.getBigDecimalValue() == null){
+            prepareNumber();
+        }
 
         return number;
     }

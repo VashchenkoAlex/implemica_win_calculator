@@ -19,7 +19,6 @@ public class DisplayHandler {
     private static final int MAX_DIGITS = 16;
     private static final double DEFAULT_FONT_SIZE = 47.0;
     private static final String DISPLAY_TEXT_ID = ".text";
-    private static final String DISPLAY_PATTERN = "#############,###.################";
 
     public void setDisplay(Label display) {
 
@@ -31,9 +30,9 @@ public class DisplayHandler {
         display.setText(ZERO);
     }
 
-    private void sendNumberToDisplay(BigDecimal number){
+    private void sendNumberToDisplay(String number){
 
-        setDisplayedText(convertToString(number,DISPLAY_PATTERN));
+        setDisplayedText(number);
     }
     public void setDisplayedText(String string) {
 
@@ -79,7 +78,7 @@ public class DisplayHandler {
         return display.getText().replace("0,","").replaceAll("[ ,]","").length() < MAX_DIGITS;
     }
 
-    public void sendToDisplay(Action action, BigDecimal number, ActionType previousActionType){
+    public void sendToDisplay(Action action, String number, ActionType previousActionType){
 
         if (DIGIT.equals(action.getType())){
             if (isNotMax()) {

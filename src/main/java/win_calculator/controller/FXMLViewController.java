@@ -1,13 +1,22 @@
 package win_calculator.controller;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import win_calculator.DTOs.ResponseDTO;
 import win_calculator.controller.nodes.digits.*;
 import win_calculator.controller.nodes.digits.Number;
@@ -24,27 +33,25 @@ import win_calculator.model.nodes.actions.memory.*;
 import win_calculator.model.nodes.actions.extra_operations.*;
 import win_calculator.model.nodes.actions.main_operations.*;
 import win_calculator.utils.ActionType;
-import win_calculator.utils.ComboBoxOption;
+import win_calculator.utils.MenuListOption;
 import win_calculator.utils.MemoryType;
 
 import java.math.BigDecimal;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static win_calculator.utils.ActionType.*;
+import static win_calculator.utils.MemoryType.ADD_TO_MEMORY;
 import static win_calculator.utils.MemoryType.STORE;
+import static win_calculator.utils.MemoryType.SUBTRACT_FROM_MEMORY;
+import static win_calculator.utils.MenuListOption.*;
 
 public class FXMLViewController implements Initializable {
 
     @FXML
     private AnchorPane rootPane;
-
-    @FXML
-    private ComboBox<ComboBoxOption> menuBox;
-
-    @FXML
-    private void trimLabelPosition() {
-    }
 
     @FXML
     private GridPane mainTable;
@@ -58,15 +65,41 @@ public class FXMLViewController implements Initializable {
     @FXML
     private Button fullScreenBtn;
 
+    @FXML
+    private Button memoryRecallBtn;
+
+    @FXML
+    private Button clearAllMemoryBtn;
+
+    @FXML
+    private Button memoryShowBtn;
+
+    @FXML
+    private AnchorPane menuListContainer;
+
     private AppModel model = new AppModel();
     private HistoryFieldHandler historyFieldHandler = new HistoryFieldHandler();
     private CaptionHandler captionHandler = new CaptionHandler();
-    //private StylesHandler stylesHandler = new StylesHandler();
     private DisplayHandler displayHandler = new DisplayHandler();
     private MemoryHandler memoryHandler = new MemoryHandler();
     private NumberBuilder numberBuilder = new NumberBuilder();
     private ActionType lastActionType;
     private String lastHistoryText;
+    private BigDecimal lastDisplayNumber;
+    private static final double MENU_LIST_WIDTH = 260;
+
+    @FXML
+    private void dropMenu() {
+
+        ListView<MenuListOption> menuListView = prepareMenuListView();
+        ObservableList<Node> menuNodes = menuListContainer.getChildren();
+        menuNodes.add(prepareBackground());
+        menuNodes.add(menuListView);
+        menuNodes.add(prepareMenuBtn());
+        Button aboutBtn = prepareAboutBtn();
+        menuNodes.add(aboutBtn);
+        setEmergentList(menuListView,aboutBtn);
+    }
 
     public void closeBtn() {
 
@@ -82,10 +115,6 @@ public class FXMLViewController implements Initializable {
 
         captionHandler.fullScreen();
     }
-
-    public void menuBox() {
-
-    } //TO DO
 
     public void historyBtn() {
 
@@ -221,32 +250,36 @@ public class FXMLViewController implements Initializable {
     public void clearMemoryBtnClick() {
 
         makeAction(new ClearMemory());
-    } //TO DO
+        disableMemoryButtons();
+    }
 
     public void memoryRecallBtnClick() {
 
         makeAction(new RecallMemory());
-    } //TO DO
+    }
 
     public void memoryAddBtnClick() {
 
         makeAction(new AddToMemory());
-    } //TO DO
+        activateMemoryButtons();
+    }
 
     public void memorySubtractBtnClick() {
 
         makeAction(new SubtractMemory());
-    } //TO DO
+        activateMemoryButtons();
+    }
 
     public void memoryStoreBtnClick() {
 
         makeAction(new StoreMemory());
-    } //TO DO
+        activateMemoryButtons();
+    }
 
     public void memoryShowBtnClick() {
 
         //makeAction(new ShowMemoryAction());
-    } //TO DO
+    }
 
     // -------- SUPPORT METHODS -----------------------
 
@@ -254,39 +287,14 @@ public class FXMLViewController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        disableMemoryButtons();
         setSizeMainTableColumns();
-        setCellFactoryMenuBox();
         displayHandler.setDisplay(display);
         historyFieldHandler.setHistoryField(historyField);
         captionHandler.setFullScreenBtn(fullScreenBtn);
         captionHandler.setStage(rootPane);
     }
 
-    private void setCellFactoryMenuBox() {
-        menuBox.setCellFactory(new Callback<ListView<ComboBoxOption>, ListCell<ComboBoxOption>>() {
-            @Override
-            public ListCell<ComboBoxOption> call(ListView<ComboBoxOption> param) {
-                return new ListCell<ComboBoxOption>() {
-                    @Override
-                    protected void updateItem(ComboBoxOption item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setText("");
-                            setGraphic(null);
-                        } else {
-                            setText(item.getLabel());
-                            if (item.isOption().equals("NOT_OPTION")) {
-                                setId("notOption");
-                                setDisable(true);
-                            } else {
-                                setId("option");
-                            }
-                        }
-                    }
-                };
-            }
-        });
-    }
 
     private void setSizeMainTableColumns() {
 
@@ -325,10 +333,11 @@ public class FXMLViewController implements Initializable {
         } else if (NEGATE.equals(type) && numberBuilder.containsNumber()) {
             response = handleNegate();
         } else if (MEMORY.equals(type)) {
-            response = handleMemory((MemoryAction) action);
+            response = handleMemory((MemoryAction) action,lastDisplayNumber);
         } else {
             response = handleOperation(action);
         }
+        lastDisplayNumber = response.getBigdecimalNumber();
         lastHistoryText = response.getHistory();
         return response;
     }
@@ -345,9 +354,6 @@ public class FXMLViewController implements Initializable {
         if (!NEGATE.equals(action.getType())) {
             numberBuilder.clear();
         }
-        if (response.getDisplayNumber() == null) {
-            response.setDisplayNumber(BigDecimal.ZERO);
-        }
         lastActionType = action.getType();
         return response;
     }
@@ -355,7 +361,7 @@ public class FXMLViewController implements Initializable {
     private ResponseDTO handleDigit(Action digit) {
 
         ResponseDTO response;
-        String historyText = historyFieldHandler.getLastValue();
+        String historyText = lastHistoryText;
         if (EXTRA_OPERATION.equals(lastActionType)) {
             try {
                 response = model.toDo(new LastExtraCleaner(), null);
@@ -371,28 +377,34 @@ public class FXMLViewController implements Initializable {
 
     private boolean isBackSpacePossible() {
 
-        return !MAIN_OPERATION.equals(lastActionType) && !EXTRA_OPERATION.equals(lastActionType);
+        return !MAIN_OPERATION.equals(lastActionType) && !EXTRA_OPERATION.equals(lastActionType) && !ENTER.equals(lastActionType);
     }
 
-    private ResponseDTO handleMemory(MemoryAction action) {
+    private ResponseDTO handleMemory(MemoryAction action, BigDecimal number) {
 
         MemoryType memoryType = action.getMemoryType();
-        Number currentNum = new Number(BigDecimal.ZERO);
-        if (STORE.equals(memoryType)) {
-            currentNum = numberBuilder.finish();
+        BigDecimal currentNum = BigDecimal.ZERO;
+        if (number!=null){
+            currentNum = number;
         }
-        Number result = memoryHandler.doAction(action, currentNum);
+        if ((STORE.equals(memoryType) || SUBTRACT_FROM_MEMORY.equals(memoryType) || ADD_TO_MEMORY.equals(memoryType))&& numberBuilder.containsNumber()) {
+            currentNum = numberBuilder.finish().getBigDecimalValue();
+        }
+        BigDecimal result = memoryHandler.doAction(action, currentNum);
         if (result != null) {
             currentNum = result;
-            numberBuilder.setNumber(result);
+            numberBuilder.setNumber(new Number(result));
+        } else {
+            currentNum = lastDisplayNumber;
         }
-        return new ResponseDTO(currentNum.getBigDecimalValue(), lastHistoryText);
+        lastActionType = action.getType();
+        return new ResponseDTO(currentNum, lastHistoryText);
     }
 
     private ResponseDTO handleNegate() {
 
         numberBuilder.negate(MEMORY.equals(lastActionType));
-        return new ResponseDTO(numberBuilder.finish().getBigDecimalValue(), null);
+        return new ResponseDTO(numberBuilder.finish().getBigDecimalValue(), lastHistoryText);
     }
 
     private ResponseDTO handleBackSpace(Action action) {
@@ -401,7 +413,7 @@ public class FXMLViewController implements Initializable {
         if (isBackSpacePossible()) {
             response = handleDigit(action);
         } else {
-            response = new ResponseDTO(null, null);
+            response = new ResponseDTO(lastDisplayNumber, lastHistoryText);
         }
         return response;
     }
@@ -410,5 +422,119 @@ public class FXMLViewController implements Initializable {
 
         numberBuilder.clear();
         return model.toDo(action, null);
+    }
+
+    private void activateMemoryButtons(){
+
+        memoryRecallBtn.setDisable(false);
+        clearAllMemoryBtn.setDisable(false);
+        memoryShowBtn.setDisable(false);
+    }
+
+    private void disableMemoryButtons(){
+
+        memoryRecallBtn.setDisable(true);
+        clearAllMemoryBtn.setDisable(true);
+        memoryShowBtn.setDisable(true);
+    }
+
+    private ListView<MenuListOption> prepareMenuListView(){
+
+        List<MenuListOption> listOptions = Arrays.asList(CALCULATOR,STANDARD,SCIENTIFIC,PROGRAMMER,
+                DATE_CALCULATION,CONVERTER,CURRENCY,VOLUME,LENGTH,WEIGHT_AND_MASS,TEMPERATURE,ENERGY,AREA,
+                SPEED,TIME,POWER,DATA,PRESSURE,ANGLE);
+        ObservableList<MenuListOption> listOpt = FXCollections.observableList(listOptions);
+        ListView<MenuListOption> menuList = new ListView<>(listOpt);
+        menuList.setId("droppedList");
+        menuList.setCellFactory(new Callback<ListView<MenuListOption>, ListCell<MenuListOption>>() {
+            @Override
+            public ListCell<MenuListOption> call(ListView<MenuListOption> param) {
+                return new ListCell<MenuListOption>() {
+                    @Override
+                    protected void updateItem(MenuListOption item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setText("");
+                            setGraphic(null);
+                        } else {
+                            setText(item.getLabel());
+                            if (item.isOption().equals("NOT_OPTION")) {
+                                setId("notOption");
+                                setDisable(true);
+                            } else {
+                                setId("option");
+                            }
+                        }
+                    }
+                };
+            }
+        });
+        menuList.setPrefHeight(rootPane.getScene().getHeight() - 33);
+        AnchorPane.setTopAnchor(menuList,32.0);
+        AnchorPane.setLeftAnchor(menuList,2.0);
+
+        return menuList;
+    }
+
+    private void setEmergentList(ListView<MenuListOption> menuListView,Button button){
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(2), new EventHandler<ActionEvent>() {
+            private double i = 1;
+
+            @Override
+            public void handle(ActionEvent event) {
+                button.setMinWidth(i);
+                button.setPrefWidth(i);
+                menuListView.setMinWidth(i);
+                menuListView.setPrefWidth(i);
+                i += 4;
+            }
+        }));
+        timeline.setOnFinished((actionEvent) -> {
+            button.setPrefWidth(MENU_LIST_WIDTH);
+            menuListView.setPrefWidth(MENU_LIST_WIDTH);
+        });
+        timeline.setCycleCount(65);
+        timeline.play();
+    }
+
+    private Button prepareMenuBtn(){
+
+        Button menuBtn = new Button("\uE700");
+        menuBtn.setId("menuBtnPressed");
+        menuBtn.setPrefSize(44,44);
+        menuBtn.setOnAction((actionEvent)-> hideMenuList());
+        AnchorPane.setTopAnchor(menuBtn,36.0);
+        AnchorPane.setLeftAnchor(menuBtn,1.0);
+        return menuBtn;
+    }
+
+    private Button prepareAboutBtn(){
+
+        Button aboutBtn = new Button("\uE946   About");
+        aboutBtn.setId("aboutBtn");
+        aboutBtn.setPrefSize(MENU_LIST_WIDTH,40);
+        aboutBtn.setAlignment(Pos.CENTER_LEFT);
+        AnchorPane.setBottomAnchor(aboutBtn,10.0);
+        AnchorPane.setLeftAnchor(aboutBtn,2.0);
+        return aboutBtn;
+    }
+    private Pane prepareBackground(){
+
+        double height = rootPane.getHeight();
+        double width = rootPane.getWidth();
+        Pane pane = new Pane();
+        pane.setPrefSize(width,height);
+        pane.setOpacity(0.01);
+        pane.setOnMouseClicked((event)-> hideMenuList());
+        return pane;
+    }
+
+    private void hideMenuList(){
+
+        ObservableList<Node> nodes = menuListContainer.getChildren();
+        for (int i = nodes.size()-1; i >= 0; i--) {
+            nodes.remove(i);
+        }
     }
 }

@@ -49,6 +49,7 @@ public class HistoryHandler {
             setMOperationBefore(true);
         } else {
             if (NUMBER.equals(action.getType()) ) {
+                resetResultNumber();
                 previousNumber = lastNumber;
                 lastNumber = new BigDecimal(action.getValue());
             }

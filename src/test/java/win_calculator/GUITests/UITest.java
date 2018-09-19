@@ -65,7 +65,9 @@ class UITest extends ApplicationTest{
     }
 
     @Test
-    void TestNumberButtons(){
+    void TestUI(){
+
+        test("1 + 2 0 % - 3 sqr * 4 sqrt / 5 1/x + 6 7 <- - 7 , 8 ± * 8 CE 9 / , 1 +","-5 778","1  +  0,2  -  sqr( 3 )  ×  √( 4 )  ÷  1/( 5 )  +  6  -  -7,8  ×  9  ÷  0,1  +  ");
 
         test("C","0","");
         test(", , ,", "0,","");
@@ -108,6 +110,7 @@ class UITest extends ApplicationTest{
         test("2 + 3 - * 4 / 9 sqrt sqr","9","2  +  3  ×  4  ÷  sqr( √( 9 ) )");
         test("2 + 3 - * 4 / 9 sqrt sqr *","2,222222222222222","2  +  3  ×  4  ÷  sqr( √( 9 ) )  ×  ");
         test("2 + 3 - * 4 / 9 sqrt sqr * CE","0","2  +  3  ×  4  ÷  sqr( √( 9 ) )  ×  ");
+
         test("C","0","");
 
         testKey("2 0 + %","4","20  +  4");
@@ -136,12 +139,6 @@ class UITest extends ApplicationTest{
         testKey("1 2 3 4 5 6 7 8 9 0 , 5 6 7 ± <- <- <- <- /", "-1 234 567 890","-1234567890  ÷  ");
         testKey("1 2 3 4 5 6 7 8 9 0 , 5 6 7 ± sqr <- <- <- <- /", "1,524157876419052e+18","sqr( -1234567890,567 )  ÷  ");
         testKey("2 5 6 7 8 9 0 , 1 3 4 ± <- <- <- <- sqr sqrt sqrt sqrt", "40,03078475546843","√( √( √( sqr( -2567890 ) ) ) )");
-
-    }
-
-    @Test
-    void prepareCases(){
-
 
     }
 
@@ -191,151 +188,4 @@ class UITest extends ApplicationTest{
         verifyThat("#historyField",LabeledMatchers.hasText(history));
         pressOn("C");
     }
-
 }
-
-/////////////////////////////////////////////////////////////////
-//    @Test
-//    public void testExpression() throws Exception {
-//        //test many buttons, that font size is decreasing
-//        testStyle("11111111111111111111111111111111111111111111111111111");
-
-//
-//    }
-//
-//    @Test
-//    public void testMOperation() throws Exception {
-//        testApp("mc mr", "0");
-//        testApp("2 m+ mr", "2");
-//        testApp("10 m+ mr", "12");
-//        testApp("112 m- mr", "-100");
-//        testApp("999999 m+ m- mr", "-100");
-//        testApp("100 m+ 200", "200");
-//        testApp("300 m- 999", "999");
-//        testApp("mr", "-300");
-//        testApp("mr 234", "234");
-//        testApp("mc 190", "190");
-//        testApp("mr", "0");
-//
-//        //test button m+
-//        testApp("mc mr", "0");
-//        testApp("22 + 2 = m+ mr", "24");
-//        testApp("999999 + 999999 - 999999 = m+ mr", "1000023");
-//        testApp("999999 m+ mr", "2000022");
-//        testApp("999999 + 1 m+ + 2 m+ mr", "2000025");
-//        testApp("mc mr", "0");
-//        testApp("22 + 2 = m+ 2", "2");
-//        testApp("22 + 2 = m+ 2 + / * + = =", "6");
-//        testApp("mr", "48");
-//        testApp("mc mr", "0");
-//
-//        //test button m-
-//        testApp("22 + 2 = m- mr", "-24");
-//        testApp("22 + 2 = m- mr 23", "23");
-//        testApp("999999 + 999999 - 999999 m+ = m- mr", "-48");
-//        testApp("mc mr", "0");
-//        testApp("999999 m- mr", "-999999");
-//        testApp("999999 m- mr", "-1999998");
-//        testApp("mc mr", "0");
-//        testApp("22 + 2 = m- mr 23 + =", "46");
-//        testApp("mc mr", "0");
-//        testApp("1234567890 + 2 = m- mr * 23 + ", "-28395061516");
-//        testApp("mc mr", "0");
-//        testApp("1234567890 + 2 = m- mr * 23 + =", "-56790123032");
-//        testApp("mc mr", "0");
-//
-//        //test with = m+,m-,mc,mr,+,-,/,*,%
-//        testApp("22 + 2 = m+ 2 + / * + = = + 22 =", "28");
-//        testApp("22 + 2 = m+ 2 + / * + = 2 + = = + 4 = =", "14");
-//        testApp("22 + 2 = m+ 2 / * + = = 34", "34");
-//        testApp("22 + 2 = m- 2 * / * + = =", "6");
-//        testApp("22 + 2 = m- 8 - / + * = * 8 = + 3 =", "515");
-//        testApp("22 + 2 = m- 123 / + * = * 8 = + 123 =", "121155");
-//        testApp("123 / + * = * 8 = + 123 = = = mr", "0");
-//        testApp("12 + 34 = m+ m- 2 + / * + = = + 22 =", "28");
-//        testApp("3425 * 3220923 = m- m+ 2 + / * + = 2 + = = + 4 = =", "14");
-//        testApp("784334 + 23784 = m+ m- mr 2 / * + = = 34", "34");
-//        testApp("784334 + 23784 = m+ + 2 / * + = = ", "2424360");
-//        testApp("mc", "0");
-//        testApp("mr", "0");
-//
-//        testApp("1000000000 * = m+ mr", "1e18");
-//        testApp("mc mr", "0");
-//        testApp("1000000000 * = m+ mr m+ mr", "2e18");
-//        testApp("mc mr", "0");
-//
-//    }
-
-//    @Test
-//    public void testExit() throws Exception {
-//        final boolean[] invoked = new boolean[1];
-//
-//        ExitController.instance = new ExitController() {
-//            @Override
-//            public void exit() {
-//                invoked[0] = true;
-//            }
-//        };
-//        //click exit
-//        WaitForAsyncUtils.waitForFxEvents();
-//        TestButton close = find("#close");
-//        Platform.runLater(close::fire);
-//        WaitForAsyncUtils.waitForFxEvents();
-//        assertTrue(invoked[0]);
-//    }
-
-//
-//    @Test
-//    public void testMouseClickedOnButton() throws Exception {
-//        testClickMouseButton("AC 12 + 34 - 56 * 78 / 90 = ", "-2,533333333333333");
-//        testClickMouseButton("AC 1 . . . 2 + 34 - 56 * 78 / 90 = ", "-13,33333333333333");
-//        testClickMouseButton("AC 1 . . . 2 + 34 - 56 * 78 / 90 = AC", "0");
-//
-//        testClickMouseButton("AC 9876543210 % % + 36487136 - 374138274 * 93755 / 3890 = ", "-8979834690,108306");
-//        testClickMouseButton("AC 9876543210 % % + 36487136 - 374138274 * 93755 / 3890 =  % %", "-897983,4690108306");
-//        testClickMouseButton("AC 9876543210 % %  =", "987654,321");
-//        testClickMouseButton("AC 9876543210 ± ± ± ± ± ± ± ± % %  = ", "987654,321");
-//
-//        testClickMouseButton("AC . 00000001", "0,00000001");
-//        testClickMouseButton("AC . 00000001 ±", "-0,00000001");
-//        testClickMouseButton("AC . 000 . . . 00001 = = = =", "0,00000001");
-//        testClickMouseButton("AC . 00000001 % % % % %", "1e-18");
-//
-//        //test click on mc m+,m-,mr.mc
-//        testClickMouseButton("AC 2 m+ mr", "2");
-//        testClickMouseButton("AC 112 m- mr", "-110");
-//        testClickMouseButton("AC 999999 m+ m- mr", "-110");
-//        testClickMouseButton("AC 100 m+ 200", "200");
-//        testClickMouseButton("AC 300 m- 999", "999");
-//        testClickMouseButton("AC mr", "-310");
-//        testClickMouseButton("AC mr 234", "234");
-//        testClickMouseButton("AC mc 190", "190");
-//        testClickMouseButton("AC mr", "0");
-//    }
-//
-//    @Test
-//    public void testKeyBoard() throws Exception {
-//    }
-//
-//    @Test
-//    public void testMouseDragged() throws Exception {
-//        assertWindowLocation(700, 400);
-//        assertWindowLocation(700, 300);
-//        assertWindowLocation(800, 300);
-//        assertWindowLocation(600, 500);
-//        assertWindowLocation(500, 400);
-//        assertWindowLocation(400, 300);
-//        assertWindowLocation(900, 400);
-//        assertWindowLocation(200, 700);
-//        assertWindowLocation(1400, 400);
-//        assertWindowLocation(1300, 200);
-//        assertWindowLocation(1200, 100);
-//        assertWindowLocation(1100, 300);
-//
-//        Random random = new Random();
-//        assertWindowLocation(random.nextInt(1200) + 100, random.nextInt(750) + 50);
-//        assertWindowLocation(random.nextInt(1200) + 100, random.nextInt(750) + 50);
-//        assertWindowLocation(random.nextInt(1200) + 100, random.nextInt(750) + 50);
-//        assertWindowLocation(random.nextInt(1200) + 100, random.nextInt(750) + 50);
-//        assertWindowLocation(700, 400);
-//    }

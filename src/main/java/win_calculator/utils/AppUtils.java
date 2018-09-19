@@ -152,7 +152,7 @@ public abstract class AppUtils {
 
     private static int getUnscaledLength(BigDecimal number) {
 
-        int result = number.unscaledValue().toString().length();
+        int result = number.abs().unscaledValue().toString().length();
         if (result > MAX_ROUND) {
             result -= 1;
         }

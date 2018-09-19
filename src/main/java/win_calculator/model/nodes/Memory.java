@@ -1,37 +1,46 @@
 package win_calculator.model.nodes;
 
-import win_calculator.controller.nodes.digits.Number;
-
 import java.math.BigDecimal;
 import java.util.LinkedList;
 
 public class Memory {
-    private LinkedList<Number> storedNumbers;
+    private LinkedList<BigDecimal> storedNumbers;
 
     public Memory(){
         storedNumbers = new LinkedList<>();
     }
 
-    public Number getStoredNumber(){
+    public BigDecimal getStoredNumber(){
 
         return storedNumbers.getLast();
     }
 
-    public void addToStoredNumber(Number number){
+    public void addToStoredNumber(BigDecimal number){
 
-        BigDecimal result = storedNumbers.getLast().getBigDecimalValue().add(number.getBigDecimalValue());
+        if (storedNumbers.isEmpty()){
+            storedNumbers.add(BigDecimal.ZERO);
+        }
+        BigDecimal result = storedNumbers.getLast().add(number);
         storedNumbers.removeLast();
-        storedNumbers.add(new Number(result));
+        storedNumbers.add(result);
     }
 
-    public void subtractFromStoredNumber(Number number){
-        BigDecimal result = storedNumbers.getLast().getBigDecimalValue().subtract(number.getBigDecimalValue());
+    public void subtractFromStoredNumber(BigDecimal number){
+        if (storedNumbers.isEmpty()){
+            storedNumbers.add(BigDecimal.ZERO);
+        }
+        BigDecimal result = storedNumbers.getLast().subtract(number);
         storedNumbers.removeLast();
-        storedNumbers.add(new Number(result));
+        storedNumbers.add(result);
     }
 
-    public void storeNumber(Number number){
+    public void storeNumber(BigDecimal number){
 
         storedNumbers.add(number);
+    }
+
+    public void clear(){
+
+        storedNumbers = new LinkedList<>();
     }
 }
