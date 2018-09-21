@@ -1,8 +1,4 @@
 /* Application wide styles */
-#mainScene {
-    -fx-min-width: 320px;
-    -fx-min-height: 470px;
-}
 
 #mainTable {
     -fx-background-color: #ebebeb;
@@ -74,11 +70,11 @@
 
 .menu {
     -fx-font-family: "Segoe MDL2 Assets";
-    -fx-font-size: 17;
-    -fx-min-width: 44.0;
-    -fx-max-width: 44.0;
-    -fx-min-height: 44.0;
-    -fx-max-height: 44.0;
+    -fx-font-size: 16;
+    -fx-min-width: 42.0;
+    -fx-max-width: 42.0;
+    -fx-min-height: 42.0;
+    -fx-max-height: 42.0;
     -fx-border-color: #ebebeb;
     -fx-border-width: 1px;
     -fx-background-radius: 0;
@@ -342,7 +338,7 @@
 
 #menuBtnPressed {
     -fx-font-family: "Segoe MDL2 Assets";
-    -fx-font-size: 17;
+    -fx-font-size: 16;
     -fx-border-color: #ebebeb;
     -fx-border-width: 1px;
     -fx-background-radius: 0;
@@ -366,4 +362,56 @@
 #aboutBtn:hover {
     -fx-background-color: #dcdcdc;
     -fx-text-fill: black;
+}
+
+#historyScroll {
+    -fx-background-color: #ebebeb;
+    -fx-min-height: 30px;
+    -fx-max-height: 30px;
+    -fx-translate-y: 4px;
+    -fx-border-width: 0;
+}
+
+#historyScroll .viewport {
+    -fx-background-color: transparent;
+}
+
+#historyScroll .decrement-button {
+
+    -fx-translate-y: -18px;
+    -fx-translate-x: -18px;
+    -fx-background-color: green;
+
+}
+
+#historyScroll .increment-button {
+
+    -fx-translate-y: -18px;
+    -fx-translate-x: 18px;
+}
+
+#historyScroll .increment-arrow {
+
+    -fx-background-color: #0078d7;
+    -fx-font-size: 20px;
+}
+
+#historyScroll .decrement-arrow {
+
+    -fx-background-color: #0078d7;
+    -fx-font-size: 20px;
+}
+
+#historyScroll .scroll-bar:horizontal {
+
+    -fx-pref-height: 1px;
+    -fx-max-height: 1px;
+}
+
+#historyField {
+    -fx-font-family: "Segoe UI";
+    -fx-translate-y: -6px;
+    -fx-background-color: #ebebeb;
+    -fx-font-size: 16px;
+    -fx-border-width: 0;
 }

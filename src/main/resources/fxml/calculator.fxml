@@ -9,8 +9,6 @@
 <?import javafx.stage.Stage?>
 <?import javafx.scene.Scene?>
 <?import java.net.URL?>
-<?import javafx.collections.FXCollections?>
-<?import win_calculator.utils.MenuListOption?>
 <?import javafx.scene.text.Font?>
 <Stage title="Calculator"
        xmlns:fx="http://javafx.com/fxml/1"
@@ -31,51 +29,23 @@
                             <Button fx:id="fullScreenBtn" styleClass="captionButton" text="" AnchorPane.rightAnchor="45.0" onAction="#fullScreenBtnClick"/>
                             <Button fx:id="hideBtn" styleClass="captionButton" text="" AnchorPane.rightAnchor="90.0" onAction="#hideBtn"/>
                         </AnchorPane>
-                        <Label text="Calculator" styleClass="captionText" AnchorPane.topAnchor="8.0" AnchorPane.leftAnchor="10.0"/>
+                        <Label fx:id="captionLabel" text="Calculator" styleClass="captionText" AnchorPane.topAnchor="8.0" AnchorPane.leftAnchor="10.0"/>
                         <AnchorPane styleClass="flowPane" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="30.0">
                             <children>
                                 <Button fx:id="menuBtn" text="" styleClass="menu" onAction="#dropMenu" AnchorPane.topAnchor="5.0" AnchorPane.leftAnchor="0.0"/>
-                                <!--<Text fx:id="menuBoxText" styleClass="menuBoxText" text="" AnchorPane.topAnchor="18.0" AnchorPane.leftAnchor="15.0"/>-->
-
-                                <!--<ComboBox fx:id="menuBox" styleClass="menu" promptText="" minWidth="250.0" onMousePressed="#dropMenu" onMouseClicked="#menuBox" AnchorPane.topAnchor="5.0" AnchorPane.leftAnchor="1.0">-->
-                                    <!--<buttonCell>-->
-                                        <!--<ComboBoxListCell fx:id="menuListCell"/>-->
-                                    <!--</buttonCell>-->
-                                    <!--<items >-->
-                                        <!--<FXCollections fx:factory="observableArrayList">-->
-                                            <!--<MenuListOption fx:value="CALCULATOR"/>-->
-                                            <!--<MenuListOption fx:value="STANDARD"/>-->
-                                            <!--<MenuListOption fx:value="SCIENTIFIC"/>-->
-                                            <!--<MenuListOption fx:value="PROGRAMMER"/>-->
-                                            <!--<MenuListOption fx:value="DATE_CALCULATION"/>-->
-                                            <!--<MenuListOption fx:value="CONVERTER"/>-->
-                                            <!--<MenuListOption fx:value="CURRENCY"/>-->
-                                            <!--<MenuListOption fx:value="VOLUME"/>-->
-                                            <!--<MenuListOption fx:value="LENGTH"/>-->
-                                            <!--<MenuListOption fx:value="WEIGHT_AND_MASS"/>-->
-                                            <!--<MenuListOption fx:value="TEMPERATURE"/>-->
-                                            <!--<MenuListOption fx:value="ENERGY"/>-->
-                                            <!--<MenuListOption fx:value="AREA"/>-->
-                                            <!--<MenuListOption fx:value="SPEED"/>-->
-                                            <!--<MenuListOption fx:value="TIME"/>-->
-                                            <!--<MenuListOption fx:value="POWER"/>-->
-                                            <!--<MenuListOption fx:value="DATA"/>-->
-                                            <!--<MenuListOption fx:value="PRESSURE"/>-->
-                                            <!--<MenuListOption fx:value="ANGLE"/>-->
-                                        <!--</FXCollections>-->
-                                    <!--</items>-->
-                                <!--</ComboBox>-->
                                 <Label fx:id="mainMessage" styleClass="mainMessage" text="Standard" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="0.0"/>
                             </children>
                         </AnchorPane>
                         <Button fx:id="historyButton" styleClass="historyButton" text="" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="33.0" onAction="#historyBtn"/>
                         <GridPane fx:id="mainTable" AnchorPane.topAnchor="84.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0">
                             <children>
-                                <Label fx:id="historyField" text="" styleClass="historyText" GridPane.columnIndex="0" GridPane.rowIndex="0" maxWidth="Infinity">
+                                <ScrollPane fx:id="historyScroll" maxWidth="Infinity" AnchorPane.rightAnchor="5.0">
                                     <GridPane.margin>
-                                        <Insets right="5.0" bottom="20.0"/>
+                                        <Insets right="20.0" bottom="12.0" left="20.0"/>
                                     </GridPane.margin>
-                                </Label>
+                                    <Label fx:id="historyField" styleClass="historyText" GridPane.columnIndex="0"
+                                           GridPane.rowIndex="0" maxWidth="Infinity"/>
+                                </ScrollPane>
                                 <Label fx:id="display" text="0" styleClass="displayText" cache="true" cacheHint="SCALE" cacheShape="false"  scaleShape="false" GridPane.columnIndex="0" GridPane.rowIndex="1" maxWidth="Infinity">
                                     <font>
                                         <Font name="Segoe UI Semibold" size="47.0"/>
@@ -280,37 +250,7 @@
                             </rowConstraints>
                         </GridPane>
                     </children>
-                    <AnchorPane fx:id="menuListContainer" minWidth="1.0" minHeight="1.0">
-                        <children>
-                            <!--<ListView fx:id="" minWidth="1.0" prefWidth="1.0" minHeight="1.0" prefHeight="1.0" AnchorPane.topAnchor="33.0" AnchorPane.leftAnchor="2.0">-->
-                                <!--<items>-->
-                                    <!--<FXCollections fx:factory="observableArrayList">-->
-                                        <!--<MenuListOption fx:value="CALCULATOR"/>-->
-                                        <!--<MenuListOption fx:value="STANDARD"/>-->
-                                        <!--<MenuListOption fx:value="SCIENTIFIC"/>-->
-                                        <!--<MenuListOption fx:value=""/>-->
-                                        <!--<MenuListOption fx:value=""/>-->
-                                        <!--<MenuListOption fx:value=""/>-->
-                                        <!--<MenuListOption fx:value=""/>-->
-                                        <!--<MenuListOption fx:value=""/>-->
-                                        <!--<MenuListOption fx:value=""/>-->
-                                        <!--<MenuListOption fx:value=""/>-->
-                                        <!--<MenuListOption fx:value=""/>-->
-                                        <!--<MenuListOption fx:value=""/>-->
-                                        <!--<MenuListOption fx:value=""/>-->
-                                        <!--<MenuListOption fx:value=""/>-->
-                                        <!--<MenuListOption fx:value=""/>-->
-                                        <!--<MenuListOption fx:value=""/>-->
-                                        <!--<MenuListOption fx:value=""/>-->
-                                        <!--<MenuListOption fx:value=""/>-->
-                                        <!--<MenuListOption fx:value=""/>-->
-                                    <!--</FXCollections>-->
-                                <!--</items>-->
-                            <!--</ListView>-->
-                            <!--<Button fx:id="menuBtnPressed" text="" onAction="#turnMenu" minWidth="1.0" prefWidth="1.0" AnchorPane.topAnchor="36.0" AnchorPane.leftAnchor="2.0"/>-->
-
-                        </children>
-                    </AnchorPane>
+                    <AnchorPane fx:id="menuListContainer" minWidth="1.0" minHeight="1.0"/>
                 </AnchorPane>
             </root>
             <stylesheets>

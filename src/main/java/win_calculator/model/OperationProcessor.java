@@ -1,4 +1,4 @@
-package win_calculator.model.response_handlers;
+package win_calculator.model;
 
 import win_calculator.model.nodes.History;
 import win_calculator.model.nodes.actions.Action;
@@ -12,7 +12,7 @@ import java.util.LinkedList;
 import static win_calculator.utils.ActionType.*;
 import static win_calculator.utils.AppUtils.*;
 
-public class HistoryHandler {
+public class OperationProcessor {
 
     private History history = new History();
     private boolean enterRepeated;
@@ -24,7 +24,7 @@ public class HistoryHandler {
     private static final String HISTORY_PATTERN = "################.################";
     private Action lastAction = new Clear();
 
-    public String getHistoryString() {
+    String getHistoryString() {
 
         LinkedList<Action> actions = history.getActions();
         String result = "";
@@ -42,22 +42,24 @@ public class HistoryHandler {
         return result;
     }
 
+    void addNumberToHistory(Number number){
+
+        history.addAction(number);
+        lastAction = number;
+        resetResultNumber();
+        setLastNumber(number.getBigDecimalValue());
+    }
+
     public void addActionToHistory(Action action) {
 
         history.addAction(action);
         if (MAIN_OPERATION.equals(action.getType())) {
             setMOperationBefore(true);
-        } else {
-            if (NUMBER.equals(action.getType()) ) {
-                resetResultNumber();
-                previousNumber = lastNumber;
-                lastNumber = new BigDecimal(action.getValue());
-            }
         }
         lastAction = action;
     }
 
-    public void clearHistory() {
+    void clearHistory() {
 
         history = new History();
         resultNumber = null;
@@ -102,12 +104,12 @@ public class HistoryHandler {
         return mOperationBefore;
     }
 
-    public boolean isEnterRepeated() {
+    boolean isEnterRepeated() {
 
         return enterRepeated;
     }
 
-    public void setEnterRepeated(boolean enterRepeated) {
+    void setEnterRepeated(boolean enterRepeated) {
         this.enterRepeated = enterRepeated;
     }
 
@@ -119,13 +121,13 @@ public class HistoryHandler {
         this.resultNumber = resultNumber;
     }
 
-    public void setLastNumber(BigDecimal number) {
+    void setLastNumber(BigDecimal number) {
 
         previousNumber = lastNumber;
         lastNumber = number;
     }
 
-    public void changeLastNumberAtActions(BigDecimal number) {
+    void changeLastNumberAtActions(BigDecimal number) {
 
         lastNumber = number;
         if (enterRepeated && !NEGATE.equals(lastAction.getType())) {
@@ -135,12 +137,12 @@ public class HistoryHandler {
         }
     }
 
-    public void changeLastNumber(BigDecimal lastNumber) {
+    void changeLastNumber(BigDecimal lastNumber) {
 
         this.lastNumber = lastNumber;
     }
 
-    public void changePreviousNumber(BigDecimal number) {
+    void changePreviousNumber(BigDecimal number) {
 
         previousNumber = number;
     }
@@ -150,12 +152,12 @@ public class HistoryHandler {
         return resultNumber;
     }
 
-    public void changeLastActionNumber(Number number) {
+    void changeLastActionNumber(Number number) {
 
         history.changeLastNumber(number);
     }
 
-    public void rejectLastNumberWithExtraOperations() {
+    void rejectLastNumberWithExtraOperations() {
 
         if (isHistoryNotEmpty() && isRejectionPossible()) {
             LinkedList<Action> actions = new LinkedList<>(history.getActions());
@@ -181,18 +183,18 @@ public class HistoryHandler {
         return lastExtraResult;
     }
 
-    public void setLastExtraResult(BigDecimal lastExtraResult) {
+    void setLastExtraResult(BigDecimal lastExtraResult) {
         this.lastExtraResult = lastExtraResult;
     }
 
-    public void resetLastExtraResult() {
+    void resetLastExtraResult() {
         if (lastExtraResult != null) {
             lastNumber = lastExtraResult;
         }
         lastExtraResult = null;
     }
 
-    public boolean lastActionNotNumber() {
+    boolean lastActionNotNumber() {
 
         ActionType type = getLastActionType();
         boolean result = true;
@@ -202,7 +204,7 @@ public class HistoryHandler {
         return result;
     }
 
-    public void setLastAction(Action lastAction) {
+    void setLastAction(Action lastAction) {
 
         this.lastAction = lastAction;
     }
@@ -213,7 +215,7 @@ public class HistoryHandler {
     }
 
 
-    public void addZeroToHistory() {
+    void addZeroToHistory() {
 
         Number number = new Number(BigDecimal.ZERO);
         if (!isHistoryNotEmpty()) {
@@ -230,17 +232,17 @@ public class HistoryHandler {
         history.removeLastNumberIfExists();
     }
 
-    public void resetResultNumber() {
+    void resetResultNumber() {
 
         resultNumber = null;
     }
 
-    public void resetPreviousNumber() {
+    void resetPreviousNumber() {
 
         previousNumber = null;
     }
 
-    public boolean isHistoryContainNegate() {
+    boolean isHistoryContainNegate() {
 
         return history.isContain(NEGATE);
     }
@@ -282,7 +284,7 @@ public class HistoryHandler {
         return new BigDecimal[]{firstNumber, secondNumber};
     }
 
-    public boolean hasExtraOperations(){
+    boolean hasExtraOperations(){
 
         return history.isContain(EXTRA_OPERATION);
     }

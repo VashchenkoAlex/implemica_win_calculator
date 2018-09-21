@@ -1,134 +1,126 @@
 package win_calculator.controller.view_handlers;
 
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-//created by Alexander Berg
 public class ResizeHandler {
-    private static double xOffset = 0;
-    private static double yOffset = 0;
 
     public static void addResizeListener(Stage stage) {
         ResizeListener resizeListener = new ResizeListener(stage);
-        stage.getScene().addEventHandler(MouseEvent.MOUSE_MOVED, resizeListener);
-        stage.getScene().addEventHandler(MouseEvent.MOUSE_PRESSED, resizeListener);
-        stage.getScene().addEventHandler(MouseEvent.MOUSE_DRAGGED, resizeListener);
-        stage.getScene().addEventHandler(MouseEvent.MOUSE_EXITED, resizeListener);
-        stage.getScene().addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, resizeListener);
+        Scene scene = stage.getScene();
+        scene.addEventHandler(MouseEvent.MOUSE_MOVED, resizeListener);
+        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, resizeListener);
+        scene.addEventHandler(MouseEvent.MOUSE_DRAGGED, resizeListener);
+        scene.addEventHandler(MouseEvent.MOUSE_EXITED, resizeListener);
+        scene.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, resizeListener);
 
-        ObservableList<Node> children = stage.getScene().getRoot().getChildrenUnmodifiable();
-        for (Node child : children) {
-            addListenerDeeply(child, resizeListener);
-        }
     }
 
-    private static void addListenerDeeply(Node node, EventHandler<MouseEvent> listener) {
-        node.addEventHandler(MouseEvent.MOUSE_MOVED, listener);
-        node.addEventHandler(MouseEvent.MOUSE_PRESSED, listener);
-        node.addEventHandler(MouseEvent.MOUSE_DRAGGED, listener);
-        node.addEventHandler(MouseEvent.MOUSE_EXITED, listener);
-        node.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, listener);
-        if (node instanceof Parent) {
-            Parent parent = (Parent) node;
-            ObservableList<Node> children = parent.getChildrenUnmodifiable();
-            for (Node child : children) {
-                addListenerDeeply(child, listener);
-            }
-        }
-    }
-
-    static class ResizeListener implements EventHandler<MouseEvent> {
+    private static class ResizeListener implements EventHandler<MouseEvent> {
         private Stage stage;
+        private Scene scene;
         private Cursor cursorEvent = Cursor.DEFAULT;
-        private int border = 4;
+        private static final int border = 4;
         private double startX = 0;
         private double startY = 0;
+        private double xOffset = 0;
+        private double yOffset = 0;
+        private double mouseX;
+        private double mouseY;
 
         ResizeListener(Stage stage) {
             this.stage = stage;
+            scene = stage.getScene();
         }
 
         @Override
         public void handle(MouseEvent mouseEvent) {
             EventType<? extends MouseEvent> mouseEventType = mouseEvent.getEventType();
-            Scene scene = stage.getScene();
-
-            double mouseEventX = mouseEvent.getSceneX(),
-                    mouseEventY = mouseEvent.getSceneY(),
-                    sceneWidth = scene.getWidth(),
-                    sceneHeight = scene.getHeight();
-
+            mouseX = mouseEvent.getSceneX();
+            mouseY = mouseEvent.getSceneY();
             if (MouseEvent.MOUSE_MOVED.equals(mouseEventType)) {
-                if (mouseEventX < border && mouseEventY < border) {
-                    cursorEvent = Cursor.NW_RESIZE;
-                } else if (mouseEventX < border && mouseEventY > sceneHeight - border) {
-                    cursorEvent = Cursor.SW_RESIZE;
-                } else if (mouseEventX > sceneWidth - border && mouseEventY < border) {
-                    cursorEvent = Cursor.NE_RESIZE;
-                } else if (mouseEventX > sceneWidth - border && mouseEventY > sceneHeight - border) {
-                    cursorEvent = Cursor.SE_RESIZE;
-                } else if (mouseEventX < border) {
-                    cursorEvent = Cursor.W_RESIZE;
-                } else if (mouseEventX > sceneWidth - border) {
-                    cursorEvent = Cursor.E_RESIZE;
-                } else if (mouseEventY < border) {
-                    cursorEvent = Cursor.N_RESIZE;
-                } else if (mouseEventY > sceneHeight - border) {
-                    cursorEvent = Cursor.S_RESIZE;
-                } else {
-                    cursorEvent = Cursor.DEFAULT;
-                }
-                scene.setCursor(cursorEvent);
+                setCursorForScene(mouseEvent);
             } else if (MouseEvent.MOUSE_EXITED.equals(mouseEventType) || MouseEvent.MOUSE_EXITED_TARGET.equals(mouseEventType)) {
                 scene.setCursor(Cursor.DEFAULT);
             } else if (MouseEvent.MOUSE_PRESSED.equals(mouseEventType)) {
-                startX = stage.getWidth() - mouseEventX;
-                startY = stage.getHeight() - mouseEventY;
+                startX = stage.getWidth() - mouseX;
+                startY = stage.getHeight() - mouseY;
                 xOffset = mouseEvent.getSceneX();
                 yOffset = mouseEvent.getSceneY();
-
             } else if (MouseEvent.MOUSE_DRAGGED.equals(mouseEventType)) {
-                if (!Cursor.DEFAULT.equals(cursorEvent)) {
-                    if (!Cursor.W_RESIZE.equals(cursorEvent) && !Cursor.E_RESIZE.equals(cursorEvent)) {
-                        double minHeight = stage.getMinHeight() > (border * 2) ? stage.getMinHeight() : (border * 2);
-                        if (Cursor.NW_RESIZE.equals(cursorEvent) || Cursor.N_RESIZE.equals(cursorEvent) || Cursor.NE_RESIZE.equals(cursorEvent)) {
-                            if (stage.getHeight() > minHeight || mouseEventY < 0) {
-                                stage.setHeight(stage.getY() - mouseEvent.getScreenY() + stage.getHeight());
-                                stage.setY(mouseEvent.getScreenY());
-                            }
-                        } else {
-                            if (stage.getHeight() > minHeight || mouseEventY + startY - stage.getHeight() > 0) {
-                                stage.setHeight(mouseEventY + startY);
-                            }
-                        }
-                    }
-
-                    if (!Cursor.N_RESIZE.equals(cursorEvent) && !Cursor.S_RESIZE.equals(cursorEvent)) {
-                        double minWidth = stage.getMinWidth() > (border * 2) ? stage.getMinWidth() : (border * 2);
-                        if (Cursor.NW_RESIZE.equals(cursorEvent) || Cursor.W_RESIZE.equals(cursorEvent) || Cursor.SW_RESIZE.equals(cursorEvent)) {
-                            if (stage.getWidth() > minWidth || mouseEventX < 0) {
-                                stage.setWidth(stage.getX() - mouseEvent.getScreenX() + stage.getWidth());
-                                stage.setX(mouseEvent.getScreenX());
-                            }
-                        } else {
-                            if (stage.getWidth() > minWidth || mouseEventX + startX - stage.getWidth() > 0) {
-                                stage.setWidth(mouseEventX + startX);
-                            }
-                        }
-                    }
-                } else if (mouseEvent.getSceneY() < 30) {
-                    stage.setX(mouseEvent.getScreenX() - xOffset);
-                    stage.setY(mouseEvent.getScreenY() - yOffset);
-                }
-
+                dragAndResizeApp(mouseEvent);
             }
+        }
+
+        private void dragAndResizeApp(MouseEvent mouseEvent){
+
+            if (!Cursor.DEFAULT.equals(cursorEvent)) {
+                if (!Cursor.W_RESIZE.equals(cursorEvent) && !Cursor.E_RESIZE.equals(cursorEvent)) {
+                    double minHeight = stage.getMinHeight();
+                    if (Cursor.NW_RESIZE.equals(cursorEvent) || Cursor.N_RESIZE.equals(cursorEvent) || Cursor.NE_RESIZE.equals(cursorEvent)) {
+                        if (stage.getHeight() > minHeight || mouseY < 0) {
+                            stage.setHeight(stage.getY() - mouseEvent.getScreenY() + stage.getHeight());
+                            stage.setY(mouseEvent.getScreenY());
+                        }
+                    } else {
+                        if (stage.getHeight() > minHeight || mouseY + startY - stage.getHeight() > 0) {
+                            stage.setHeight(mouseY + startY);
+                        }
+                    }
+                }
+                if (!Cursor.N_RESIZE.equals(cursorEvent) && !Cursor.S_RESIZE.equals(cursorEvent)) {
+                    double minWidth = stage.getMinWidth();
+                    if (Cursor.NW_RESIZE.equals(cursorEvent) || Cursor.W_RESIZE.equals(cursorEvent) || Cursor.SW_RESIZE.equals(cursorEvent)) {
+                        if (stage.getWidth() > minWidth || mouseX < 0) {
+                            stage.setWidth(stage.getX() - mouseEvent.getScreenX() + stage.getWidth());
+                            stage.setX(mouseEvent.getScreenX());
+                        }
+                    } else {
+                        if (stage.getWidth() > minWidth || mouseX + startX - stage.getWidth() > 0) {
+                            stage.setWidth(mouseX + startX);
+                        }
+                    }
+                }
+            } else if (mouseEvent.getSceneY() < 30) {
+                setStageCoordinates(mouseEvent.getScreenX() - xOffset, mouseEvent.getScreenY() - yOffset);
+            }
+        }
+        private void setStageCoordinates(double x, double y) {
+            stage.setX(x);
+            stage.setY(y);
+        }
+
+        private void setCursorForScene(MouseEvent event) {
+
+            double eventX = event.getSceneX();
+            double eventY = event.getSceneY();
+            double width = scene.getWidth();
+            double height = scene.getHeight();
+
+            if (eventX < border && eventY < border) {
+                cursorEvent = Cursor.NW_RESIZE;
+            } else if (eventX < border && eventY > height - border) {
+                cursorEvent = Cursor.SW_RESIZE;
+            } else if (eventX > width - border && eventY < border) {
+                cursorEvent = Cursor.NE_RESIZE;
+            } else if (eventX > width - border && eventY > height - border) {
+                cursorEvent = Cursor.SE_RESIZE;
+            } else if (eventX < border) {
+                cursorEvent = Cursor.W_RESIZE;
+            } else if (eventX > width - border) {
+                cursorEvent = Cursor.E_RESIZE;
+            } else if (eventY < border) {
+                cursorEvent = Cursor.N_RESIZE;
+            } else if (eventY > height - border) {
+                cursorEvent = Cursor.S_RESIZE;
+            } else {
+                cursorEvent = Cursor.DEFAULT;
+            }
+            scene.setCursor(cursorEvent);
         }
     }
 }

@@ -12,6 +12,7 @@ import java.io.IOException;
 
 public class MainApp extends Application {
 
+    private Stage stage;
     public static void main(String[] args){
         launch(args);
     }
@@ -24,7 +25,7 @@ public class MainApp extends Application {
     public void setUpApp() throws IOException {
 
         String fxmlFile = "/fxml/calculator.fxml";
-        Stage stage = FXMLLoader.load(getClass().getResource(fxmlFile));
+        stage = FXMLLoader.load(getClass().getResource(fxmlFile));
 
         stage.setResizable(true);
         stage.initStyle(StageStyle.UNDECORATED);
@@ -36,5 +37,9 @@ public class MainApp extends Application {
         ButtonPressHandler.addButtonPressListener(stage);
         stage.show();
         stage.toFront();
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 }

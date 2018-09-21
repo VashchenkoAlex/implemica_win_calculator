@@ -5,7 +5,6 @@ import win_calculator.DTOs.ResponseDTO;
 import win_calculator.controller.FXMLViewController;
 import win_calculator.controller.nodes.digits.*;
 import win_calculator.controller.nodes.digits.Number;
-import win_calculator.exceptions.MyException;
 import win_calculator.model.nodes.actions.Action;
 import win_calculator.model.nodes.actions.clear.BaskSpace;
 import win_calculator.model.nodes.actions.clear.Clear;
@@ -19,7 +18,6 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 
 import static org.junit.gen5.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.*;
 
 class AppModelTest {
 
@@ -66,9 +64,8 @@ class AppModelTest {
     }
 
     @Test
-    void testAddOperation() throws MyException {
+    void testAddOperation(){
 
-        //test Add
         test("+", "0", "0  +  ");
         test("+ =", "0", "");
         test("+ 2 =", "2", "");
@@ -157,7 +154,7 @@ class AppModelTest {
     }
 
     @Test
-    void testSubtractOperation() throws MyException {
+    void testSubtractOperation(){
 
         test("-", "0", "0  -  ");
         test("- =", "0", "");
@@ -230,7 +227,7 @@ class AppModelTest {
     }
 
     @Test
-    void testMultiplyOperation() throws MyException {
+    void testMultiplyOperation(){
 
         test("*", "0", "0  ×  ");
         test("* =", "0", "");
@@ -287,7 +284,7 @@ class AppModelTest {
     }
 
     @Test
-    void testDivideOperation() throws MyException {
+    void testDivideOperation(){
 
         test("/", "0", "0  ÷  ");
         test("/ 2 =", "0", "");
@@ -357,7 +354,7 @@ class AppModelTest {
     }
 
     @Test
-    void testOperationCombinations() throws MyException {
+    void testOperationCombinations(){
 
         test("± / * - +", "0", "negate( 0 )  +  ");
         test("± / * - + %", "0", "negate( 0 )  +  0");
@@ -437,7 +434,7 @@ class AppModelTest {
     }
 
     @Test
-    void testSqr() throws MyException {
+    void testSqr(){
 
         test("sqr + 5 sqr", "25", "sqr( 0 )  +  sqr( 5 )");
         test("0 sqr sqr sqr = =", "0", "");
@@ -452,7 +449,7 @@ class AppModelTest {
     }
 
     @Test
-    void testSqrt() throws MyException {
+    void testSqrt(){
 
         test("4 sqrt + = =", "6", "");
         test("25 sqrt + = =", "15", "");
@@ -485,16 +482,50 @@ class AppModelTest {
     }
 
     @Test
-    void testFractional() throws MyException {
+    void testFraction(){
+
+        test("1 1/x", "1", "1/( 1 )");
+        test("2 1/x", "0,5", "1/( 2 )");
+        test("3 1/x", "0,3333333333333333", "1/( 3 )");
+        test("4 1/x", "0,25", "1/( 4 )");
+        test("5 1/x", "0,2", "1/( 5 )");
+        test("6 1/x", "0,1666666666666667", "1/( 6 )");
+        test("7 1/x", "0,1428571428571429", "1/( 7 )");
+        test("8 1/x", "0,125", "1/( 8 )");
+        test("9 1/x", "0,1111111111111111", "1/( 9 )");
+
+        test("1 ± 1/x", "-1", "1/( -1 )");
+        test("2 ± 1/x", "-0,5", "1/( -2 )");
+        test("3 ± 1/x", "-0,3333333333333333", "1/( -3 )");
+        test("4 ± 1/x", "-0,25", "1/( -4 )");
+        test("5 ± 1/x", "-0,2", "1/( -5 )");
+        test("6 ± 1/x", "-0,1666666666666667", "1/( -6 )");
+        test("7 ± 1/x", "-0,1428571428571429", "1/( -7 )");
+        test("8 ± 1/x", "-0,125", "1/( -8 )");
+        test("9 ± 1/x", "-0,1111111111111111", "1/( -9 )");
+
+        test("1 1/x * 3 +", "3", "1/( 1 )  ×  3  +  ");
+        test("2 1/x * 2 +", "1", "1/( 2 )  ×  2  +  ");
+        test("3 1/x * 3 +", "1", "1/( 3 )  ×  3  +  ");
+        test("4 1/x * 4 +", "1", "1/( 4 )  ×  4  +  ");
+        test("5 1/x * 5 +", "1", "1/( 5 )  ×  5  +  ");
+        test("6 1/x * 6 +", "1", "1/( 6 )  ×  6  +  ");
+        test("7 1/x * 7 +", "1", "1/( 7 )  ×  7  +  ");
+        test("8 1/x * 8 +", "1", "1/( 8 )  ×  8  +  ");
+        test("9 1/x * 9 +", "1", "1/( 9 )  ×  9  +  ");
 
         test("1 + 4 1/x * 3 = =", "11,25", "");
         test("9999999999999999 1/x 1/x", "9 999 999 999 999 999", "1/( 1/( 9999999999999999 ) )");
+        test("9999999999999999 1/x 1/x 1/x", "0,0000000000000001", "1/( 1/( 1/( 9999999999999999 ) ) )");
         test("10 + 1/x = 1/x", "0,099009900990099", "1/( 10,1 )");
+        test("10 + 1/x = 1/x / 1/x +", "0,0098029604940692", "1/( 10,1 )  ÷  1/( 0,099009900990099 )  +  ");
         test("9999999999999999 1/x 1/x = 1/x", "0,0000000000000001", "1/( 9999999999999999 )");
+        test("9999999999999999 1/x 1/x = 1/x / 1/x +", "1,e-32", "1/( 9999999999999999 )  ÷  1/( 0,0000000000000001 )  +  ");
+        test("9999999999999999 1/x 1/x = ± 1/x / 1/x +", "1,e-32", "1/( negate( 9999999999999999 ) )  ÷  1/( -0,0000000000000001 )  +  ");
     }
 
     @Test
-    void testNegate() throws MyException {
+    void testNegate(){
 
         test("0 ± -", "0", "0  -  ");
         test("± -", "0", "negate( 0 )  -  ");
@@ -527,7 +558,7 @@ class AppModelTest {
     }
 
     @Test
-    void testPercent() throws MyException {
+    void testPercent(){
 
         test("%", "0", "0");
         test("0 % % %", "0", "0");
@@ -622,7 +653,7 @@ class AppModelTest {
     }
 
     @Test
-    void testScalingAndRounding() throws MyException {
+    void testScalingAndRounding(){
 
         test("10 / 9 * 0,1 *", "0,1111111111111111", "10  ÷  9  ×  0,1  ×  ");
         test("10 / 11 =", "0,9090909090909091", "");
@@ -635,6 +666,7 @@ class AppModelTest {
         test("1 / 6 /", "0,1666666666666667", "1  ÷  6  ÷  ");
         test("1 / 3 * 3 +", "1", "1  ÷  3  ×  3  +  ");
         test("1 / 3 * 3 - 1 =", "0", "");
+        test("1 / 3 * 0,0000000000000001 * 0,00000000001 * 10000000000000000 * 10000000000000 * 3 *","10","1  ÷  3  ×  0,0000000000000001  ×  0,00000000001  ×  1000000000000000  ×  10000000000000  ×  3  ×  ");
 //        test("1 / 3 * 10000000000 - 3333333333 * 10000000000 - 3333333333 * 10000000000 - 3333333333 * 10000000000 - 3333333333 * 10000000000 - 3333333333 * 10000000000 - 3333333333 * 3 - 1 =", "0", "");
 
 
@@ -664,7 +696,7 @@ class AppModelTest {
     }
 
     @Test
-    void testEMinusValues() throws MyException {
+    void testEMinusValues(){
 
         test("1 * 0,1 =", "0,1", "");
         test("1 * 0,1 = =", "0,01", "");
@@ -730,7 +762,7 @@ class AppModelTest {
     }
 
     @Test
-    void testEPlusValues() throws MyException {
+    void testEPlusValues(){
 
         test("1000000000000000 + ", "1 000 000 000 000 000", "1000000000000000  +  ");
         test("1000000000000000 * 10 *", "1,e+16", "1000000000000000  ×  10  ×  ");
@@ -755,14 +787,14 @@ class AppModelTest {
     }
 
     @Test
-    void testClear() throws MyException {
+    void testClear(){
 
         test("5 - 3 = C - 2 -", "-2", "0  -  2  -  ");
         test("5 MS + 3 = C - MR -", "-5", "0  -  5  -  ");
     }
 
     @Test
-    void testClearEntered() throws MyException {
+    void testClearEntered(){
 
         test("5 - 2333 CE", "0", "5  -  ");
         test("9 ± ± sqrt - CE", "0", "√( 9 )  -  ");
@@ -772,7 +804,7 @@ class AppModelTest {
     }
 
     @Test
-    void testBackSpace() throws MyException {
+    void testBackSpace(){
 
         test(", <-", "0", "");
         test("5 <-", "0", "");
@@ -801,7 +833,7 @@ class AppModelTest {
     }
 
     @Test
-    void testMemory() throws MyException {
+    void testMemory(){
 
         test("20 MS", "20", "");
         test("20 MS + 10 + MR", "20", "20  +  10  +  ");
@@ -864,44 +896,122 @@ class AppModelTest {
     @Test
     void testExceptions(){
 
-        testException("/ =","Result is undefined");
-        testException("1 / 0 =","Cannot divide by zero");
-        testException("0 1/x","Cannot divide by zero");
-        testException("/ , , -","Cannot divide by zero");
-        testException("+ / 0 -","Cannot divide by zero");
-        testException(", = + / , , -","Cannot divide by zero");
-        testException(", , , , , = = , , , , , = = + - * / , , , , , -","Cannot divide by zero");
-        testException("1 ± sqrt","Invalid input");
-        testException("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr sqr","Overflow");
-        testException("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr sqr","Overflow");
+        test("/ =","Result is undefined","0  ÷  ");
+        test("1 / 0 =","Cannot divide by zero","1  ÷  ");
+
+        test("/ , , -","Result is undefined","0  ÷  0  -  ");
+        test("+ / 0 -","Result is undefined","0  ÷  0  -  ");
+        test(", = + / , , -","Result is undefined","0  ÷  0  -  ");
+        test(", , , , , = = , , , , , = = + - * / , , , , , -","Result is undefined","0  ÷  0  -  ");
+
+        test("0 1/x","Cannot divide by zero","1/( 0 )");
+        test("2 / 0 +","Cannot divide by zero","2  ÷  0  +  ");
+        test("3 / 0 sqr +","Cannot divide by zero","3  ÷  sqr( 0 )  +  ");
+        test("4 / 0 sqrt +","Cannot divide by zero","4  ÷  √( 0 )  +  ");
+
+        test("1 ± sqrt","Invalid input","√( -1 )");
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr sqr","Overflow","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 1000000000000000 ) ) ) ) ) ) ) ) ) )");
+        test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr sqr","Overflow","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) ) ) )");
     }
 
     @Test
-    void testJustModel() throws MyException {
+    void testJustModel(){
 
         testModel("5 - 3 sqr * 2 =", "-8", "");
         testModel("1 + 20 % - 3 sqr * 4 sqrt / 5 1/x + 6 -", "-72", "1  +  0,2  -  sqr( 3 )  ×  √( 4 )  ÷  1/( 5 )  +  6  -  ");
         testModel("1 + 20 % - 3 sqr * 4 sqrt / 5 1/x + 6 - -7.8 =", "-64,2", "");
+
+        testModel("+", "0", "0  +  ");
+        testModel("+ =", "0", "");
+        testModel("+ 2 =", "2", "");
+        testModel("2 + 2 =", "4", "");
+        testModel("2 + 2 = +", "4", "4  +  ");
+        testModel("0 + = = =", "0", "");
+        testModel("1 + = = =", "4", "");
+        testModel("2 + = = =", "8", "");
+        testModel("13 + = = =", "52", "");
+        testModel("9999 + = = =", "39 996", "");
+        testModel("0.2 + 0.2 =", "0,4", "");
+        testModel("-0.2 + 0.2 =", "0", "");
+        testModel("2 + 3 + = =", "15", "");
+        testModel("1 + 2 + 3 = =", "9", "");
+        testModel("1 + 2 + 3 = + 4 +", "10", "6  +  4  +  ");
+        testModel("1 + 2 + 3 + 4 = =", "14", "");
+        testModel("2 + 3 + 4 + 5 = =", "19", "");
+        testModel("101 + 102 + 103 + 104 = =", "514", "");
+        testModel("102 + 103 + 104 + 105 = =", "519", "");
+        testModel("1 + 2 =", "3", "");
+        testModel("9 + 5 =", "14", "");
+        testModel("123 + 3 =", "126", "");
+        testModel("123456789 + 987654321 =", "1 111 111 110", "");
+        testModel("724387928792 + 724387928792 =", "1 448 775 857 584", "");
+        testModel("724387928792 + 724387928792 + 724387928792 + 724387928792 =", "2 897 551 715 168", "");
+        testModel("724387928792 + 724387928792 + 724387928792 + 724387928792 + 724387928792 + 724387928792 =", "4 346 327 572 752", "");
+
+        testModel("-123456789 + 01111 =", "-123 455 678", "");
+        testModel("00003456 + -00002 =", "3 454", "");
+        testModel("000 + 2 =", "2", "");
+        testModel("2 + 0 =", "2", "");
+        testModel("-2 + 0 =", "-2", "");
+        testModel("2 + 0 =", "2", "");
+        testModel("0 + -2 =", "-2", "");
+
+        testModel("5.6 + 2.7 =", "8,3", "");
+        testModel("0.99 + 0.03 =", "1,02", "");
+        testModel("0.999999999999 + 0.0000000003 =", "1,000000000299", "");
+        testModel("0.999999999999 + 0.0000000003 =", "1,000000000299", "");
+        testModel("0.999999999999 + 0.0000000003 =", "1,000000000299", "");
+        testModel("123456789.987654321 + 987654321.123456789 =", "1 111 111 111,111111", "");
+        testModel("1.111111111 + 2.999999999 =", "4,11111111", "");
+
+        testModel("-1.111111111 + 2.999999999 =", "1,888888888", "");
+        testModel("-1.111111111 + 2.999999999 =", "1,888888888", "");
+        testModel("1.111111111 + 2.999999999 =", "4,11111111", "");
+        testModel("1.111111111 + -2.999999999 =", "-1,888888888", "");
+
+        testModel("1 - * / + 2 =", "3", "");
+        testModel("1 - * / + + - + 2 =", "3", "");
+        testModel("1 - * / + + - + 2 =", "3", "");
+        testModel("123456789 * / + + - + 2 =", "123 456 791", "");
+        testModel("123456789 * / + = =", "370 370 367", "");
+
+        testModel("-999 + = = = =", "-4 995", "");
+        testModel("191919 + -2 =", "191 917", "");
+        testModel("0.99 + -0.03 =", "0,96", "");
+        testModel("-35 + -23 =", "-58", "");
+
+        testModel("2 + + + = = = =", "10", "");
+        testModel("2 + = = = =", "10", "");
+
+        testModel("1 - * / + + - + 2 +", "3", "1  +  2  +  ");
+        testModel("1234567 + - + -2 +", "1 234 565", "1234567  +  -2  +  ");
+        testModel("1 - * / + + - + -2 +", "-1", "1  +  -2  +  ");
+        testModel("-2 + + + +", "-2", "-2  +  ");
+
+        testModel("-1 +", "-1", "-1  +  ");
+        testModel("-1 + -2 +", "-3", "-1  +  -2  +  ");
+        testModel("-1 + -2 + -3 +", "-6", "-1  +  -2  +  -3  +  ");
+        testModel("-1 + -2 + -3 + -4 =", "-10", "");
+        testModel("-1 + -2 + -3 + -4 = =", "-14", "");
+        testModel("-2 + -3 + -4 + -5 = =", "-19", "");
+        testModel("-101 + -102 + -103 + -104 = =", "-514", "");
+        testModel("-102 + -103 + -104 + -105 = =", "-519", "");
+        testModel("-1 + 2 + -3 + 4 = =", "6", "");
+        testModel("2 + -3 + 4 + -5 = =", "-7", "");
+        testModel("-101 + 102 + -103 + 104 = =", "106", "");
+        testModel("102 + -103 + 104 + -105 = =", "-107", "");
     }
 
-    private void test(String expression, String display, String history) throws MyException {
+    private void test(String expression, String display, String history){
 
         ResponseDTO response = prepareTest(expression);
-        assertEquals(display, response.getDisplayNumber());
+        assertEquals(display, response.getDisplay());
         assertEquals(history, response.getHistory());
         controller.handleAction(new Clear());
         controller.handleAction(new ClearMemory());
     }
 
-
-    private void test(String expression) throws MyException {
-
-        assertThrows(MyException.class, () -> prepareTest(expression));
-        controller.handleAction(new Clear());
-        controller.handleAction(new ClearMemory());
-    }
-
-    private ResponseDTO prepareTest(String expression) throws MyException {
+    private ResponseDTO prepareTest(String expression){
 
         String[] parsedActionStrings = expression.split(" ");
         ResponseDTO response = null;
@@ -926,15 +1036,15 @@ class AppModelTest {
         return result.toString();
     }
 
-    private void testModel(String expression, String display, String history) throws MyException {
+    private void testModel(String expression, String display, String history){
 
         ResponseDTO response = prepareModelTest(expression);
 
-        assertEquals(display, response.getDisplayNumber());
+        assertEquals(display, response.getDisplay());
         assertEquals(history, response.getHistory());
     }
 
-    private ResponseDTO prepareModelTest(String expression) throws MyException {
+    private ResponseDTO prepareModelTest(String expression){
 
         String[] data = expression.split(" ");
         Number number = null;
@@ -949,16 +1059,5 @@ class AppModelTest {
         }
         model.toDo(new Clear(), number);
         return response;
-    }
-
-    private void testException(String expression, String expected){
-
-        String message = "";
-        try {
-            prepareTest(expression);
-        } catch (MyException e) {
-            message = e.getMessage();
-        }
-        assertEquals(expected,message);
     }
 }

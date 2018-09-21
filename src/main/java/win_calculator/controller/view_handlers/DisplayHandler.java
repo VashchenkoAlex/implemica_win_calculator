@@ -6,8 +6,7 @@ import javafx.scene.text.Text;
 import win_calculator.model.nodes.actions.Action;
 import win_calculator.utils.ActionType;
 
-import java.math.BigDecimal;
-
+import static win_calculator.utils.ActionType.BACKSPACE;
 import static win_calculator.utils.ActionType.DIGIT;
 import static win_calculator.utils.AppUtils.*;
 
@@ -30,11 +29,7 @@ public class DisplayHandler {
         display.setText(ZERO);
     }
 
-    private void sendNumberToDisplay(String number){
-
-        setDisplayedText(number);
-    }
-    public void setDisplayedText(String string) {
+    private void setDisplayedText(String string) {
 
         if (!"".equals(string)) {
             display.setText(string);
@@ -54,7 +49,7 @@ public class DisplayHandler {
 
         String text = display.getText();
         if (!"".equals(text) && isComaAbsent(text)) {
-            display.setText(text + COMA);
+            setDisplayedText(text + COMA);
         }
     }
 
@@ -82,16 +77,16 @@ public class DisplayHandler {
 
         if (DIGIT.equals(action.getType())){
             if (isNotMax()) {
-                if (ZERO.equals(action.getValue()) && DIGIT.equals(previousActionType)) {
+                if (ZERO.equals(action.getValue()) && DIGIT.equals(previousActionType) || BACKSPACE.equals(previousActionType)) {
                     addZero();
                 }else {
-                    sendNumberToDisplay(number);
+                    setDisplayedText(number);
                 }
             }else if (!DIGIT.equals(previousActionType)){
-                sendNumberToDisplay(number);
+                setDisplayedText(number);
             }
         }else {
-            sendNumberToDisplay(number);
+            setDisplayedText(number);
         }
     }
 }

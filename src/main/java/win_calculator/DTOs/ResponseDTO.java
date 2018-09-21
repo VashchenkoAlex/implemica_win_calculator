@@ -1,41 +1,30 @@
 package win_calculator.DTOs;
 
-import java.math.BigDecimal;
-
-import static win_calculator.utils.AppUtils.convertToString;
-
 public class ResponseDTO {
 
-    private BigDecimal displayNumber;
+    private String display;
     private String history;
-    private static final String DISPLAY_PATTERN = "#############,###.################";
 
-    public String getDisplayNumber() {
+    public ResponseDTO(String display, String history) {
 
-        String result;
-        if (displayNumber == null){
-            result = "0";
-        }else {
-            result = convertToString(displayNumber,DISPLAY_PATTERN);
-        }
-        return result;
+        this.display = display;
+        this.history = history;
     }
 
-    public BigDecimal getBigdecimalNumber(){
+    public String getDisplay() {
 
-        return displayNumber;
+        if (display == null) {
+            display = "0";
+        }
+        return display;
     }
 
     public String getHistory() {
 
-        if (history == null){
+        if (history == null) {
             history = "";
         }
         return history;
     }
 
-    public ResponseDTO(BigDecimal displayNumber, String history) {
-        this.displayNumber = displayNumber;
-        this.history = history;
-    }
 }

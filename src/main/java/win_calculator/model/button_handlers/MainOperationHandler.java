@@ -3,7 +3,7 @@ package win_calculator.model.button_handlers;
 import win_calculator.exceptions.MyException;
 import win_calculator.model.nodes.History;
 import win_calculator.model.nodes.actions.main_operations.MainOperation;
-import win_calculator.model.response_handlers.HistoryHandler;
+import win_calculator.model.OperationProcessor;
 
 import java.math.BigDecimal;
 
@@ -12,7 +12,7 @@ import static win_calculator.utils.AppUtils.checkOnOverflow;
 
 public class MainOperationHandler {
 
-    private HistoryHandler historyHandler;
+    private OperationProcessor operationProcessor;
     private BigDecimal lastNumber;
     private BigDecimal previousNumber;
     private BigDecimal resultNumber;
@@ -20,22 +20,22 @@ public class MainOperationHandler {
     private boolean mOperationBefore = false;
     private MainOperation lastOperation;
 
-    public MainOperationHandler(HistoryHandler historyHandler) {
-        this.historyHandler = historyHandler;
+    public MainOperationHandler(OperationProcessor operationProcessor) {
+        this.operationProcessor = operationProcessor;
     }
 
     public BigDecimal doOperation(MainOperation operation) throws MyException {
 
         initVariables();
         setEnterRepeated(false);
-        if (MAIN_OPERATION.equals(historyHandler.getLastActionType())){
-            historyHandler.changeLastAction(operation);
-            historyHandler.removeLastNumberAtHistoryIfExists();
+        if (MAIN_OPERATION.equals(operationProcessor.getLastActionType())){
+            operationProcessor.changeLastAction(operation);
+            operationProcessor.removeLastNumberAtHistoryIfExists();
         }else {
+            operationProcessor.addActionToHistory(operation);
             doCalculation();
-            historyHandler.addActionToHistory(operation);
         }
-        historyHandler.setMOperationBefore(true);
+        operationProcessor.setMOperationBefore(true);
         lastOperation = operation;
         return resultNumber;
     }
@@ -56,7 +56,7 @@ public class MainOperationHandler {
                 }
             }
             resultNumber = checkOnOverflow(resultNumber);
-            historyHandler.setResultNumber(resultNumber);
+            operationProcessor.setResultNumber(resultNumber);
         }else {
             resultNumber = null;
         }
@@ -67,12 +67,12 @@ public class MainOperationHandler {
         if (mOperationBefore||enterRepeated){
             doCalculation();
             setEnterRepeated(true);
-            historyHandler.setMOperationBefore(false);
+            operationProcessor.setMOperationBefore(false);
         }else {
-            resultNumber = historyHandler.getResultNumber();
+            resultNumber = operationProcessor.getResultNumber();
         }
-        historyHandler.setResultNumber(resultNumber);
-        historyHandler.setHistory(new History());
+        operationProcessor.setResultNumber(resultNumber);
+        operationProcessor.setHistory(new History());
         previousNumber = null;
         return resultNumber;
     }
@@ -102,22 +102,22 @@ public class MainOperationHandler {
 
     private void initVariables(){
 
-        BigDecimal lastNumber = historyHandler.getLastNumber();
+        BigDecimal lastNumber = operationProcessor.getLastNumber();
         if (lastNumber !=null){
             this.lastNumber = lastNumber;
         }
-        BigDecimal lastExtraResult = historyHandler.getLastExtraResult();
+        BigDecimal lastExtraResult = operationProcessor.getLastExtraResult();
         if (lastExtraResult !=null){
             this.lastNumber = lastExtraResult;
         }
-        BigDecimal previousNumber = historyHandler.getPreviousNumber();
+        BigDecimal previousNumber = operationProcessor.getPreviousNumber();
         if (previousNumber!=null){
             this.previousNumber = previousNumber;
         }
-        BigDecimal resultNumFromHistory = historyHandler.getResultNumber();
+        BigDecimal resultNumFromHistory = operationProcessor.getResultNumber();
         if (resultNumFromHistory!=null){
             resultNumber = resultNumFromHistory;
         }
-        mOperationBefore = historyHandler.isMOperationBefore();
+        mOperationBefore = operationProcessor.isMOperationBefore();
     }
 }

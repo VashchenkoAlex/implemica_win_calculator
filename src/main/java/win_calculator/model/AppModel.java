@@ -9,7 +9,6 @@ import win_calculator.model.nodes.actions.extra_operations.ExtraOperation;
 import win_calculator.model.nodes.actions.extra_operations.Negate;
 import win_calculator.model.nodes.actions.extra_operations.Percent;
 import win_calculator.model.nodes.actions.main_operations.MainOperation;
-import win_calculator.model.response_handlers.HistoryHandler;
 import win_calculator.model.button_handlers.MainOperationHandler;
 import win_calculator.model.button_handlers.PercentHandler;
 import win_calculator.utils.ActionType;
@@ -18,60 +17,69 @@ import java.math.BigDecimal;
 
 import static win_calculator.utils.ActionType.*;
 import static win_calculator.utils.AppUtils.checkOnOverflow;
+import static win_calculator.utils.AppUtils.convertToString;
 
 public class AppModel {
 
-    private HistoryHandler historyHandler = new HistoryHandler();
-    private MainOperationHandler mOperationHandler = new MainOperationHandler(historyHandler);
-    private PercentHandler percentHandler = new PercentHandler(historyHandler);
+    private static final String DISPLAY_PATTERN = "#############,###.################";
+
+    private OperationProcessor operationProcessor = new OperationProcessor();
+    private MainOperationHandler mOperationHandler = new MainOperationHandler(operationProcessor);
+    private PercentHandler percentHandler = new PercentHandler(operationProcessor);
     private BigDecimal responseNumber;
     private Number lastNumber;
 
-    public ResponseDTO toDo(Action action, Number number) throws MyException {
+    public ResponseDTO toDo(Action action, Number number){
 
-        switch (action.getType()) {
-            case MAIN_OPERATION: {
-                processMainOperation(action, number);
-                break;
+        ResponseDTO responseDTO;
+        try{
+            switch (action.getType()) {
+                case MAIN_OPERATION: {
+                    processMainOperation(action, number);
+                    break;
+                }
+                case ENTER: {
+                    processEnter(number);
+                    break;
+                }
+                case EXTRA_OPERATION: {
+                    processExtraOperation(action, number);
+                    break;
+                }
+                case NEGATE: {
+                    processNegate(action, number);
+                    break;
+                }
+                case PERCENT: {
+                    processPercent(action, number);
+                    break;
+                }
+                case CLEAR: {
+                    processClear();
+                    break;
+                }
+                case CLEAR_ENTERED: {
+                    operationProcessor.rejectLastNumberWithExtraOperations();
+                    responseNumber = null;
+                    break;
+                }
+                case CLEAR_EXTRA: {
+                    operationProcessor.rejectLastNumberWithExtraOperations();
+                    break;
+                }
             }
-            case ENTER: {
-                processEnter(number);
-                break;
-            }
-            case EXTRA_OPERATION: {
-                processExtraOperation(action, number);
-                break;
-            }
-            case NEGATE: {
-                processNegate(action, number);
-                break;
-            }
-            case PERCENT: {
-                processPercent(action, number);
-                break;
-            }
-            case CLEAR: {
-                processClear();
-                break;
-            }
-            case CLEAR_ENTERED: {
-                historyHandler.rejectLastNumberWithExtraOperations();
-                responseNumber = null;
-                break;
-            }
-            case CLEAR_EXTRA: {
-                historyHandler.rejectLastNumberWithExtraOperations();
-                break;
-            }
+            responseDTO = new ResponseDTO(convertToString(responseNumber,DISPLAY_PATTERN), operationProcessor.getHistoryString());
+        }catch (MyException e){
+            responseDTO = new ResponseDTO(e.getMessage(),operationProcessor.getHistoryString());
         }
-        return new ResponseDTO(responseNumber, historyHandler.getHistoryString());
+        return responseDTO;
     }
 
     private void processClear() {
 
         lastNumber = null;
         responseNumber = null;
-        historyHandler.clearHistory();
+        operationProcessor.clearHistory();
         mOperationHandler.resetValues();
     }
 
@@ -79,22 +87,24 @@ public class AppModel {
 
         BigDecimal operationNumber;
         if (number != null) {
-            historyHandler.addActionToHistory(number);
+            operationProcessor.addNumberToHistory(number);
             operationNumber = new BigDecimal(number.getValue());
         } else if (responseNumber != null) {
             operationNumber = responseNumber;
-            if (MAIN_OPERATION.equals(historyHandler.getLastActionType()) || (historyHandler.isEnterRepeated()
-                    && !EXTRA_OPERATION.equals(historyHandler.getLastActionType()))) {
-                historyHandler.addActionToHistory(new Number(operationNumber));
+            ActionType type = operationProcessor.getLastActionType();
+            if (MAIN_OPERATION.equals(type) || (operationProcessor.isEnterRepeated()
+                    && !EXTRA_OPERATION.equals(type) && !NEGATE.equals(type))) {
+                operationProcessor.addNumberToHistory(new Number(operationNumber));
             }
         } else {
             operationNumber = BigDecimal.ZERO;
-            historyHandler.addActionToHistory(new Number(operationNumber));
+            operationProcessor.addZeroToHistory();
         }
+        operationProcessor.addActionToHistory(eOperation);
         BigDecimal resultNum = checkOnOverflow(((ExtraOperation) eOperation).calculate(operationNumber));
-        historyHandler.setLastExtraResult(resultNum);
+        operationProcessor.setLastExtraResult(resultNum);
         responseNumber = resultNum;
-        historyHandler.addActionToHistory(eOperation);
+
     }
 
     private void processPercent(Action percent, Number number) throws MyException {
@@ -103,22 +113,22 @@ public class AppModel {
         responseNumber = result;
         if (!BigDecimal.ZERO.equals(responseNumber) && !"0.00".equals(result.toString())) {
             BigDecimal tempNumber;
-            if (historyHandler.getPreviousNumber() != null) {
-                tempNumber = historyHandler.getPreviousNumber();
+            if (operationProcessor.getPreviousNumber() != null) {
+                tempNumber = operationProcessor.getPreviousNumber();
             } else {
-                tempNumber = historyHandler.getLastNumber();
+                tempNumber = operationProcessor.getLastNumber();
             }
-            historyHandler.rejectLastNumberWithExtraOperations();
-            historyHandler.changeLastActionNumber(new Number(result));
-            historyHandler.setEnterRepeated(false);
-            historyHandler.changeLastNumberAtActions(result);
-            historyHandler.changePreviousNumber(tempNumber);
-            historyHandler.addActionToHistory(percent);
-        } else if (!"0".equals(historyHandler.getHistoryString())) {
-            if (MAIN_OPERATION.equals(historyHandler.getLastActionType()) || EXTRA_OPERATION.equals(historyHandler.getLastActionType())) {
-                historyHandler.addActionToHistory(new Number(BigDecimal.ZERO));
+            operationProcessor.rejectLastNumberWithExtraOperations();
+            operationProcessor.changeLastActionNumber(new Number(result));
+            operationProcessor.setEnterRepeated(false);
+            operationProcessor.changeLastNumberAtActions(result);
+            operationProcessor.changePreviousNumber(tempNumber);
+            operationProcessor.addActionToHistory(percent);
+        } else if (!"0".equals(operationProcessor.getHistoryString())) {
+            if (MAIN_OPERATION.equals(operationProcessor.getLastActionType()) || EXTRA_OPERATION.equals(operationProcessor.getLastActionType())) {
+                operationProcessor.addNumberToHistory(new Number(BigDecimal.ZERO));
             } else {
-                historyHandler.addZeroToHistory();
+                operationProcessor.addZeroToHistory();
             }
         }
     }
@@ -126,13 +136,14 @@ public class AppModel {
     private void processEnter(Number number) throws MyException {
 
         if (number != null) {
-            historyHandler.addActionToHistory(number);
+            operationProcessor.resetResultNumber();
+            operationProcessor.setLastNumber(number.getBigDecimalValue());
             responseNumber = number.getBigDecimalValue();
         } else {
-            BigDecimal resultNumber = historyHandler.getResultNumber();
-            ActionType lastActionType = historyHandler.getLastActionType();
-            if (!historyHandler.isEnterRepeated() && resultNumber != null && (MAIN_OPERATION.equals(lastActionType)||MEMORY.equals(lastActionType))) {
-                historyHandler.setLastNumber(resultNumber);
+            BigDecimal resultNumber = operationProcessor.getResultNumber();
+            ActionType lastActionType = operationProcessor.getLastActionType();
+            if (!operationProcessor.isEnterRepeated() && resultNumber != null && (MAIN_OPERATION.equals(lastActionType)||MEMORY.equals(lastActionType))) {
+                operationProcessor.setLastNumber(resultNumber);
             }
         }
         BigDecimal operationResult = mOperationHandler.doEnter();
@@ -141,56 +152,56 @@ public class AppModel {
         } else if (lastNumber != null) {
             responseNumber = lastNumber.getBigDecimalValue();
         }
-        historyHandler.setEnterRepeated(true);
-        historyHandler.resetLastExtraResult();
-        historyHandler.setLastAction(new Clear());
+        operationProcessor.setEnterRepeated(true);
+        operationProcessor.resetLastExtraResult();
+        operationProcessor.setLastAction(new Clear());
     }
 
     private void processMainOperation(Action mOperation, Number number) throws MyException {
 
         if (number != null) {
-            historyHandler.addActionToHistory(number);
+            operationProcessor.addNumberToHistory(number);
             responseNumber = number.getBigDecimalValue();
-            if (historyHandler.isEnterRepeated()) {
-                historyHandler.resetResultNumber();
+            if (operationProcessor.isEnterRepeated()) {
+                operationProcessor.resetResultNumber();
             }
-            if (!historyHandler.isMOperationBefore()) {
-                historyHandler.resetPreviousNumber();
+            if (!operationProcessor.isMOperationBefore()) {
+                operationProcessor.resetPreviousNumber();
             }
         } else if (responseNumber != null) {
-            if (!historyHandler.hasExtraOperations()) {
-                historyHandler.changeLastNumberAtActions(responseNumber);
+            if (!operationProcessor.hasExtraOperations()) {
+                operationProcessor.changeLastNumberAtActions(responseNumber);
             }
         } else {
-            historyHandler.addZeroToHistory();
+            operationProcessor.addZeroToHistory();
         }
         BigDecimal operationResult = mOperationHandler.doOperation((MainOperation) mOperation);
         if (operationResult != null) {
             responseNumber = operationResult;
         }
-        historyHandler.setEnterRepeated(false);
-        historyHandler.resetLastExtraResult();
+        operationProcessor.setEnterRepeated(false);
+        operationProcessor.resetLastExtraResult();
     }
 
     private void processNegate(Action negate, Number number) {
 
-        if (number == null && historyHandler.lastActionNotNumber()) {
+        if (number == null && operationProcessor.lastActionNotNumber()) {
             if (responseNumber != null) {
-                if (MAIN_OPERATION.equals(historyHandler.getLastActionType()) || CLEAR.equals(historyHandler.getLastActionType())) {
-                    historyHandler.addActionToHistory(new Number(responseNumber));
+                if (MAIN_OPERATION.equals(operationProcessor.getLastActionType()) || CLEAR.equals(operationProcessor.getLastActionType())) {
+                    operationProcessor.addNumberToHistory(new Number(responseNumber));
                 }
             } else {
                 responseNumber = BigDecimal.ZERO;
-                historyHandler.addActionToHistory(new Number(responseNumber));
+                operationProcessor.addNumberToHistory(new Number(responseNumber));
             }
             responseNumber = ((Negate) negate).calculate(responseNumber);
-            historyHandler.changeLastNumber(responseNumber);
-            historyHandler.addActionToHistory(negate);
+            operationProcessor.changeLastNumber(responseNumber);
+            operationProcessor.addActionToHistory(negate);
         } else {
-            responseNumber = ((Negate) negate).calculate(historyHandler.getLastNumber());
-            historyHandler.changeLastNumber(responseNumber);
-            if (historyHandler.isHistoryContainNegate()) {
-                historyHandler.addActionToHistory(negate);
+            responseNumber = ((Negate) negate).calculate(operationProcessor.getLastNumber());
+            operationProcessor.changeLastNumber(responseNumber);
+            if (operationProcessor.isHistoryContainNegate()) {
+                operationProcessor.addActionToHistory(negate);
             }
         }
     }

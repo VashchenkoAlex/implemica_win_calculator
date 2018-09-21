@@ -10,18 +10,22 @@ import java.math.BigDecimal;
 import java.util.LinkedList;
 
 import static win_calculator.utils.ActionType.*;
+import static win_calculator.utils.AppUtils.addCapacity;
+import static win_calculator.utils.AppUtils.convertToString;
+import static win_calculator.utils.AppUtils.replaceDotToComa;
 
 public class NumberBuilder {
 
     private static final int MAX_DIGITS = 16;
     private static final String COMA = ".";
     private static final String ZERO = "0";
+    private static final String DISPLAY_PATTERN = "#############,###.################";
     private boolean positive = true;
     private Number number;
     private LinkedList<Digit> digitsChain = new LinkedList<>();
     private LinkedList<Digit> previousChain;
 
-    BigDecimal toDo(Action action) {
+    String toDo(Action action) {
 
         ActionType actionType = action.getType();
         if (DIGIT.equals(actionType) && isNotMaxDigits()) {
@@ -29,10 +33,7 @@ public class NumberBuilder {
         } else if (BACKSPACE.equals(actionType)) {
             backSpace();
         }
-//        else if (NEGATE.equals(actionType)) {
-//            negate();
-//        }
-        return number.getBigDecimalValue();
+        return convertChainToString();
     }
 
     private void add(Digit digit) {
@@ -179,12 +180,17 @@ public class NumberBuilder {
         positive = !positive;
     }
 
-    void negate(boolean wasMemoryAction) {
+    String negate(boolean wasMemoryAction) {
 
         changeIsPositive();
+        String result;
         if (!wasMemoryAction){
             prepareNumber();
+            result = convertChainToString();
+        }else {
+            result = convertToString(number.getBigDecimalValue().negate(),DISPLAY_PATTERN);
         }
+        return result;
     }
 
     private void resetPositive() {
@@ -208,8 +214,11 @@ public class NumberBuilder {
             number = new Number(value);
         } else if (isChainNotEmpty()) {
             BigDecimal value = number.getBigDecimalValue();
-            if (!positive && value.compareTo(BigDecimal.ZERO) > 0) {
+            boolean positiveValue = value.compareTo(BigDecimal.ZERO) > 0;
+            if (!positive && positiveValue) {
                 value = value.negate();
+            }else if (positive && !positiveValue){
+                value = value.abs();
             }
             number = new Number(value);
         }else if (number != null && number.getBigDecimalValue() != null){
@@ -230,7 +239,33 @@ public class NumberBuilder {
         if (number != null && number.getBigDecimalValue() == null){
             prepareNumber();
         }
-
         return number;
+    }
+
+    private boolean isNumberNegative(){
+
+        return !positive;
+    }
+
+    String convertChainToString(){
+
+        StringBuilder resultBuilder = new StringBuilder();
+        if (isNumberNegative()){
+            resultBuilder = new StringBuilder("-");
+        }
+        LinkedList<Digit> chain = digitsChain;
+        if (digitsChain.isEmpty()){
+            chain = previousChain;
+        }
+        if (chain != null && !chain.isEmpty()){
+            for (Digit digit: chain) {
+                resultBuilder.append(digit.getValue());
+            }
+        }
+        String result = resultBuilder.toString();
+        if (!"".equals(result)){
+            result = addCapacity(replaceDotToComa(result));
+        }
+        return result;
     }
 }

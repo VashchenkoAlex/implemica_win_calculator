@@ -15,10 +15,11 @@ public abstract class AppUtils {
     private static final String ZERO = "0";
     private static final String PLUS = "+";
     private static final String MINUS = "-";
-    private static final String MINUS_REGEX = "^-";
+    private static final String MINUS_REGEX = "^-.[0-9,]*";
     private static final String BRACKET = " )";
     private static final String SPACE = "  ";
     private static final String SPACES_REGEX = "\\s\\s";
+    private static final String IS_TEXT_REGEX = "^[^0-9]+";
     private static final String ADD_EXTRA_OPERATION_REGEX = "^.+[\\s{2}][^\\s{2}]+$";
     private static final String ARE_ZEROS_FIRST_REGEX = "^0.0[0-9]+";
     private static final String IS_ZERO_FIRST_REGEX = "^0.+";
@@ -89,14 +90,17 @@ public abstract class AppUtils {
         return result;
     }
 
-    public static String convertToString(BigDecimal response, String pattern) {
+    public static String convertToString(BigDecimal incomeNumber, String pattern) {
 
-        BigDecimal number = response;
-        int scale = selectScale(number);
-        number = setNewScale(number, scale);
-        String eSeparator = selectSeparator(number);
-        String thePattern = selectPattern(number, pattern);
-        return initFormatter(thePattern, eSeparator).format(number);
+        String result = null;
+        if (incomeNumber != null) {
+            BigDecimal number = incomeNumber;
+            int scale = selectScale(number);
+            number = setNewScale(number, scale);
+            String thePattern = selectPattern(number, pattern);
+            result = initFormatter(thePattern, selectSeparator(number)).format(number);
+        }
+        return result;
     }
 
     private static String preparePattern(int count) {
@@ -138,7 +142,18 @@ public abstract class AppUtils {
             parts = parts[0].split(COMA);
         }
         parts[0] = String.format("%,d", Long.parseLong(parts[0].replaceAll(" ", "")));
-        return minus + parts[0] + coma + parts[1];
+        String result;
+        if (parts.length>1){
+            result = minus + parts[0] + coma + parts[1];
+        }else {
+            result = minus + parts[0] + coma;
+        }
+        return result;
+    }
+
+    public static String replaceCapacity(String string){
+
+        return string.replaceAll(" ","");
     }
 
     private static DecimalFormat initFormatter(String pattern, String separator) {
@@ -266,5 +281,20 @@ public abstract class AppUtils {
             throw new MyException(OVERFLOW_MSG);
         }
         return resultNumber;
+    }
+
+    public static String replaceDotToComa(String string){
+
+        return string.replace(DOT,COMA);
+    }
+
+    public static String replaceComaToDot(String string){
+
+        return string.replace(COMA,DOT);
+    }
+
+    public static boolean isNotNumber(String string){
+
+        return string.matches(IS_TEXT_REGEX);
     }
 }
