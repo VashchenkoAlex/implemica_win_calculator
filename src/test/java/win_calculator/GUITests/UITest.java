@@ -211,7 +211,7 @@ class UITest extends ApplicationTest{
 
         testByRobot("1 + 2 - 3 C", "0", "");
         testByRobot("1 + 2 - 3 CE 4 -", "-1", "1  +  2  -  4  -  ");
-        testByRobot("1 MS + 2 - MR + M- MR * 3 = MC", "3", "");
+        testByRobot("1 M+ + 2 - MR + M- MR * 3 = MC", "3", "");
         testByRobot("1 + 2 0 % - 3 sqr * 4 sqrt / 5 1/x + 6 7 <- - 7 , 8 ± * 8 CE 9 / , 1 +", "-5 778", "1  +  0,2  -  sqr( 3 )  ×  √( 4 )  ÷  1/( 5 )  +  6  -  -7,8  ×  9  ÷  0,1  +  ");
 
         testDrag(0, 500, 200, 700);

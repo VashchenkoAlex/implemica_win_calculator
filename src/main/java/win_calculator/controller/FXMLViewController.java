@@ -624,17 +624,18 @@ public class FXMLViewController implements Initializable {
         });
 
         dragBtn.setOnMouseReleased(event -> {
-            if (checkOnOverScreen(event)){
+            if (checkOnOverScreen(event)) {
                 captionHandler.fullScreen();
             }
         });
     }
-    private boolean checkOnOverScreen(MouseEvent event){
+
+    private boolean checkOnOverScreen(MouseEvent event) {
 
         double x = event.getScreenY();
         double y = event.getScreenX();
         boolean result = false;
-        if (x < 1 || y < 1){
+        if (x < 1 || y < 1) {
             result = true;
         }
         return result;

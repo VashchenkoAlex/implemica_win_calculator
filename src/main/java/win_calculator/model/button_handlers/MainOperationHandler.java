@@ -30,7 +30,6 @@ public class MainOperationHandler {
         setEnterRepeated(false);
         if (MAIN_OPERATION.equals(operationProcessor.getLastActionType())){
             operationProcessor.changeLastAction(operation);
-            operationProcessor.removeLastNumberAtHistoryIfExists();
         }else {
             operationProcessor.addActionToHistory(operation);
             doCalculation();

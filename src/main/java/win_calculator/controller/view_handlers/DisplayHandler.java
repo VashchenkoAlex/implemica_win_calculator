@@ -3,6 +3,7 @@ package win_calculator.controller.view_handlers;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import win_calculator.controller.nodes.digits.Digit;
 import win_calculator.model.nodes.actions.Action;
 import win_calculator.utils.ActionType;
 
@@ -77,7 +78,7 @@ public class DisplayHandler {
 
         if (DIGIT.equals(action.getType())){
             if (isNotMax()) {
-                if (ZERO.equals(action.getValue()) && DIGIT.equals(previousActionType) || BACKSPACE.equals(previousActionType)) {
+                if (ZERO.equals(((Digit)action).getValue()) && DIGIT.equals(previousActionType) || BACKSPACE.equals(previousActionType)) {
                     addZero();
                 }else {
                     setDisplayedText(number);

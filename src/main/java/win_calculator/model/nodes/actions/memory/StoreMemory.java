@@ -7,18 +7,12 @@ import static win_calculator.utils.MemoryType.STORE;
 
 public class StoreMemory implements MemoryAction {
 
-    private static final String VALUE = " MS ";
     private static final ActionType TYPE = ActionType.MEMORY;
     private static final MemoryType MEMORY_TYPE = STORE;
 
     @Override
     public MemoryType getMemoryType() {
         return MEMORY_TYPE;
-    }
-
-    @Override
-    public String getValue() {
-        return VALUE;
     }
 
     @Override

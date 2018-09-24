@@ -4,6 +4,9 @@ import win_calculator.model.nodes.History;
 import win_calculator.model.nodes.actions.Action;
 import win_calculator.controller.nodes.digits.Number;
 import win_calculator.model.nodes.actions.clear.Clear;
+import win_calculator.model.nodes.actions.extra_operations.ExtraOperation;
+import win_calculator.model.nodes.actions.extra_operations.Percent;
+import win_calculator.model.nodes.actions.main_operations.MainOperation;
 import win_calculator.utils.ActionType;
 
 import java.math.BigDecimal;
@@ -29,14 +32,17 @@ public class OperationProcessor {
         LinkedList<Action> actions = history.getActions();
         String result = "";
         for (Action action : actions) {
-            if (EXTRA_OPERATION.equals(action.getType())) {
-                result = addExtraOperationToString(result, action.getValue());
-            } else if (NUMBER.equals(action.getType())) {
+            ActionType type = action.getType();
+            if (EXTRA_OPERATION.equals(type)) {
+                result = addExtraOperationToString(result, ((ExtraOperation) action).getValue());
+            } else if (NUMBER.equals(type)) {
                 result += convertToString(((Number) action).getBigDecimalValue(), HISTORY_PATTERN);
-            } else if (NEGATE.equals(action.getType())) {
-                result = addExtraOperationToString(result, action.getValue());
+            } else if (NEGATE.equals(type)) {
+                result = addExtraOperationToString(result, ((ExtraOperation) action).getValue());
+            } else if (PERCENT.equals(type)){
+                result += ((Percent)action).getValue();
             } else {
-                result += action.getValue();
+                result += ((MainOperation)action).getValue();
             }
         }
         return result;
@@ -222,11 +228,6 @@ public class OperationProcessor {
         }
         lastNumber = BigDecimal.ZERO;
         mOperationBefore = false;
-    }
-
-    public void removeLastNumberAtHistoryIfExists() {
-
-        history.removeLastNumberIfExists();
     }
 
     void resetResultNumber() {
