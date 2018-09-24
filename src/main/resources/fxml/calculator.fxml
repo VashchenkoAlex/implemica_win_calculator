@@ -24,12 +24,13 @@
                 <AnchorPane fx:id="rootPane" styleClass="main-panel"
                             minWidth="320.0" minHeight="502.0">
                     <children>
-                        <AnchorPane fx:id="caption" styleClass="captionButtons" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                            <Button fx:id="closeBtn" styleClass="captionButton" text="" AnchorPane.rightAnchor="0" onAction="#closeBtn"/>
+                        <Label fx:id="captionLabel" text="Calculator" styleClass="captionText" AnchorPane.topAnchor="8.0" AnchorPane.leftAnchor="10.0"/>
+                        <Button fx:id="dragBtn" AnchorPane.leftAnchor="3.0" AnchorPane.topAnchor="3.0"/>
+                        <AnchorPane fx:id="caption" styleClass="captionButtons" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="0.0">
+                            <Button fx:id="closeBtn" styleClass="captionButton" text="" AnchorPane.rightAnchor="1.0" onAction="#closeBtn"/>
                             <Button fx:id="fullScreenBtn" styleClass="captionButton" text="" AnchorPane.rightAnchor="45.0" onAction="#fullScreenBtnClick"/>
                             <Button fx:id="hideBtn" styleClass="captionButton" text="" AnchorPane.rightAnchor="90.0" onAction="#hideBtn"/>
                         </AnchorPane>
-                        <Label fx:id="captionLabel" text="Calculator" styleClass="captionText" AnchorPane.topAnchor="8.0" AnchorPane.leftAnchor="10.0"/>
                         <AnchorPane styleClass="flowPane" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="30.0">
                             <children>
                                 <Button fx:id="menuBtn" text="" styleClass="menu" onAction="#dropMenu" AnchorPane.topAnchor="5.0" AnchorPane.leftAnchor="0.0"/>

@@ -27,8 +27,6 @@ public class ResizeHandler {
         private static final int border = 4;
         private double startX = 0;
         private double startY = 0;
-        private double xOffset = 0;
-        private double yOffset = 0;
         private double mouseX;
         private double mouseY;
 
@@ -44,19 +42,18 @@ public class ResizeHandler {
             mouseY = mouseEvent.getSceneY();
             if (MouseEvent.MOUSE_MOVED.equals(mouseEventType)) {
                 setCursorForScene(mouseEvent);
-            } else if (MouseEvent.MOUSE_EXITED.equals(mouseEventType) || MouseEvent.MOUSE_EXITED_TARGET.equals(mouseEventType)) {
+            } else if (MouseEvent.MOUSE_EXITED.equals(mouseEventType)) {
                 scene.setCursor(Cursor.DEFAULT);
             } else if (MouseEvent.MOUSE_PRESSED.equals(mouseEventType)) {
                 startX = stage.getWidth() - mouseX;
                 startY = stage.getHeight() - mouseY;
-                xOffset = mouseEvent.getSceneX();
-                yOffset = mouseEvent.getSceneY();
             } else if (MouseEvent.MOUSE_DRAGGED.equals(mouseEventType)) {
-                dragAndResizeApp(mouseEvent);
+                resize(mouseEvent);
+                fixSize();
             }
         }
 
-        private void dragAndResizeApp(MouseEvent mouseEvent){
+        private void resize(MouseEvent mouseEvent) {
 
             if (!Cursor.DEFAULT.equals(cursorEvent)) {
                 if (!Cursor.W_RESIZE.equals(cursorEvent) && !Cursor.E_RESIZE.equals(cursorEvent)) {
@@ -85,13 +82,7 @@ public class ResizeHandler {
                         }
                     }
                 }
-            } else if (mouseEvent.getSceneY() < 30) {
-                setStageCoordinates(mouseEvent.getScreenX() - xOffset, mouseEvent.getScreenY() - yOffset);
             }
-        }
-        private void setStageCoordinates(double x, double y) {
-            stage.setX(x);
-            stage.setY(y);
         }
 
         private void setCursorForScene(MouseEvent event) {
@@ -121,6 +112,16 @@ public class ResizeHandler {
                 cursorEvent = Cursor.DEFAULT;
             }
             scene.setCursor(cursorEvent);
+        }
+
+        private void fixSize() {
+
+            if (stage.getWidth() < stage.getMinWidth()) {
+                stage.setWidth(stage.getMinWidth());
+            }
+            if (stage.getHeight() < stage.getMinHeight()) {
+                stage.setHeight(stage.getMinHeight());
+            }
         }
     }
 }

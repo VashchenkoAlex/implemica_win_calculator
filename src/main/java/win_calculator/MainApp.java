@@ -31,6 +31,8 @@ public class MainApp extends Application {
         stage.initStyle(StageStyle.UNDECORATED);
         stage.toBack();
         stage.setOpacity(0.98F);
+        stage.setX(200);
+        stage.setY(200);
         stage.getIcons().add(new Image("/images/calc_logo.png"));
         stage.setOnCloseRequest(e -> Platform.exit());
         ResizeHandler.addResizeListener(stage);

@@ -11,10 +11,12 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
+import javafx.stage.Window;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import win_calculator.DTOs.ResponseDTO;
@@ -119,6 +121,9 @@ public class FXMLViewController implements Initializable {
     @FXML
     private Button comaBtn;
 
+    @FXML
+    private Button dragBtn;
+
     private AppModel model = new AppModel();
     private HistoryFieldHandler historyFieldHandler = new HistoryFieldHandler();
     private CaptionHandler captionHandler = new CaptionHandler();
@@ -128,6 +133,8 @@ public class FXMLViewController implements Initializable {
     private ActionType lastActionType;
     private String lastHistoryText;
     private String lastDisplay;
+    private double xOffset = 0;
+    private double yOffset = 0;
     private static final double MENU_LIST_WIDTH = 260;
     private static final String DISPLAY_PATTERN = "#############,###.################";
 
@@ -146,7 +153,7 @@ public class FXMLViewController implements Initializable {
 
     public void closeBtn() {
 
-        captionHandler.close();
+        CaptionHandler.getInstance().close();
     }
 
     public void hideBtn() {
@@ -328,6 +335,7 @@ public class FXMLViewController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        setDragEvent();
         setDisableMemoryButtons(true);
         setSizeMainTableColumns();
         displayHandler.setDisplay(display);
@@ -405,7 +413,7 @@ public class FXMLViewController implements Initializable {
     private ResponseDTO handleDigit(Action digit) {
 
         ResponseDTO response;
-        if (lastDisplay!=null && isNotNumber(lastDisplay)){
+        if (lastDisplay != null && isNotNumber(lastDisplay)) {
             lastHistoryText = "";
         }
         String historyText = lastHistoryText;
@@ -599,5 +607,36 @@ public class FXMLViewController implements Initializable {
         for (int i = nodes.size() - 1; i >= 0; i--) {
             nodes.remove(i);
         }
+    }
+
+    private void setDragEvent() {
+
+        dragBtn.setOnMousePressed(event -> {
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+
+        dragBtn.setOnMouseDragged(event -> {
+            Window window = rootPane.getScene().getWindow();
+            window.setX(event.getScreenX() - xOffset);
+            window.setY(event.getScreenY() - yOffset);
+
+        });
+
+        dragBtn.setOnMouseReleased(event -> {
+            if (checkOnOverScreen(event)){
+                captionHandler.fullScreen();
+            }
+        });
+    }
+    private boolean checkOnOverScreen(MouseEvent event){
+
+        double x = event.getScreenY();
+        double y = event.getScreenX();
+        boolean result = false;
+        if (x < 1 || y < 1){
+            result = true;
+        }
+        return result;
     }
 }

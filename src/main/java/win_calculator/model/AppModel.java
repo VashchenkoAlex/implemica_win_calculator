@@ -27,7 +27,6 @@ public class AppModel {
     private MainOperationHandler mOperationHandler = new MainOperationHandler(operationProcessor);
     private PercentHandler percentHandler = new PercentHandler(operationProcessor);
     private BigDecimal responseNumber;
-    private Number lastNumber;
 
     public ResponseDTO toDo(Action action, Number number){
 
@@ -77,7 +76,6 @@ public class AppModel {
 
     private void processClear() {
 
-        lastNumber = null;
         responseNumber = null;
         operationProcessor.clearHistory();
         mOperationHandler.resetValues();
@@ -149,8 +147,6 @@ public class AppModel {
         BigDecimal operationResult = mOperationHandler.doEnter();
         if (operationResult != null) {
             responseNumber = operationResult;
-        } else if (lastNumber != null) {
-            responseNumber = lastNumber.getBigDecimalValue();
         }
         operationProcessor.setEnterRepeated(true);
         operationProcessor.resetLastExtraResult();

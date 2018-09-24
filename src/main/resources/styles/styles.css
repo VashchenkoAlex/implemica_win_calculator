@@ -415,3 +415,11 @@
     -fx-font-size: 16px;
     -fx-border-width: 0;
 }
+
+#dragBtn {
+
+    -fx-opacity: 0.1%;
+    -fx-min-width: 2000px;
+    -fx-min-height: 30px;
+    -fx-pref-height: 30px;
+}

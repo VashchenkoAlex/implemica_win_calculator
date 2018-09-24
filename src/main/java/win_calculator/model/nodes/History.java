@@ -36,11 +36,11 @@ public class History {
 
     private Action getLastAction() {
 
-        if (actions.isEmpty()) {
-            return new Clear();
-        } else {
+//        if (actions.isEmpty()) {
+//            return new Clear();
+//        } else {
             return actions.getLast();
-        }
+//        }
     }
 
     public void changeLastMOperation(Action action) {
@@ -101,9 +101,10 @@ public class History {
 
         if (NUMBER.equals(actions.getFirst().getType())) {
             actions.set(0, number);
-        } else {
-            actions.addFirst(number);
         }
+//        else {
+//            actions.addFirst(number);
+//        }
     }
 
     public void removeLastNumberIfExists() {

@@ -167,9 +167,6 @@ public class OperationProcessor {
                 if (EXTRA_OPERATION.equals(type) || NEGATE.equals(type)) {
                     actions.removeLast();
                 }
-                if (MAIN_OPERATION.equals(type)) {
-                    break;
-                }
             }
             actions.removeLast();
             history.setActions(actions);

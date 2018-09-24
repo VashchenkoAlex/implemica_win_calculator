@@ -3,7 +3,6 @@ package win_calculator.utils;
 import win_calculator.exceptions.MyException;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -167,14 +166,7 @@ public abstract class AppUtils {
 
     private static int getUnscaledLength(BigDecimal number) {
 
-        int result = number.abs().unscaledValue().toString().length();
-        if (result > MAX_ROUND) {
-            result -= 1;
-        }
-        if (result > MAX_EXPONENT){
-            result = MAX_DECIMAL;
-        }
-        return result;
+        return number.abs().unscaledValue().toString().length();
     }
 
     private static int getWholeLength(BigDecimal number) {
@@ -184,9 +176,6 @@ public abstract class AppUtils {
 
     private static BigDecimal setNewScale(BigDecimal number, int scale) {
 
-        if (getExponent(number) > MAX_EXPONENT && number.unscaledValue().abs().compareTo(BigInteger.ONE)==0){
-            number = BigDecimal.ZERO;
-        }
         return number.setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros();
     }
 
@@ -198,19 +187,11 @@ public abstract class AppUtils {
     private static String selectSeparator(BigDecimal number) {
 
         String separator = SIMPLE_E_SEPARATOR;
-        int unscaledLength = getUnscaledLength(number);
-        String numberStr = number.toString();
-        if (unscaledLength > MAX_ROUND) {
-            if (!numberStr.contains(DOT)) {
-                separator += PLUS;
-            }
-        } else {
-            if (unscaledLength < 2) {
-                separator = COMA + separator;
-            }
-            if (numberStr.contains(PLUS)) {
-                separator += PLUS;
-            }
+        if (getUnscaledLength(number) < 2) {
+            separator = COMA + separator;
+        }
+        if (number.toString().contains(PLUS)) {
+            separator += PLUS;
         }
         return separator;
     }
@@ -218,7 +199,6 @@ public abstract class AppUtils {
     private static String selectPattern(BigDecimal number, String pattern) {
 
         String currentPattern = pattern;
-        int unscaledLength = getUnscaledLength(number);
         String numberStr = number.toString();
         if (containsE(number) && !numberStr.matches(IS_ZERO_FIRST_REGEX)) {
             String[] parts = numberStr.split(E);
@@ -241,18 +221,7 @@ public abstract class AppUtils {
         }
         if (containsE(number) && getWholeLength(number) > MAX_ROUND) {
             currentPattern = FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT;
-        } else {
-            if (unscaledLength > MAX_ROUND) {
-                if (numberStr.matches(IS_ZERO_FIRST_REGEX)) {
-                    currentPattern = FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT;
-                } else if (numberStr.contains(DOT)) {
-                    currentPattern = "#,##" + preparePattern(unscaledLength);
-                } else {
-                    currentPattern = FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT;
-                }
-            }
         }
-
         return currentPattern;
     }
 

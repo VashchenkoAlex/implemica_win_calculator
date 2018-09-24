@@ -9,13 +9,13 @@ public class CaptionHandler {
 
     private static final String FULL = "\uE922";
     private static final String MINIMIZE = "\uE923";
+    public static CaptionHandler instance = new CaptionHandler();
     private Button fullScreenBtn;
     private Stage stage;
 
     public void setStage(AnchorPane rootPane) {
 
         stage = (Stage) rootPane.getScene().getWindow();
-//        stage.setMaxHeight(500.0);
     }
 
     public void setFullScreenBtn(Button fullScreen) {
@@ -30,7 +30,7 @@ public class CaptionHandler {
 
     public void hide(){
 
-        stage.toBack();
+        stage.setIconified(true);
     }
 
     public void fullScreen(){
@@ -42,5 +42,10 @@ public class CaptionHandler {
             stage.setMaximized(true);
             fullScreenBtn.setText(MINIMIZE);
         }
+    }
+
+    public static CaptionHandler getInstance(){
+
+        return instance;
     }
 }
