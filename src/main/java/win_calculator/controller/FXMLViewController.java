@@ -20,7 +20,6 @@ import javafx.stage.Window;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import win_calculator.controller.memory.*;
-import win_calculator.model.DTOs.ResponseDTO;
 import win_calculator.controller.digits.*;
 import win_calculator.model.nodes.actions.Number;
 import win_calculator.controller.view_handlers.*;
@@ -42,11 +41,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static win_calculator.controller.utils.ControllerUtils.isNotNumber;
-import static win_calculator.controller.utils.ControllerUtils.replaceCapacity;
-import static win_calculator.controller.utils.ControllerUtils.replaceComaToDot;
+import static win_calculator.controller.utils.ControllerUtils.*;
 import static win_calculator.model.nodes.actions.ActionType.*;
-import static win_calculator.model.utils.ModelUtils.*;
 import static win_calculator.controller.memory.MemoryType.ADD_TO_MEMORY;
 import static win_calculator.controller.memory.MemoryType.STORE;
 import static win_calculator.controller.memory.MemoryType.SUBTRACT_FROM_MEMORY;
@@ -362,7 +358,7 @@ public class FXMLViewController implements Initializable {
 
         setDisableOperationButtons(false);
         ActionType previousActionType = lastActionType;
-        ResponseDTO response = handleAction(action);
+        Response response = handleAction(action);
         displayHandler.sendToDisplay(action, response.getDisplay(), previousActionType);
         if (isNotNumber(response.getDisplay())) {
             setDisableOperationButtons(true);
@@ -375,9 +371,9 @@ public class FXMLViewController implements Initializable {
         }
     }
 
-    public ResponseDTO handleAction(Action action) {
+    public Response handleAction(Action action) {
 
-        ResponseDTO response;
+        Response response;
         ActionType type = action.getType();
         if (DIGIT.equals(type)) {
             response = handleDigit(action);
@@ -397,7 +393,7 @@ public class FXMLViewController implements Initializable {
         return response;
     }
 
-    private ResponseDTO handleOperation(Action action) {
+    private Response handleOperation(Action action) {
 
         Number currentNum;
         if (MEMORY.equals(lastActionType) && numberBuilder.containsNumber()) {
@@ -405,7 +401,7 @@ public class FXMLViewController implements Initializable {
         } else {
             currentNum = numberBuilder.finish();
         }
-        ResponseDTO response = model.toDo(currentNum, action);
+        Response response = convertDataFromModel(model.toDo(currentNum, action));
         if (!NEGATE.equals(action.getType())) {
             numberBuilder.clear();
         }
@@ -413,18 +409,18 @@ public class FXMLViewController implements Initializable {
         return response;
     }
 
-    private ResponseDTO handleDigit(Action digit) {
+    private Response handleDigit(Action digit) {
 
-        ResponseDTO response;
+        Response response;
         if (lastDisplay != null && isNotNumber(lastDisplay)) {
             lastHistoryText = "";
         }
         String historyText = lastHistoryText;
         if (EXTRA_OPERATION.equals(lastActionType)) {
-            response = model.toDo(null, new LastExtraCleaner());
+            response = convertDataFromModel(model.toDo(null, new LastExtraCleaner()));
             historyText = response.getHistory();
         }
-        response = new ResponseDTO(numberBuilder.toDo(digit), historyText);
+        response = new Response(numberBuilder.toDo(digit), historyText);
         lastActionType = digit.getType();
         return response;
     }
@@ -437,7 +433,7 @@ public class FXMLViewController implements Initializable {
                 && numberBuilder.containsNumber();
     }
 
-    private ResponseDTO handleMemory(MemoryAction action, String number) {
+    private Response handleMemory(MemoryAction action, String number) {
 
         MemoryType memoryType = action.getMemoryType();
         String currentNum = "";
@@ -462,32 +458,31 @@ public class FXMLViewController implements Initializable {
             currentNum = lastDisplay;
         }
         lastActionType = action.getType();
-        return new ResponseDTO(currentNum, lastHistoryText);
+        return new Response(currentNum, lastHistoryText);
     }
 
-    private ResponseDTO handleNegate() {
+    private Response handleNegate() {
 
-        return new ResponseDTO(numberBuilder.negate(MEMORY.equals(lastActionType)), lastHistoryText);
+        return new Response(numberBuilder.negate(MEMORY.equals(lastActionType)), lastHistoryText);
     }
 
-    private ResponseDTO handleBackSpace(Action action) {
+    private Response handleBackSpace(Action action) {
 
-        ResponseDTO response;
+        Response response;
         if (isBackSpacePossible()) {
             response = handleDigit(action);
         } else {
             if (lastDisplay == null || isNotNumber(lastDisplay)) {
                 lastDisplay = "0";
             }
-            response = new ResponseDTO(lastDisplay, lastHistoryText);
+            response = new Response(lastDisplay, lastHistoryText);
         }
         return response;
     }
 
-    private ResponseDTO handleClearEntered(Action action) {
+    private Response handleClearEntered(Action action) {
 
-        numberBuilder.clear();
-        return model.toDo(null, action);
+        return convertDataFromModel(model.toDo(null, action));
     }
 
     private void setDisableMemoryButtons(boolean val) {

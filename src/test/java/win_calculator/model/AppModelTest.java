@@ -2,10 +2,9 @@ package win_calculator.model;
 
 import org.junit.jupiter.api.Test;
 import win_calculator.controller.memory.*;
-import win_calculator.model.DTOs.ResponseDTO;
+import win_calculator.controller.Response;
 import win_calculator.controller.FXMLViewController;
 import win_calculator.controller.digits.*;
-import win_calculator.model.nodes.actions.Number;
 import win_calculator.model.nodes.actions.Action;
 import win_calculator.model.nodes.actions.clear.BaskSpace;
 import win_calculator.model.nodes.actions.clear.Clear;
@@ -14,7 +13,6 @@ import win_calculator.model.nodes.actions.enter.Enter;
 import win_calculator.model.nodes.actions.extra_operations.*;
 import win_calculator.model.nodes.actions.main_operations.*;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 
 import static org.junit.gen5.api.Assertions.assertEquals;
@@ -22,10 +20,8 @@ import static org.junit.gen5.api.Assertions.assertEquals;
 class AppModelTest {
 
     private FXMLViewController controller = new FXMLViewController();
-    private AppModel model = new AppModel();
     private static final HashMap<String, Action> actions = createMap();
     private static final String IS_DIGIT_REGEX = "\\d+(,\\d+)?";
-    private static final String IS_NUMBER_REGEX = "-*\\d+(.\\d+)?";
     private static final String COMA = ",";
 
     private static HashMap<String, Action> createMap() {
@@ -560,7 +556,6 @@ class AppModelTest {
 
         test("3 1/x + % 1/x","900","1/( 3 )  +  1/( 0,0011111111111111 )");
         test("3 1/x + % 1/x =","900,3333333333333","");
-
     }
 
     @Test
@@ -706,8 +701,6 @@ class AppModelTest {
         test("1 / 3 * 3 +", "1", "1  ÷  3  ×  3  +  ");
         test("1 / 3 * 3 - 1 =", "0", "");
         test("1 / 3 * 0,0000000000000001 * 0,00000000001 * 10000000000000000 * 10000000000000 * 3 *","10","1  ÷  3  ×  0,0000000000000001  ×  0,00000000001  ×  1000000000000000  ×  10000000000000  ×  3  ×  ");
-//        test("1 / 3 * 10000000000 - 3333333333 * 10000000000 - 3333333333 * 10000000000 - 3333333333 * 10000000000 - 3333333333 * 10000000000 - 3333333333 * 10000000000 - 3333333333 * 3 - 1 =", "0", "");
-
 
         test("2 sqrt", "1,414213562373095", "√( 2 )");
         test("3 sqrt", "1,732050807568877", "√( 3 )");
@@ -787,7 +780,6 @@ class AppModelTest {
         test("1,234567891234567 * 0,1 =", "0,1234567891234567", "");
         test("0,0001111111111111 * 0,1 =", "1,111111111111e-5", "");
 
-
         test("0,0000000000000023 * 0,1 = ±", "-2,3e-16", "negate( 2,3e-16 )");
         test("0,0000000000000234 * 0,1 = ±", "-2,34e-15", "negate( 2,34e-15 )");
         test("0,0000000000002345 * 0,1 = ±", "-2,345e-14", "negate( 2,345e-14 )");
@@ -798,9 +790,6 @@ class AppModelTest {
         test("0,0000000234567891 * 0,1 = ±", "-2,34567891e-9", "negate( 2,34567891e-9 )");
         test("0,0000002345678912 * 0,1 = ±", "-2,345678912e-8", "negate( 2,345678912e-8 )");
         test("0,0000023456789123 * 0,1 = ±", "-2,3456789123e-7", "negate( 2,3456789123e-7 )");
-//        test("0,0000123456789123 * 0,1 = ±", "-1,23456789123e-6", "negate( 1,23456789123e-6 )");
-//        test("0,0001234567891234 * 0,1 = ±", "-1,234567891234e-5", "negate( 1,234567891234e-5 )");
-//        test("0,0012345678912345 * 0,1 = ±", "-1,2345678912345e-4", "negate( 1,2345678912345e-4 )");
         test("0,0123456789123456 * 0,1 = ±", "-0,0012345678912346", "negate( 0,0012345678912346 )");
         test("0,1234567891234567 * 0,1 = ±", "-0,0123456789123457", "negate( 0,0123456789123457 )");
 
@@ -1000,107 +989,19 @@ class AppModelTest {
         test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr sqr","Overflow","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) ) ) )");
     }
 
-    @Test
-    void testJustModel(){
-
-        testModel("5 - 3 sqr * 2 =", "-8", "");
-        testModel("1 + 20 % - 3 sqr * 4 sqrt / 5 1/x + 6 -", "-72", "1  +  0,2  -  sqr( 3 )  ×  √( 4 )  ÷  1/( 5 )  +  6  -  ");
-        testModel("1 + 20 % - 3 sqr * 4 sqrt / 5 1/x + 6 - -7.8 =", "-64,2", "");
-
-        testModel("+", "0", "0  +  ");
-        testModel("+ =", "0", "");
-        testModel("+ 2 =", "2", "");
-        testModel("2 + 2 =", "4", "");
-        testModel("2 + 2 = +", "4", "4  +  ");
-        testModel("0 + = = =", "0", "");
-        testModel("1 + = = =", "4", "");
-        testModel("2 + = = =", "8", "");
-        testModel("13 + = = =", "52", "");
-        testModel("9999 + = = =", "39 996", "");
-        testModel("0.2 + 0.2 =", "0,4", "");
-        testModel("-0.2 + 0.2 =", "0", "");
-        testModel("2 + 3 + = =", "15", "");
-        testModel("1 + 2 + 3 = =", "9", "");
-        testModel("1 + 2 + 3 = + 4 +", "10", "6  +  4  +  ");
-        testModel("1 + 2 + 3 + 4 = =", "14", "");
-        testModel("2 + 3 + 4 + 5 = =", "19", "");
-        testModel("101 + 102 + 103 + 104 = =", "514", "");
-        testModel("102 + 103 + 104 + 105 = =", "519", "");
-        testModel("1 + 2 =", "3", "");
-        testModel("9 + 5 =", "14", "");
-        testModel("123 + 3 =", "126", "");
-        testModel("123456789 + 987654321 =", "1 111 111 110", "");
-        testModel("724387928792 + 724387928792 =", "1 448 775 857 584", "");
-        testModel("724387928792 + 724387928792 + 724387928792 + 724387928792 =", "2 897 551 715 168", "");
-        testModel("724387928792 + 724387928792 + 724387928792 + 724387928792 + 724387928792 + 724387928792 =", "4 346 327 572 752", "");
-
-        testModel("-123456789 + 01111 =", "-123 455 678", "");
-        testModel("00003456 + -00002 =", "3 454", "");
-        testModel("000 + 2 =", "2", "");
-        testModel("2 + 0 =", "2", "");
-        testModel("-2 + 0 =", "-2", "");
-        testModel("2 + 0 =", "2", "");
-        testModel("0 + -2 =", "-2", "");
-
-        testModel("5.6 + 2.7 =", "8,3", "");
-        testModel("0.99 + 0.03 =", "1,02", "");
-        testModel("0.999999999999 + 0.0000000003 =", "1,000000000299", "");
-        testModel("0.999999999999 + 0.0000000003 =", "1,000000000299", "");
-        testModel("0.999999999999 + 0.0000000003 =", "1,000000000299", "");
-        testModel("123456789.987654321 + 987654321.123456789 =", "1 111 111 111,111111", "");
-        testModel("1.111111111 + 2.999999999 =", "4,11111111", "");
-
-        testModel("-1.111111111 + 2.999999999 =", "1,888888888", "");
-        testModel("-1.111111111 + 2.999999999 =", "1,888888888", "");
-        testModel("1.111111111 + 2.999999999 =", "4,11111111", "");
-        testModel("1.111111111 + -2.999999999 =", "-1,888888888", "");
-
-        testModel("1 - * / + 2 =", "3", "");
-        testModel("1 - * / + + - + 2 =", "3", "");
-        testModel("1 - * / + + - + 2 =", "3", "");
-        testModel("123456789 * / + + - + 2 =", "123 456 791", "");
-        testModel("123456789 * / + = =", "370 370 367", "");
-
-        testModel("-999 + = = = =", "-4 995", "");
-        testModel("191919 + -2 =", "191 917", "");
-        testModel("0.99 + -0.03 =", "0,96", "");
-        testModel("-35 + -23 =", "-58", "");
-
-        testModel("2 + + + = = = =", "10", "");
-        testModel("2 + = = = =", "10", "");
-
-        testModel("1 - * / + + - + 2 +", "3", "1  +  2  +  ");
-        testModel("1234567 + - + -2 +", "1 234 565", "1234567  +  -2  +  ");
-        testModel("1 - * / + + - + -2 +", "-1", "1  +  -2  +  ");
-        testModel("-2 + + + +", "-2", "-2  +  ");
-
-        testModel("-1 +", "-1", "-1  +  ");
-        testModel("-1 + -2 +", "-3", "-1  +  -2  +  ");
-        testModel("-1 + -2 + -3 +", "-6", "-1  +  -2  +  -3  +  ");
-        testModel("-1 + -2 + -3 + -4 =", "-10", "");
-        testModel("-1 + -2 + -3 + -4 = =", "-14", "");
-        testModel("-2 + -3 + -4 + -5 = =", "-19", "");
-        testModel("-101 + -102 + -103 + -104 = =", "-514", "");
-        testModel("-102 + -103 + -104 + -105 = =", "-519", "");
-        testModel("-1 + 2 + -3 + 4 = =", "6", "");
-        testModel("2 + -3 + 4 + -5 = =", "-7", "");
-        testModel("-101 + 102 + -103 + 104 = =", "106", "");
-        testModel("102 + -103 + 104 + -105 = =", "-107", "");
-    }
-
     private void test(String expression, String display, String history){
 
-        ResponseDTO response = prepareTest(expression);
+        Response response = prepareTest(expression);
         assertEquals(display, response.getDisplay());
         assertEquals(history, response.getHistory());
         controller.handleAction(new Clear());
         controller.handleAction(new ClearMemory());
     }
 
-    private ResponseDTO prepareTest(String expression){
+    private Response prepareTest(String expression){
 
         String[] parsedActionStrings = expression.split(" ");
-        ResponseDTO response = null;
+        Response response = null;
         for (String str : parsedActionStrings) {
             if (str.matches(IS_DIGIT_REGEX) || COMA.equals(str)) {
                 for (char ch : str.toCharArray()) {
@@ -1122,28 +1023,4 @@ class AppModelTest {
         return result.toString();
     }
 
-    private void testModel(String expression, String display, String history){
-
-        ResponseDTO response = prepareModelTest(expression);
-
-        assertEquals(display, response.getDisplay());
-        assertEquals(history, response.getHistory());
-    }
-
-    private ResponseDTO prepareModelTest(String expression){
-
-        String[] data = expression.split(" ");
-        Number number = null;
-        ResponseDTO response = null;
-        for (String str : data) {
-            if (str.matches(IS_NUMBER_REGEX)) {
-                number = new Number(new BigDecimal(str));
-            } else {
-                response = model.toDo(number, actions.get(str));
-                number = null;
-            }
-        }
-        model.toDo(number, new Clear());
-        return response;
-    }
 }

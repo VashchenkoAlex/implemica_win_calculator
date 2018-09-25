@@ -1,19 +1,20 @@
 package win_calculator.model;
 
+import win_calculator.model.exceptions.MyException;
 import win_calculator.model.nodes.History;
 import win_calculator.model.nodes.actions.Action;
 import win_calculator.model.nodes.actions.Number;
 import win_calculator.model.nodes.actions.clear.Clear;
 import win_calculator.model.nodes.actions.extra_operations.ExtraOperation;
-import win_calculator.model.nodes.actions.extra_operations.Percent;
-import win_calculator.model.nodes.actions.main_operations.MainOperation;
+import win_calculator.model.nodes.actions.extra_operations.Negate;
 import win_calculator.model.nodes.actions.ActionType;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;
 
 import static win_calculator.model.nodes.actions.ActionType.*;
-import static win_calculator.model.utils.ModelUtils.*;
+import static win_calculator.model.utils.ModelUtils.checkOnOverflow;
+import static win_calculator.model.utils.ModelUtils.roundNumber;
 
 class OperationProcessor {
 
@@ -24,29 +25,7 @@ class OperationProcessor {
     private BigDecimal previousNumber;
     private BigDecimal resultNumber;
     private BigDecimal lastExtraResult;
-    private static final String HISTORY_PATTERN = "################.################";
     private Action lastAction = new Clear();
-
-    String getHistoryString() {
-
-        LinkedList<Action> actions = history.getActions();
-        String result = "";
-        for (Action action : actions) {
-            ActionType type = action.getType();
-            if (EXTRA_OPERATION.equals(type)) {
-                result = addExtraOperationToString(result, ((ExtraOperation) action).getValue());
-            } else if (NUMBER.equals(type)) {
-                result += convertToString(((Number) action).getBigDecimalValue(), HISTORY_PATTERN);
-            } else if (NEGATE.equals(type)) {
-                result = addExtraOperationToString(result, ((ExtraOperation) action).getValue());
-            } else if (PERCENT.equals(type)){
-                result += ((Percent)action).getValue();
-            } else {
-                result += ((MainOperation)action).getValue();
-            }
-        }
-        return result;
-    }
 
     void addNumberToHistory(Number number){
 
@@ -133,17 +112,7 @@ class OperationProcessor {
         lastNumber = number;
     }
 
-    void changeLastNumberAtActions(BigDecimal number) {
-
-        lastNumber = number;
-        if (enterRepeated && !NEGATE.equals(lastAction.getType())) {
-            history.addAction(new Number(number));
-        } else if (!enterRepeated && NEGATE.equals(lastAction.getType())) {
-            changeLastActionNumber(new Number(number));
-        }
-    }
-
-    void changeLastNumber(BigDecimal lastNumber) {
+    private void changeLastNumber(BigDecimal lastNumber) {
 
         this.lastNumber = lastNumber;
     }
@@ -158,9 +127,20 @@ class OperationProcessor {
         return resultNumber;
     }
 
-    void changeLastActionNumber(Number number) {
+    void changeLastActionNumber(BigDecimal number) {
 
-        history.changeLastNumber(number);
+        history.changeLastNumber(new Number(number));
+        lastNumber = number;
+    }
+
+    void changeLastNumberAtActions(BigDecimal number) {
+
+        lastNumber = number;
+        if (enterRepeated && !NEGATE.equals(lastAction.getType())) {
+            history.addAction(new Number(number));
+        } else if (!enterRepeated && NEGATE.equals(lastAction.getType())) {
+            changeLastActionNumber(number);
+        }
     }
 
     void rejectLastNumberWithExtraOperations() {
@@ -186,7 +166,7 @@ class OperationProcessor {
         return lastExtraResult;
     }
 
-    void setLastExtraResult(BigDecimal lastExtraResult) {
+    private void setLastExtraResult(BigDecimal lastExtraResult) {
         this.lastExtraResult = lastExtraResult;
     }
 
@@ -197,7 +177,7 @@ class OperationProcessor {
         lastExtraResult = null;
     }
 
-    boolean lastActionNotNumber() {
+    private boolean lastActionNotNumber() {
 
         ActionType type = getLastActionType();
         boolean result = true;
@@ -240,7 +220,7 @@ class OperationProcessor {
         previousNumber = null;
     }
 
-    boolean isHistoryContainNegate() {
+    private boolean isHistoryContainNegate() {
 
         return history.isContain(NEGATE);
     }
@@ -285,5 +265,59 @@ class OperationProcessor {
     boolean hasExtraOperations(){
 
         return history.isContain(EXTRA_OPERATION);
+    }
+
+    BigDecimal processNegate(Action negate,Number number,BigDecimal responseNumber){
+
+        BigDecimal result = responseNumber;
+        if (number == null && lastActionNotNumber()) {
+            if (responseNumber != null) {
+                if (MAIN_OPERATION.equals(getLastActionType()) || CLEAR.equals(getLastActionType())) {
+                    addNumberToHistory(new Number(result));
+                }
+            } else {
+                result = BigDecimal.ZERO;
+                addNumberToHistory(new Number(result));
+            }
+            result = ((Negate) negate).calculate(result);
+            changeLastNumber(result);
+            addActionToHistory(negate);
+        } else {
+            result = ((Negate) negate).calculate(getLastNumber());
+            changeLastNumber(result);
+            if (isHistoryContainNegate()) {
+                addActionToHistory(negate);
+            }
+        }
+        return result;
+    }
+
+    public LinkedList<Action> getHistory(){
+
+        return history.getActions();
+    }
+
+    BigDecimal processExtraOperation(Action action, Number number, BigDecimal responseNumber) throws MyException {
+
+        BigDecimal resultNum;
+        if (number != null) {
+            addNumberToHistory(number);
+            resultNum = new BigDecimal(number.getValue());
+        } else if (responseNumber != null) {
+            resultNum = responseNumber;
+            ActionType type = getLastActionType();
+            if (MAIN_OPERATION.equals(type) || (isEnterRepeated()
+                    && !EXTRA_OPERATION.equals(type) && !NEGATE.equals(type))) {
+                addNumberToHistory(new Number(resultNum));
+            }
+        } else {
+            resultNum = BigDecimal.ZERO;
+            addZeroToHistory();
+        }
+        addActionToHistory(action);
+        resultNum = roundNumber(((ExtraOperation) action).calculate(resultNum));
+        checkOnOverflow(resultNum);
+        setLastExtraResult(resultNum);
+        return resultNum;
     }
 }

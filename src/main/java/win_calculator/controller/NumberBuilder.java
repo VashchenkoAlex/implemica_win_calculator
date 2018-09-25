@@ -10,9 +10,9 @@ import java.math.BigDecimal;
 import java.util.LinkedList;
 
 import static win_calculator.controller.utils.ControllerUtils.addCapacity;
+import static win_calculator.controller.utils.ControllerUtils.convertToString;
 import static win_calculator.controller.utils.ControllerUtils.replaceDotToComa;
 import static win_calculator.model.nodes.actions.ActionType.*;
-import static win_calculator.model.utils.ModelUtils.convertToString;
 
 public class NumberBuilder {
 

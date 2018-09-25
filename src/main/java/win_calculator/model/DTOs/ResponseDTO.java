@@ -1,30 +1,39 @@
 package win_calculator.model.DTOs;
 
+import win_calculator.model.nodes.actions.Action;
+
+import java.math.BigDecimal;
+import java.util.LinkedList;
+
 public class ResponseDTO {
 
-    private String display;
-    private String history;
+    private BigDecimal display;
+    private LinkedList<Action> history;
+    private String message = null;
 
-    public ResponseDTO(String display, String history) {
+    public ResponseDTO(BigDecimal display, LinkedList<Action> history) {
 
         this.display = display;
         this.history = history;
     }
 
-    public String getDisplay() {
+    public ResponseDTO(String message,LinkedList<Action> history){
 
-        if (display == null) {
-            display = "0";
-        }
+        this.message = message;
+        this.history = history;
+    }
+
+    public BigDecimal getDisplay() {
+
         return display;
     }
 
-    public String getHistory() {
+    public LinkedList<Action> getHistory() {
 
-        if (history == null) {
-            history = "";
-        }
         return history;
     }
 
+    public String getMessage() {
+        return message;
+    }
 }
