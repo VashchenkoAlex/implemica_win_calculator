@@ -1,6 +1,6 @@
 package win_calculator.model.nodes.actions.main_operations;
 
-import win_calculator.utils.ActionType;
+import win_calculator.model.nodes.actions.ActionType;
 import java.math.BigDecimal;
 
 public class Multiply implements MainOperation {

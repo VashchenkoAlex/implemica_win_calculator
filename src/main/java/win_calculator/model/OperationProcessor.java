@@ -2,20 +2,20 @@ package win_calculator.model;
 
 import win_calculator.model.nodes.History;
 import win_calculator.model.nodes.actions.Action;
-import win_calculator.controller.nodes.digits.Number;
+import win_calculator.model.nodes.actions.Number;
 import win_calculator.model.nodes.actions.clear.Clear;
 import win_calculator.model.nodes.actions.extra_operations.ExtraOperation;
 import win_calculator.model.nodes.actions.extra_operations.Percent;
 import win_calculator.model.nodes.actions.main_operations.MainOperation;
-import win_calculator.utils.ActionType;
+import win_calculator.model.nodes.actions.ActionType;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;
 
-import static win_calculator.utils.ActionType.*;
-import static win_calculator.utils.AppUtils.*;
+import static win_calculator.model.nodes.actions.ActionType.*;
+import static win_calculator.model.utils.ModelUtils.*;
 
-public class OperationProcessor {
+class OperationProcessor {
 
     private History history = new History();
     private boolean enterRepeated;
@@ -56,7 +56,7 @@ public class OperationProcessor {
         setLastNumber(number.getBigDecimalValue());
     }
 
-    public void addActionToHistory(Action action) {
+    void addActionToHistory(Action action) {
 
         history.addAction(action);
         if (MAIN_OPERATION.equals(action.getType())) {
@@ -76,11 +76,11 @@ public class OperationProcessor {
         lastExtraResult = null;
     }
 
-    public void setHistory(History history) {
+    void setHistory(History history) {
         this.history = history;
     }
 
-    public ActionType getLastActionType() {
+    ActionType getLastActionType() {
 
         ActionType result = null;
         Action action = lastAction;
@@ -90,22 +90,22 @@ public class OperationProcessor {
         return result;
     }
 
-    public BigDecimal getLastNumber() {
+    BigDecimal getLastNumber() {
 
         return lastNumber;
     }
 
-    public void changeLastAction(Action action) {
+    void changeLastAction(Action action) {
 
         history.changeLastMOperation(action);
     }
 
-    public BigDecimal getPreviousNumber() {
+    BigDecimal getPreviousNumber() {
 
         return previousNumber;
     }
 
-    public boolean isMOperationBefore() {
+    boolean isMOperationBefore() {
 
         return mOperationBefore;
     }
@@ -119,11 +119,11 @@ public class OperationProcessor {
         this.enterRepeated = enterRepeated;
     }
 
-    public void setMOperationBefore(boolean mOperationBefore) {
+    void setMOperationBefore(boolean mOperationBefore) {
         this.mOperationBefore = mOperationBefore;
     }
 
-    public void setResultNumber(BigDecimal resultNumber) {
+    void setResultNumber(BigDecimal resultNumber) {
         this.resultNumber = resultNumber;
     }
 
@@ -153,7 +153,7 @@ public class OperationProcessor {
         previousNumber = number;
     }
 
-    public BigDecimal getResultNumber() {
+    BigDecimal getResultNumber() {
 
         return resultNumber;
     }
@@ -182,7 +182,7 @@ public class OperationProcessor {
         }
     }
 
-    public BigDecimal getLastExtraResult() {
+    BigDecimal getLastExtraResult() {
         return lastExtraResult;
     }
 
@@ -250,7 +250,7 @@ public class OperationProcessor {
         return history.isContain(NEGATE) || history.isContain(EXTRA_OPERATION);
     }
 
-    public BigDecimal[] selectNumbersForPercent(Number number) {
+    BigDecimal[] selectNumbersForPercent(Number number) {
 
         BigDecimal firstNumber = BigDecimal.ZERO;
         BigDecimal secondNumber = BigDecimal.ZERO;

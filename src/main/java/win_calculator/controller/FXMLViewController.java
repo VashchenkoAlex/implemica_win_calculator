@@ -19,9 +19,10 @@ import javafx.scene.layout.RowConstraints;
 import javafx.stage.Window;
 import javafx.util.Callback;
 import javafx.util.Duration;
-import win_calculator.DTOs.ResponseDTO;
-import win_calculator.controller.nodes.digits.*;
-import win_calculator.controller.nodes.digits.Number;
+import win_calculator.controller.memory.*;
+import win_calculator.model.DTOs.ResponseDTO;
+import win_calculator.controller.digits.*;
+import win_calculator.model.nodes.actions.Number;
 import win_calculator.controller.view_handlers.*;
 import win_calculator.model.AppModel;
 import win_calculator.model.nodes.actions.Action;
@@ -30,12 +31,10 @@ import win_calculator.model.nodes.actions.clear.ClearDisplay;
 import win_calculator.model.nodes.actions.clear.LastExtraCleaner;
 import win_calculator.model.nodes.actions.enter.Enter;
 import win_calculator.model.nodes.actions.clear.Clear;
-import win_calculator.model.nodes.actions.memory.*;
 import win_calculator.model.nodes.actions.extra_operations.*;
 import win_calculator.model.nodes.actions.main_operations.*;
-import win_calculator.utils.ActionType;
-import win_calculator.utils.MenuListOption;
-import win_calculator.utils.MemoryType;
+import win_calculator.model.nodes.actions.ActionType;
+import win_calculator.controller.enums.MenuListOption;
 
 import java.math.BigDecimal;
 import java.net.URL;
@@ -43,12 +42,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static win_calculator.utils.ActionType.*;
-import static win_calculator.utils.AppUtils.*;
-import static win_calculator.utils.MemoryType.ADD_TO_MEMORY;
-import static win_calculator.utils.MemoryType.STORE;
-import static win_calculator.utils.MemoryType.SUBTRACT_FROM_MEMORY;
-import static win_calculator.utils.MenuListOption.*;
+import static win_calculator.controller.utils.ControllerUtils.isNotNumber;
+import static win_calculator.controller.utils.ControllerUtils.replaceCapacity;
+import static win_calculator.controller.utils.ControllerUtils.replaceComaToDot;
+import static win_calculator.model.nodes.actions.ActionType.*;
+import static win_calculator.model.utils.ModelUtils.*;
+import static win_calculator.controller.memory.MemoryType.ADD_TO_MEMORY;
+import static win_calculator.controller.memory.MemoryType.STORE;
+import static win_calculator.controller.memory.MemoryType.SUBTRACT_FROM_MEMORY;
+import static win_calculator.controller.enums.MenuListOption.*;
 
 public class FXMLViewController implements Initializable {
 
@@ -86,7 +88,7 @@ public class FXMLViewController implements Initializable {
     private Button memoryShowBtn;
 
     @FXML
-    private AnchorPane menuListContainer;
+    private AnchorPane dropDownContainer;
 
     @FXML
     private ScrollPane historyScroll;
@@ -124,6 +126,9 @@ public class FXMLViewController implements Initializable {
     @FXML
     private Button dragBtn;
 
+    @FXML
+    private GridPane mainButtonsGrid;
+
     private AppModel model = new AppModel();
     private HistoryFieldHandler historyFieldHandler = new HistoryFieldHandler();
     private CaptionHandler captionHandler = new CaptionHandler();
@@ -142,7 +147,7 @@ public class FXMLViewController implements Initializable {
     private void dropMenu() {
 
         ListView<MenuListOption> menuListView = prepareMenuListView();
-        ObservableList<Node> menuNodes = menuListContainer.getChildren();
+        ObservableList<Node> menuNodes = dropDownContainer.getChildren();
         menuNodes.add(prepareBackground());
         menuNodes.add(menuListView);
         menuNodes.add(prepareMenuBtn());
@@ -168,9 +173,11 @@ public class FXMLViewController implements Initializable {
 
     public void historyBtn() {
 
+        ObservableList<Node> menuNodes = dropDownContainer.getChildren();
+        menuNodes.add(prepareBackground());
+        menuNodes.add(prepareDropDownLabel("History Label", "historyPane"));
     }
 
-    // -------- CLEAR_ENTERED BUTTONS ------------------
     public void clearEnteredBtnClick() {
 
         makeAction(new ClearDisplay());
@@ -186,7 +193,6 @@ public class FXMLViewController implements Initializable {
         makeAction(new BaskSpace());
     }
 
-    // -------- DIGIT BUTTONS -----------------
     public void oneBtnClick() {
 
         makeAction(new OneDigit());
@@ -243,7 +249,6 @@ public class FXMLViewController implements Initializable {
         displayHandler.addComa();
     }
 
-    // -------- MAIN OPERATIONS BUTTONS ----------
     public void divideBtnClick() {
 
         makeAction(new Divide());
@@ -268,8 +273,6 @@ public class FXMLViewController implements Initializable {
 
         makeAction(new Enter());
     }
-
-    //---------- ADVANCED OPERATIONS BUTTONS ----------------
 
     public void percentBtnClick() {
 
@@ -296,7 +299,6 @@ public class FXMLViewController implements Initializable {
         makeAction(new Negate());
     }
 
-    //---------- MEMORY BUTTONS ------------------
     public void clearMemoryBtnClick() {
 
         makeAction(new ClearMemory());
@@ -328,9 +330,10 @@ public class FXMLViewController implements Initializable {
 
     public void memoryShowBtnClick() {
 
+        ObservableList<Node> menuNodes = dropDownContainer.getChildren();
+        menuNodes.add(prepareBackground());
+        menuNodes.add(prepareDropDownLabel(memoryHandler.doAction(new RecallMemory(),null).toString(), "memoryPane"));
     }
-
-    // -------- SUPPORT METHODS -----------------------
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -402,7 +405,7 @@ public class FXMLViewController implements Initializable {
         } else {
             currentNum = numberBuilder.finish();
         }
-        ResponseDTO response = model.toDo(action, currentNum);
+        ResponseDTO response = model.toDo(currentNum, action);
         if (!NEGATE.equals(action.getType())) {
             numberBuilder.clear();
         }
@@ -418,7 +421,7 @@ public class FXMLViewController implements Initializable {
         }
         String historyText = lastHistoryText;
         if (EXTRA_OPERATION.equals(lastActionType)) {
-            response = model.toDo(new LastExtraCleaner(), null);
+            response = model.toDo(null, new LastExtraCleaner());
             historyText = response.getHistory();
         }
         response = new ResponseDTO(numberBuilder.toDo(digit), historyText);
@@ -428,7 +431,10 @@ public class FXMLViewController implements Initializable {
 
     private boolean isBackSpacePossible() {
 
-        return !MAIN_OPERATION.equals(lastActionType) && !EXTRA_OPERATION.equals(lastActionType) && !ENTER.equals(lastActionType);
+        return !MAIN_OPERATION.equals(lastActionType)
+                && !EXTRA_OPERATION.equals(lastActionType)
+                && !ENTER.equals(lastActionType)
+                && numberBuilder.containsNumber();
     }
 
     private ResponseDTO handleMemory(MemoryAction action, String number) {
@@ -442,7 +448,7 @@ public class FXMLViewController implements Initializable {
         if ("".equals(currentNum) && number != null) {
             currentNum = number;
         }
-        if ("".equals(currentNum)) {
+        if ("".equals(currentNum) && numberBuilder.containsNumber()) {
             currentNum = numberBuilder.getNumber().getValue();
         }
         if ("".equals(currentNum)) {
@@ -470,7 +476,7 @@ public class FXMLViewController implements Initializable {
         if (isBackSpacePossible()) {
             response = handleDigit(action);
         } else {
-            if (isNotNumber(lastDisplay)) {
+            if (lastDisplay == null || isNotNumber(lastDisplay)) {
                 lastDisplay = "0";
             }
             response = new ResponseDTO(lastDisplay, lastHistoryText);
@@ -481,7 +487,7 @@ public class FXMLViewController implements Initializable {
     private ResponseDTO handleClearEntered(Action action) {
 
         numberBuilder.clear();
-        return model.toDo(action, null);
+        return model.toDo(null, action);
     }
 
     private void setDisableMemoryButtons(boolean val) {
@@ -573,7 +579,7 @@ public class FXMLViewController implements Initializable {
         Button menuBtn = new Button("\uE700");
         menuBtn.setId("menuBtnPressed");
         menuBtn.setPrefSize(42, 42);
-        menuBtn.setOnAction((actionEvent) -> hideMenuList());
+        menuBtn.setOnAction((actionEvent) -> hideDropDown());
         AnchorPane.setTopAnchor(menuBtn, 36.0);
         AnchorPane.setLeftAnchor(menuBtn, 1.0);
         return menuBtn;
@@ -597,13 +603,13 @@ public class FXMLViewController implements Initializable {
         Pane pane = new Pane();
         pane.setPrefSize(width, height);
         pane.setOpacity(0.01);
-        pane.setOnMouseClicked((event) -> hideMenuList());
+        pane.setOnMouseClicked((event) -> hideDropDown());
         return pane;
     }
 
-    private void hideMenuList() {
+    private void hideDropDown() {
 
-        ObservableList<Node> nodes = menuListContainer.getChildren();
+        ObservableList<Node> nodes = dropDownContainer.getChildren();
         for (int i = nodes.size() - 1; i >= 0; i--) {
             nodes.remove(i);
         }
@@ -639,5 +645,15 @@ public class FXMLViewController implements Initializable {
             result = true;
         }
         return result;
+    }
+
+    private Label prepareDropDownLabel(String text, String id) {
+
+        Label label = new Label(text);
+        label.setId(id);
+        AnchorPane.setBottomAnchor(label, 0.0);
+        AnchorPane.setLeftAnchor(label, 2.0);
+        label.setPrefSize(rootPane.getWidth() - 4, mainButtonsGrid.getHeight());
+        return label;
     }
 }

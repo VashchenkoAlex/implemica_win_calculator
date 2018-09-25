@@ -1,18 +1,18 @@
 package win_calculator.controller;
 
 import win_calculator.model.nodes.actions.Action;
-import win_calculator.controller.nodes.digits.Digit;
-import win_calculator.controller.nodes.digits.Number;
-import win_calculator.controller.nodes.digits.ZeroDigit;
-import win_calculator.utils.ActionType;
+import win_calculator.controller.digits.Digit;
+import win_calculator.model.nodes.actions.Number;
+import win_calculator.controller.digits.ZeroDigit;
+import win_calculator.model.nodes.actions.ActionType;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;
 
-import static win_calculator.utils.ActionType.*;
-import static win_calculator.utils.AppUtils.addCapacity;
-import static win_calculator.utils.AppUtils.convertToString;
-import static win_calculator.utils.AppUtils.replaceDotToComa;
+import static win_calculator.controller.utils.ControllerUtils.addCapacity;
+import static win_calculator.controller.utils.ControllerUtils.replaceDotToComa;
+import static win_calculator.model.nodes.actions.ActionType.*;
+import static win_calculator.model.utils.ModelUtils.convertToString;
 
 public class NumberBuilder {
 

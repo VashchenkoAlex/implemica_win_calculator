@@ -423,3 +423,22 @@
     -fx-min-height: 30px;
     -fx-pref-height: 30px;
 }
+
+#historyPane {
+
+    -fx-background-color: white;
+    -fx-alignment: TOP-RIGHT;
+    -fx-font-size: 20px;
+    -fx-font-family: "Segoe UI";
+    -fx-label-padding: 20px;
+
+}
+
+#memoryPane {
+
+    -fx-background-color: white;
+    -fx-alignment: TOP-RIGHT;
+    -fx-font-size: 20px;
+    -fx-font-family: "Segoe UI Semibold";
+    -fx-label-padding: 20px;
+}

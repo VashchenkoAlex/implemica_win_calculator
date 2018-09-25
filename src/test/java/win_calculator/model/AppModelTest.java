@@ -1,10 +1,11 @@
 package win_calculator.model;
 
 import org.junit.jupiter.api.Test;
-import win_calculator.DTOs.ResponseDTO;
+import win_calculator.controller.memory.*;
+import win_calculator.model.DTOs.ResponseDTO;
 import win_calculator.controller.FXMLViewController;
-import win_calculator.controller.nodes.digits.*;
-import win_calculator.controller.nodes.digits.Number;
+import win_calculator.controller.digits.*;
+import win_calculator.model.nodes.actions.Number;
 import win_calculator.model.nodes.actions.Action;
 import win_calculator.model.nodes.actions.clear.BaskSpace;
 import win_calculator.model.nodes.actions.clear.Clear;
@@ -12,7 +13,6 @@ import win_calculator.model.nodes.actions.clear.ClearDisplay;
 import win_calculator.model.nodes.actions.enter.Enter;
 import win_calculator.model.nodes.actions.extra_operations.*;
 import win_calculator.model.nodes.actions.main_operations.*;
-import win_calculator.model.nodes.actions.memory.*;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -493,6 +493,7 @@ class AppModelTest {
         test("7 1/x", "0,1428571428571429", "1/( 7 )");
         test("8 1/x", "0,125", "1/( 8 )");
         test("9 1/x", "0,1111111111111111", "1/( 9 )");
+        test("10 1/x", "0,1", "1/( 10 )");
 
         test("1 ± 1/x", "-1", "1/( -1 )");
         test("2 ± 1/x", "-0,5", "1/( -2 )");
@@ -503,6 +504,7 @@ class AppModelTest {
         test("7 ± 1/x", "-0,1428571428571429", "1/( -7 )");
         test("8 ± 1/x", "-0,125", "1/( -8 )");
         test("9 ± 1/x", "-0,1111111111111111", "1/( -9 )");
+        test("10 ± 1/x", "-0,1", "1/( -10 )");
 
         test("1 1/x * 3 +", "3", "1/( 1 )  ×  3  +  ");
         test("2 1/x * 2 +", "1", "1/( 2 )  ×  2  +  ");
@@ -522,6 +524,43 @@ class AppModelTest {
         test("9999999999999999 1/x 1/x = 1/x", "0,0000000000000001", "1/( 9999999999999999 )");
         test("9999999999999999 1/x 1/x = 1/x / 1/x +", "1,e-32", "1/( 9999999999999999 )  ÷  1/( 0,0000000000000001 )  +  ");
         test("9999999999999999 1/x 1/x = ± 1/x / 1/x +", "1,e-32", "1/( negate( 9999999999999999 ) )  ÷  1/( -0,0000000000000001 )  +  ");
+
+        test("1 / 3 = 1/x","3","1/( 0,3333333333333333 )");
+        test("1 / 6 = 1/x","6","1/( 0,1666666666666667 )");
+        test("1 / 3 = 1/x - 3 -","0","1/( 0,3333333333333333 )  -  3  -  ");
+        test("1 / 6 = 1/x - 6 -","0","1/( 0,1666666666666667 )  -  6  -  ");
+
+        test("1000000000000000 sqr 1/x","1,e-30","1/( sqr( 1000000000000000 ) )");
+        test("1000000000000000 sqr ± 1/x","-1,e-30","1/( negate( sqr( 1000000000000000 ) ) )");
+        test( "1234567890123456 1/x sqrt","2,846049906958767e-8","√( 1/( 1234567890123456 ) )");
+        test( "1234567890123456 ± 1/x","-8,100000072900006e-16","1/( -1234567890123456 )");
+
+        test("0,1 1/x","10","1/( 0,1 )");
+        test("0,1 ± 1/x","-10","1/( -0,1 )");
+        test("0,0000000000000001 1/x","1,e+16","1/( 0,0000000000000001 )");
+        test("0,0000000000000001 ± 1/x","-1,e+16","1/( -0,0000000000000001 )");
+        test("0,0000000000000001 sqr 1/x","1,e+32","1/( sqr( 0,0000000000000001 ) )");
+        test("0,0000000000000001 sqr ± 1/x","-1,e+32","1/( negate( sqr( 0,0000000000000001 ) ) )");
+
+        test( "9876543210 sqr ± sqr sqr 1/x","1,104486101070964e-80","1/( sqr( sqr( negate( sqr( 9876543210 ) ) ) ) )");
+        test( "9876543210 sqrt 1/x sqrt 1/x sqrt sqr  ","315,2472030020438","sqr( √( 1/( √( 1/( √( 9876543210 ) ) ) ) ) )");
+        test( "9876543210 sqrt 1/x sqrt ± ±","0,0031721137903118","negate( negate( √( 1/( √( 9876543210 ) ) ) ) )");
+        test( "9876543210 1/x ± sqr" ,"1,025156249974371e-20","sqr( negate( 1/( 9876543210 ) ) )");
+        test( "9876543210 ± sqr sqrt sqrt sqrt sqr","99 380,79900061178","sqr( √( √( √( sqr( -9876543210 ) ) ) ) )");
+        test( "9876543210 1/x sqr sqrt sqr sqr 1/x ±","-9,515242752647292e+39","negate( 1/( sqr( sqr( √( sqr( 1/( 9876543210 ) ) ) ) ) ) )");
+        test( "9876543210 sqrt sqrt 1/x ± sqr sqrt ±","-0,0031721137903118","negate( √( sqr( negate( 1/( √( √( 9876543210 ) ) ) ) ) ) )");
+        test( "9876543210 ± sqr sqr sqrt ± ± 1/x","1,025156249974371e-20","1/( negate( negate( √( sqr( sqr( -9876543210 ) ) ) ) ) )");
+        test( "9876543210 sqrt sqr ± 1/x ± ±","-1,012499999987344e-10","negate( negate( 1/( negate( sqr( √( 9876543210 ) ) ) ) ) )");
+
+        test("123 + 456 = + 789 - 1/x -","1 367,999269005848","579  +  789  -  1/( 1368 )  -  ");
+        test("123 * 456 = / 789 * 1/x /","1","56088  ÷  789  ×  1/( 71,08745247148289 )  ÷  ");
+        test("123 * 456 = / 789 * 123 1/x /","0,5779467680608365","56088  ÷  789  ×  1/( 123 )  ÷  ");
+
+        test("3 1/x * 9 = 1/x * 9 = 1/x * 9 *","3","1/( 3 )  ×  9  ×  ");
+
+        test("3 1/x + % 1/x","900","1/( 3 )  +  1/( 0,0011111111111111 )");
+        test("3 1/x + % 1/x =","900,3333333333333","");
+
     }
 
     @Test
@@ -748,6 +787,23 @@ class AppModelTest {
         test("1,234567891234567 * 0,1 =", "0,1234567891234567", "");
         test("0,0001111111111111 * 0,1 =", "1,111111111111e-5", "");
 
+
+        test("0,0000000000000023 * 0,1 = ±", "-2,3e-16", "negate( 2,3e-16 )");
+        test("0,0000000000000234 * 0,1 = ±", "-2,34e-15", "negate( 2,34e-15 )");
+        test("0,0000000000002345 * 0,1 = ±", "-2,345e-14", "negate( 2,345e-14 )");
+        test("0,0000000000023456 * 0,1 = ±", "-2,3456e-13", "negate( 2,3456e-13 )");
+        test("0,0000000000234567 * 0,1 = ±", "-2,34567e-12", "negate( 2,34567e-12 )");
+        test("0,0000000002345678 * 0,1 = ±", "-2,345678e-11", "negate( 2,345678e-11 )");
+        test("0,0000000023456789 * 0,1 = ±", "-2,3456789e-10", "negate( 2,3456789e-10 )");
+        test("0,0000000234567891 * 0,1 = ±", "-2,34567891e-9", "negate( 2,34567891e-9 )");
+        test("0,0000002345678912 * 0,1 = ±", "-2,345678912e-8", "negate( 2,345678912e-8 )");
+        test("0,0000023456789123 * 0,1 = ±", "-2,3456789123e-7", "negate( 2,3456789123e-7 )");
+//        test("0,0000123456789123 * 0,1 = ±", "-1,23456789123e-6", "negate( 1,23456789123e-6 )");
+//        test("0,0001234567891234 * 0,1 = ±", "-1,234567891234e-5", "negate( 1,234567891234e-5 )");
+//        test("0,0012345678912345 * 0,1 = ±", "-1,2345678912345e-4", "negate( 1,2345678912345e-4 )");
+        test("0,0123456789123456 * 0,1 = ±", "-0,0012345678912346", "negate( 0,0012345678912346 )");
+        test("0,1234567891234567 * 0,1 = ±", "-0,0123456789123457", "negate( 0,0123456789123457 )");
+
         test("0,1111111111111111 * 0,1 =", "0,0111111111111111", "");
         test("0,1111111111111111 * 0,1 = =", "0,0011111111111111", "");
         test("0,1111111111111111 * 0,1 = = =", "1,111111111111111e-4", "");
@@ -789,7 +845,32 @@ class AppModelTest {
     @Test
     void testClear(){
 
+        test("5 C","0","");
+        test("4 sqr C","0","");
+        test("4 sqrt C","0","");
+        test("4 1/x C","0","");
+        test("4 % C","0","");
+        test("4 ± C","0","");
+
+        test("4 + C + 1 =","1","");
+        test("4 + 5 C + 1 +","1","0  +  1  +  ");
+        test("4 - C - 1 =","-1","");
+        test("4 - 5 C - 1 -","-1","0  -  1  -  ");
+        test("4 * C * 1 =","0","");
+        test("4 * 5 C * 1 *","0","0  ×  1  ×  ");
+        test("4 / C / 1 =","0","");
+        test("4 / 5 C / 1 /","0","0  ÷  1  ÷  ");
+
+        test("5 + 3 = C + 2 +", "2", "0  +  2  +  ");
         test("5 - 3 = C - 2 -", "-2", "0  -  2  -  ");
+        test("5 * 3 = C * 2 *", "0", "0  ×  2  ×  ");
+        test("5 / 3 = C / 2 /", "0", "0  ÷  2  ÷  ");
+
+        test("5 + 3 = sqr C + 2 +", "2", "0  +  2  +  ");
+        test("5 - 3 = sqrt C - 2 -", "-2", "0  -  2  -  ");
+        test("5 * 3 = 1/x C * 2 *", "0", "0  ×  2  ×  ");
+        test("5 / 3 = + % C / 2 /", "0", "0  ÷  2  ÷  ");
+
         test("5 MS + 3 = C - MR -", "-5", "0  -  5  -  ");
     }
 
@@ -806,6 +887,8 @@ class AppModelTest {
     @Test
     void testBackSpace(){
 
+        test("<-","0","");
+        test("C <-","0","");
         test(", <-", "0", "");
         test("5 <-", "0", "");
         test("5 , <-", "5", "");
@@ -835,6 +918,7 @@ class AppModelTest {
     @Test
     void testMemory(){
 
+        test("MS 10 MR","0","");
         test("20 MS", "20", "");
         test("20 MS + 10 + MR", "20", "20  +  10  +  ");
         test("20 MS + 10 + MR =", "50", "");
@@ -853,6 +937,7 @@ class AppModelTest {
         test("20 M+ - MR +", "0", "20  -  20  +  ");
 
         test("MS MR", "0", "");
+        test("C MS MR", "0", "");
         test("10 M+ MR", "10", "");
         test("10 M+ 20 + MR +", "30", "20  +  10  +  ");
         test("123 M- MR", "-123", "");
@@ -905,6 +990,7 @@ class AppModelTest {
         test(", , , , , = = , , , , , = = + - * / , , , , , -","Result is undefined","0  ÷  0  -  ");
 
         test("0 1/x","Cannot divide by zero","1/( 0 )");
+        test("3 - 3 + 1/x","Cannot divide by zero","3  -  3  +  1/( 0 )");
         test("2 / 0 +","Cannot divide by zero","2  ÷  0  +  ");
         test("3 / 0 sqr +","Cannot divide by zero","3  ÷  sqr( 0 )  +  ");
         test("4 / 0 sqrt +","Cannot divide by zero","4  ÷  √( 0 )  +  ");
@@ -1053,11 +1139,11 @@ class AppModelTest {
             if (str.matches(IS_NUMBER_REGEX)) {
                 number = new Number(new BigDecimal(str));
             } else {
-                response = model.toDo(actions.get(str), number);
+                response = model.toDo(number, actions.get(str));
                 number = null;
             }
         }
-        model.toDo(new Clear(), number);
+        model.toDo(number, new Clear());
         return response;
     }
 }

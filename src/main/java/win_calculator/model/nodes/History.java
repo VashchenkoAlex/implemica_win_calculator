@@ -1,14 +1,13 @@
 package win_calculator.model.nodes;
 
 import win_calculator.model.nodes.actions.Action;
-import win_calculator.controller.nodes.digits.Number;
-import win_calculator.model.nodes.actions.clear.Clear;
-import win_calculator.utils.ActionType;
+import win_calculator.model.nodes.actions.Number;
+import win_calculator.model.nodes.actions.ActionType;
 
 import java.util.LinkedList;
 
-import static win_calculator.utils.ActionType.MAIN_OPERATION;
-import static win_calculator.utils.ActionType.NUMBER;
+import static win_calculator.model.nodes.actions.ActionType.MAIN_OPERATION;
+import static win_calculator.model.nodes.actions.ActionType.NUMBER;
 
 public class History {
 

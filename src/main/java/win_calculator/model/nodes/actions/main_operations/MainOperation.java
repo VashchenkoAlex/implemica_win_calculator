@@ -1,6 +1,6 @@
 package win_calculator.model.nodes.actions.main_operations;
 
-import win_calculator.exceptions.MyException;
+import win_calculator.model.exceptions.MyException;
 import win_calculator.model.nodes.actions.Action;
 
 import java.math.BigDecimal;

@@ -1,23 +1,22 @@
 package win_calculator.model;
 
-import win_calculator.DTOs.ResponseDTO;
-import win_calculator.exceptions.MyException;
+import win_calculator.model.DTOs.ResponseDTO;
+import win_calculator.model.exceptions.MyException;
 import win_calculator.model.nodes.actions.Action;
-import win_calculator.controller.nodes.digits.Number;
+import win_calculator.model.nodes.actions.Number;
 import win_calculator.model.nodes.actions.clear.Clear;
 import win_calculator.model.nodes.actions.extra_operations.ExtraOperation;
 import win_calculator.model.nodes.actions.extra_operations.Negate;
 import win_calculator.model.nodes.actions.extra_operations.Percent;
 import win_calculator.model.nodes.actions.main_operations.MainOperation;
-import win_calculator.model.button_handlers.MainOperationHandler;
-import win_calculator.model.button_handlers.PercentHandler;
-import win_calculator.utils.ActionType;
+import win_calculator.model.nodes.actions.ActionType;
 
 import java.math.BigDecimal;
 
-import static win_calculator.utils.ActionType.*;
-import static win_calculator.utils.AppUtils.checkOnOverflow;
-import static win_calculator.utils.AppUtils.convertToString;
+import static win_calculator.model.nodes.actions.ActionType.*;
+import static win_calculator.model.utils.ModelUtils.checkOnOverflow;
+import static win_calculator.model.utils.ModelUtils.convertToString;
+import static win_calculator.model.utils.ModelUtils.roundNumber;
 
 public class AppModel {
 
@@ -28,7 +27,7 @@ public class AppModel {
     private PercentHandler percentHandler = new PercentHandler(operationProcessor);
     private BigDecimal responseNumber;
 
-    public ResponseDTO toDo(Action action, Number number){
+    public ResponseDTO toDo(Number number, Action action){
 
         ResponseDTO responseDTO;
         try{
@@ -99,7 +98,8 @@ public class AppModel {
             operationProcessor.addZeroToHistory();
         }
         operationProcessor.addActionToHistory(eOperation);
-        BigDecimal resultNum = checkOnOverflow(((ExtraOperation) eOperation).calculate(operationNumber));
+        BigDecimal resultNum = roundNumber(((ExtraOperation) eOperation).calculate(operationNumber));
+        checkOnOverflow(resultNum);
         operationProcessor.setLastExtraResult(resultNum);
         responseNumber = resultNum;
 
@@ -107,9 +107,9 @@ public class AppModel {
 
     private void processPercent(Action percent, Number number) throws MyException {
 
-        BigDecimal result = checkOnOverflow(percentHandler.doOperation((Percent) percent, number));
-        responseNumber = result;
-        if (!BigDecimal.ZERO.equals(responseNumber) && !"0.00".equals(result.toString())) {
+        responseNumber = roundNumber(percentHandler.doOperation((Percent) percent, number));
+        checkOnOverflow(responseNumber);
+        if (!BigDecimal.ZERO.equals(responseNumber) && !"0.00".equals(responseNumber.toString())) {
             BigDecimal tempNumber;
             if (operationProcessor.getPreviousNumber() != null) {
                 tempNumber = operationProcessor.getPreviousNumber();
@@ -117,9 +117,9 @@ public class AppModel {
                 tempNumber = operationProcessor.getLastNumber();
             }
             operationProcessor.rejectLastNumberWithExtraOperations();
-            operationProcessor.changeLastActionNumber(new Number(result));
+            operationProcessor.changeLastActionNumber(new Number(responseNumber));
             operationProcessor.setEnterRepeated(false);
-            operationProcessor.changeLastNumberAtActions(result);
+            operationProcessor.changeLastNumberAtActions(responseNumber);
             operationProcessor.changePreviousNumber(tempNumber);
             operationProcessor.addActionToHistory(percent);
         } else if (!"0".equals(operationProcessor.getHistoryString())) {

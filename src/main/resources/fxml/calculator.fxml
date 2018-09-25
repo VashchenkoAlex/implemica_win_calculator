@@ -251,7 +251,7 @@
                             </rowConstraints>
                         </GridPane>
                     </children>
-                    <AnchorPane fx:id="menuListContainer" minWidth="1.0" minHeight="1.0"/>
+                    <AnchorPane fx:id="dropDownContainer" minWidth="1.0" minHeight="1.0"/>
                 </AnchorPane>
             </root>
             <stylesheets>

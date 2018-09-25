@@ -3,13 +3,14 @@ package win_calculator.controller.view_handlers;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import win_calculator.controller.nodes.digits.Digit;
+import win_calculator.controller.digits.Digit;
 import win_calculator.model.nodes.actions.Action;
-import win_calculator.utils.ActionType;
+import win_calculator.model.nodes.actions.ActionType;
 
-import static win_calculator.utils.ActionType.BACKSPACE;
-import static win_calculator.utils.ActionType.DIGIT;
-import static win_calculator.utils.AppUtils.*;
+import static win_calculator.controller.utils.ControllerUtils.addCapacity;
+import static win_calculator.controller.utils.ControllerUtils.isComaAbsent;
+import static win_calculator.model.nodes.actions.ActionType.BACKSPACE;
+import static win_calculator.model.nodes.actions.ActionType.DIGIT;
 
 public class DisplayHandler {
 
