@@ -1,6 +1,6 @@
 package win_calculator.model.nodes.events.main_operations;
 
-import win_calculator.model.exceptions.MyException;
+import win_calculator.model.exceptions.OperationException;
 import win_calculator.model.nodes.events.EventType;
 
 import java.math.BigDecimal;
@@ -15,28 +15,28 @@ public class Divide implements MainOperation {
     private static final int SCALE = 10030;
 
     @Override
-    public BigDecimal calculate(BigDecimal number) throws MyException {
+    public BigDecimal calculate(BigDecimal number) throws OperationException {
 
         BigDecimal result;
         try{
             result = number.divide(number,SCALE,RoundingMode.HALF_DOWN);
         }catch (ArithmeticException e){
-            throw new MyException(UNDEFINED_EXCEPTION_MSG);
+            throw new OperationException(UNDEFINED_EXCEPTION_MSG);
         }
         return result;
     }
 
     @Override
-    public BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber) throws MyException {
+    public BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber) throws OperationException {
 
         BigDecimal result;
         if (firstNumber.equals(BigDecimal.ZERO) && secondNumber.equals(BigDecimal.ZERO)){
-            throw new MyException(UNDEFINED_EXCEPTION_MSG);
+            throw new OperationException(UNDEFINED_EXCEPTION_MSG);
         }
         try{
             result = firstNumber.divide(secondNumber,SCALE,RoundingMode.HALF_UP);
         }catch (ArithmeticException e){
-            throw new MyException(CANNOT_DIVIDE_EXCEPTION_MSG);
+            throw new OperationException(CANNOT_DIVIDE_EXCEPTION_MSG);
         }
         return result;
     }

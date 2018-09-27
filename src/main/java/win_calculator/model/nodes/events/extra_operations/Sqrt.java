@@ -1,6 +1,6 @@
 package win_calculator.model.nodes.events.extra_operations;
 
-import win_calculator.model.exceptions.MyException;
+import win_calculator.model.exceptions.OperationException;
 import win_calculator.model.nodes.events.EventType;
 
 import java.math.BigDecimal;
@@ -13,14 +13,14 @@ public class Sqrt implements ExtraOperation {
     private static final String EXCEPTION_MSG = "Invalid input";
     private static final int SCALE = 10050;
     @Override
-    public BigDecimal calculate(BigDecimal number) throws MyException {
+    public BigDecimal calculate(BigDecimal number) throws OperationException {
 
         BigDecimal x0 = BigDecimal.ZERO;
         BigDecimal x1;
         try{
             x1 = new BigDecimal(Math.sqrt(number.doubleValue()));
         }catch (NumberFormatException e){
-            throw new MyException(EXCEPTION_MSG);
+            throw new OperationException(EXCEPTION_MSG);
         }
         while (!x0.equals(x1)){
             x0 = x1;

@@ -1,6 +1,6 @@
 package win_calculator.model.utils;
 
-import win_calculator.model.exceptions.MyException;
+import win_calculator.model.exceptions.OperationException;
 
 import java.math.BigDecimal;
 
@@ -44,10 +44,10 @@ public abstract class ModelUtils {
         return result;
     }
 
-    public static void checkOnOverflow(BigDecimal number) throws MyException {
+    public static void checkOnOverflow(BigDecimal number) throws OperationException {
 
         if (isOverflow(number)){
-            throw new MyException(OVERFLOW_MSG);
+            throw new OperationException(OVERFLOW_MSG);
         }
     }
 

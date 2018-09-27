@@ -40,6 +40,8 @@ class TestUtils {
         map.put("M+",new TestButton("#memoryAddBtn",KeyCode.P,false));
         map.put("M-",new TestButton("#memorySubtractBtn",KeyCode.S,false));
         map.put("MENU",new TestButton("#menuBtn",KeyCode.M,true));
+        map.put("FS",new TestButton("#fullScreenBtn",KeyCode.F,true));
+        map.put("HD",new TestButton("#hideBtn",KeyCode.H,true));
         return map;
     }
 

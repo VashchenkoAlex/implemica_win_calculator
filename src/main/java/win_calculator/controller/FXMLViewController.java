@@ -21,7 +21,7 @@ import javafx.util.Callback;
 import javafx.util.Duration;
 import win_calculator.controller.memory.*;
 import win_calculator.controller.digits.*;
-import win_calculator.model.nodes.events.Number;
+import win_calculator.model.exceptions.OperationException;
 import win_calculator.controller.view_handlers.*;
 import win_calculator.model.AppModel;
 import win_calculator.model.nodes.events.Event;
@@ -393,7 +393,7 @@ public class FXMLViewController implements Initializable {
 
     private Response handleOperation(Event event) {
 
-        Number currentNum;
+        BigDecimal currentNum;
         if (MEMORY.equals(lastEventType) && numberBuilder.containsNumber()) {
             currentNum = numberBuilder.getNumber();
         } else {
@@ -447,7 +447,7 @@ public class FXMLViewController implements Initializable {
                 currentNum = number;
             }
             if ("".equals(currentNum) && numberBuilder.containsNumber()) {
-                currentNum = numberBuilder.getNumber().getValue();
+                currentNum = numberBuilder.getNumber().toString();
             }
             if ("".equals(currentNum)) {
                 currentNum = "0";
@@ -455,7 +455,7 @@ public class FXMLViewController implements Initializable {
             BigDecimal result = memoryHandler.doEvent(event, new BigDecimal(replaceCapacity(replaceComaToDot(currentNum))));
             if (result != null) {
                 currentNum = convertToString(result, DISPLAY_PATTERN);
-                numberBuilder.setNumber(new Number(result));
+                numberBuilder.setNumber(result);
             } else {
                 currentNum = lastDisplay;
             }
@@ -656,14 +656,13 @@ public class FXMLViewController implements Initializable {
         return label;
     }
 
-    private Response getDataFromModel(Number number, Event event) {
+    private Response getDataFromModel(BigDecimal number, Event event) {
 
-        BigDecimal result = model.toDo(number, event);
         String resultString;
-        if (result == null) {
-            resultString = model.getErrorMessage();
-        } else {
-            resultString = convertToString(result, DISPLAY_PATTERN);
+        try {
+            resultString = convertToString(model.toDo(number, event), DISPLAY_PATTERN);
+        } catch (OperationException e) {
+            resultString = e.getMessage();
         }
         String historyString = getHistoryString(model.getHistory());
         return new Response(resultString, historyString);

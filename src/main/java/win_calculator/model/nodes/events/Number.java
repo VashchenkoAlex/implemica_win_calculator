@@ -11,10 +11,6 @@ public class Number implements Event {
         this.bigDecimalValue = bigDecimalValue;
     }
 
-    public Number() {
-    }
-
-
     public String getValue() {
 
         return bigDecimalValue.toString();
@@ -30,7 +26,4 @@ public class Number implements Event {
         return bigDecimalValue;
     }
 
-    public void setBigDecimalValue(BigDecimal bigDecimalValue) {
-        this.bigDecimalValue = bigDecimalValue;
-    }
 }

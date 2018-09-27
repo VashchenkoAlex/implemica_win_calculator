@@ -2,7 +2,6 @@ package win_calculator.controller;
 
 import win_calculator.model.nodes.events.Event;
 import win_calculator.controller.digits.Digit;
-import win_calculator.model.nodes.events.Number;
 import win_calculator.controller.digits.ZeroDigit;
 import win_calculator.model.nodes.events.EventType;
 
@@ -21,7 +20,7 @@ public class NumberBuilder {
     private static final String ZERO = "0";
     private static final String DISPLAY_PATTERN = "#############,###.################";
     private boolean positive = true;
-    private Number number;
+    private BigDecimal number;
     private LinkedList<Digit> digitsChain = new LinkedList<>();
     private LinkedList<Digit> previousChain;
 
@@ -37,9 +36,7 @@ public class NumberBuilder {
     }
 
     private void add(Digit digit) {
-        if (number == null) {
-            number = new Number();
-        }
+
         if (COMA.equals(digit.getValue())) {
             addComa(digit);
         } else if (ZERO.equals(digit.getValue())) {
@@ -47,27 +44,27 @@ public class NumberBuilder {
         } else {
             addDigit(digit);
         }
-        number.setBigDecimalValue(new BigDecimal(getValue()));
+        number = new BigDecimal(getValue());
     }
 
-    Number finish() {
+    BigDecimal finish() {
 
         prepareNumber();
         previousChain = digitsChain;
         digitsChain = new LinkedList<>();
-        Number result;
-        if (number != null && number.getBigDecimalValue() != null) {
+        BigDecimal result;
+        if (number != null) {
             result = number;
         } else {
             result = null;
         }
-        number = new Number();
+        number = null;
         return result;
     }
 
     public void clear() {
 
-        number = new Number();
+        number = null;
         digitsChain = new LinkedList<>();
         previousChain = null;
         resetPositive();
@@ -79,13 +76,11 @@ public class NumberBuilder {
             digitsChain = previousChain;
             cutLastDigit();
             BigDecimal value = new BigDecimal(getValue());
-            value = setSign(value);
-            number.setBigDecimalValue(value);
+            number = setSign(value);
         } else if (!digitsChain.isEmpty()) {
             cutLastDigit();
             BigDecimal value = new BigDecimal(getValue());
-            value = setSign(value);
-            number.setBigDecimalValue(value);
+            number = setSign(value);
         }
 
     }
@@ -193,7 +188,7 @@ public class NumberBuilder {
             prepareNumber();
             result = convertChainToString();
         }else {
-            result = convertToString(number.getBigDecimalValue().negate(),DISPLAY_PATTERN);
+            result = convertToString(number.negate(),DISPLAY_PATTERN);
         }
         return result;
     }
@@ -205,47 +200,42 @@ public class NumberBuilder {
 
     boolean containsNumber() {
 
-        return isChainNotEmpty() || isPreviousChainNotEmpty() || (number != null && number.getBigDecimalValue() != null);
+        return isChainNotEmpty() || isPreviousChainNotEmpty() || (number != null);
     }
 
     private void prepareNumber() {
 
         if (digitsChain.isEmpty() && isPreviousChainNotEmpty()) {
             digitsChain = previousChain;
-            number = new Number(setSign(new BigDecimal(getValue())));
+            number = setSign(new BigDecimal(getValue()));
         } else if (isChainNotEmpty()) {
-            BigDecimal value = setSign(number.getBigDecimalValue());
+            BigDecimal value = setSign(number);
             if (positive && value.compareTo(BigDecimal.ZERO) < 0){
                 value = value.abs();
             }
-            number = new Number(value);
-        }else if (number != null && number.getBigDecimalValue() != null){
-            number.setBigDecimalValue(setSign(number.getBigDecimalValue()));
+            number = value;
+        }else if (number != null){
+            number = setSign(number);
         }
     }
 
-    public void setNumber(Number number){
+    public void setNumber(BigDecimal number){
 
         this.number = number;
     }
 
-    public Number getNumber(){
+    public BigDecimal getNumber(){
 
-        if (number != null && number.getBigDecimalValue() == null){
+        if (number == null){
             prepareNumber();
         }
         return number;
     }
 
-    private boolean isNumberNegative(){
-
-        return !positive;
-    }
-
     String convertChainToString(){
 
         StringBuilder resultBuilder = new StringBuilder();
-        if (isNumberNegative()){
+        if (!positive){
             resultBuilder = new StringBuilder("-");
         }
         LinkedList<Digit> chain = digitsChain;

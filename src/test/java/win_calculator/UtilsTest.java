@@ -1,7 +1,7 @@
 package win_calculator;
 
 import org.junit.jupiter.api.Test;
-import win_calculator.model.exceptions.MyException;
+import win_calculator.model.exceptions.OperationException;
 
 import java.math.BigDecimal;
 
@@ -93,7 +93,7 @@ class UtilsTest {
         String result = "";
         try {
             checkOnOverflow(new BigDecimal(inserted));
-        } catch (MyException e) {
+        } catch (OperationException e) {
             result = e.getMessage();
         }
         assertEquals("Overflow",result);

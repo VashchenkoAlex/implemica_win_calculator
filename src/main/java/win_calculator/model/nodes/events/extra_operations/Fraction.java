@@ -1,6 +1,6 @@
 package win_calculator.model.nodes.events.extra_operations;
 
-import win_calculator.model.exceptions.MyException;
+import win_calculator.model.exceptions.OperationException;
 import win_calculator.model.nodes.events.EventType;
 
 import java.math.BigDecimal;
@@ -15,12 +15,12 @@ public class Fraction implements ExtraOperation {
     private static final String EXCEPTION_MSG = "Cannot divide by zero";
 
     @Override
-    public BigDecimal calculate(BigDecimal number) throws MyException {
+    public BigDecimal calculate(BigDecimal number) throws OperationException {
         BigDecimal result;
         try{
             result = BigDecimal.ONE.divide(number, SCALE_BEFORE,RoundingMode.HALF_UP).setScale(SCALE_AFTER,RoundingMode.HALF_UP);
         }catch (ArithmeticException e){
-            throw new MyException(EXCEPTION_MSG);
+            throw new OperationException(EXCEPTION_MSG);
         }
         return result;
     }

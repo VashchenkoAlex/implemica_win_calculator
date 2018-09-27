@@ -38,7 +38,7 @@ public class History {
             return events.getLast();
     }
 
-    public void changeLastMOperation(Event event) {
+    public void changeLastEvent(Event event) {
 
         if (!events.isEmpty() && isChangingMOperationPossible()) {
             for (int i = events.size() - 1; i > 0; i--) {

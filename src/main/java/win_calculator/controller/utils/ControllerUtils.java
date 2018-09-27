@@ -1,7 +1,5 @@
 package win_calculator.controller.utils;
 
-import win_calculator.controller.Response;
-import win_calculator.model.DTOs.ResponseDTO;
 import win_calculator.model.nodes.events.Event;
 import win_calculator.model.nodes.events.EventType;
 import win_calculator.model.nodes.events.Number;
@@ -25,7 +23,6 @@ public abstract class ControllerUtils {
     private static final String MINUS_REGEX = "^-.[0-9,]*";
     private static final String MINUS = "-";
     private static final String HISTORY_PATTERN = "################.################";
-    private static final String DISPLAY_PATTERN = "#############,###.################";
     private static final String SIMPLE_E_SEPARATOR = "e";
     private static final String FOURTEEN_DECIMAL_PART = "#.##############";
     private static final String INTEGER_AND_DECIMAL_PART = "0.0000000000000000";
@@ -111,16 +108,6 @@ public abstract class ControllerUtils {
             }
         }
         return result;
-    }
-
-    public static Response convertDataFromModel(ResponseDTO data){
-
-        String display = data.getMessage();
-        if (display == null){
-            display = convertToString(data.getDisplay(),DISPLAY_PATTERN);
-        }
-        String history = getHistoryString(data.getHistory());
-        return new Response(display,history);
     }
 
     public static String convertToString(BigDecimal incomeNumber, String pattern) {

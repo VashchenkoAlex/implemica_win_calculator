@@ -2,22 +2,23 @@ package win_calculator.GUITests;
 
 import javafx.application.Platform;
 import javafx.event.Event;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.junit.jupiter.api.*;
-import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.*;
 import org.testfx.matcher.control.LabeledMatchers;
 import org.testfx.util.WaitForAsyncUtils;
 import win_calculator.MainApp;
 import win_calculator.controller.view_handlers.CaptionHandler;
 
+import java.awt.*;
+import java.awt.event.InputEvent;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -30,66 +31,74 @@ import static win_calculator.GUITests.TestUtils.createButtonsMap;
 
 class UITest extends ApplicationTest{
 
-
-    private FxRobot fxRobot = new FxRobot();
+    private Robot robot;
     private Scene scene;
     private MainApp app = new MainApp();
     private static final HashMap<String,TestButton> buttons = createButtonsMap();
 
     @Start
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) throws IOException{
 
         app.setUpApp();
         scene = app.getStage().getScene();
+        try {
+            robot = new Robot();
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
-    void TestUI(){
+    void testKeyBoard(){
 
-        testKey(", ±","-0,","");
-        testKey(", 0 0 ±","-0,00","");
-        testKey(", 0 0 5 ±","-0,005","");
-        testKey(", 0 0 ± ±","0,00","");
+        robot.setAutoDelay(20);
+        testDrag(0, 500, 200, 700);
+        testDrag(0, -500, 200, 200);
+        testDrag(20, 60, 220, 260);
+        testDrag(-20, -60, 200, 200);
+        testDrag(100, 100, 300, 300);
+        testDrag(100, 200, 400, 500);
+        testDrag(-100, -150, 300, 350);
+        testDrag(-100, -150, 200, 200);
 
-        testKey("C ⟵","0","");
+        testResize(-100, -100, false, false, 419, 601);
+        testResize(100, 100, false, false, 320, 502);
+        testResize(0, -100, false, false, 320, 601);
+        testResize(0, 100, false, false, 320, 502);
+        testResize(-100, 0, false, false, 419, 502);
+        testResize(100, 0, false, false, 320, 502);
 
-        testKey(", 0 0 5 0 0 ,","0,00500","");
+        testResize(100, 150, true, true, 420, 652);
+        testResize(-100, -150, true, true, 320, 502);
+        testResize(0, 100, true, true, 320, 602);
+        testResize(0, -100, true, true, 320, 502);
+        testResize(100, 0, true, true, 420, 502);
+        testResize(-100, 0, true, true, 320, 502);
 
-        testKey("1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ,","1 111 111 111 111 111,","");
+        testResize(100, -150, true, false, 420, 651);
+        testResize(-100, 150, true, false, 320, 502);
+        testResize(0, -100, true, false, 320, 601);
+        testResize(0, 100, true, false, 320, 502);
+        testResize(100, 0, true, false, 420, 502);
+        testResize(-100, 0, true, false, 320, 502);
 
-        testKey("2 0 + %","4","20  +  4");
-        testKey("1 2 + 3 4 - 5 6 * 7 8 / 9 0 = ", "-8,666666666666667","");
-        testKey("1 , , , 2 + 3 4 - 5 6 * 7 8 / 9 0 = ", "-18,02666666666667","");
-        testKey("1 , , , 2 + 3 4 - 5 6 * 7 8 / 9 0 = C", "0","");
-        testKey("1 + 2 + 3 + 4 =", "10","");
+        testResize(-100, 150, false, true, 419, 652);
+        testResize(100, -150, false, true, 320, 502);
+        testResize(0, 100, false, true, 320, 602);
+        testResize(0, -100, false, true, 320, 502);
+        testResize(-100, 0, false, true, 419, 502);
+        testResize(100, 0, false, true, 320, 502);
 
-        testKey("1 2 3 ± + 4 5 % - 6 7 sqr * 8 9 0 sqrt / 2 4 1/x = + 6 8 - 0 1 * 3 5 / 7 9 + 2 , 4 = - 6 8 * 1 3 / 5 7 =", "-337 673,2047848424","");
-        testKey("9 8 7 6 5 4 3 2 1 0 + 1 3 5 7 9 1 3 5 % - 2 4 6 8 0 * 1 2 3 4 / 4 3 2 1 = sqr sqrt", "383 010 928 309 372,9","√( sqr( 383010928309372,9 ) )");
-        testKey("9 8 7 6 5 4 3 2 1 0 + % =", "9,754610676665143e+17","");
-        testKey("9 8 7 6 5 4 3 2 1 0 ± ± ± ± ± ± ± ± + % % = =", "1,926836657386991e+26","");
-        testKey("9 8 7 6 5 4 3 2 1 0 ± % = ", "0","");
-        testKey("1 2 3 4 5 6 7 8 9 0 sqr + sqrt ± % % %", "-4,371241896208856e+57","sqr( 1234567890 )  +  -4,371241896208856e+57");
+        testResize(100, 100, false, false, 320, 502);
+        testResize(-100, -150, true, true, 320, 502);
+        testResize(-100, 150, true, false, 320, 502);
+        testResize(100, -150, false, true, 320, 502);
 
-        testKey(", 0 0 0 0 0 0 0 1", "0,00000001","");
-        testKey(", 0 0 0 0 0 0 1 ±", "-0,0000001","");
-        testKey(", 0 0 0 , , , 0 0 0 0 1 = = = =", "0,00000001","");
-        testKey(", 0 0 0 0 0 0 0 1 - % % %", "1,e-38","0,00000001  -  1,e-38");
-        testKey("1 2 3 4 5 6 7 8 9 0 , 0 1 2 3 4 5 6 7 *", "1 234 567 890,012345","1234567890,012345  ×  ");
-        testKey("2 5 ± ⟵","-2","");
-        testKey("1 2 3 4 ± ⟵ ⟵ ⟵","-1","");
-        testKey("1 2 3 4 ± ⟵ ⟵ / 2 -","-6","-12  ÷  2  -  ");
+        testFSWithDrag(0, -300);
+        testFSWithDrag(-300, 0);
 
-        testKey("1 2 3 4 5 6 7 8 9 0 , 0 1 2 3 4 5 6 7 ⟵ ⟵ ⟵ ⟵ /", "1 234 567 890,01","1234567890,01  ÷  ");
-        testKey("1 2 3 4 5 6 7 8 9 0 , 5 6 7 ± ⟵ ⟵ ⟵ ⟵ /", "-1 234 567 890","-1234567890  ÷  ");
-        testKey("1 2 3 4 5 6 7 8 9 0 , 5 6 7 ± sqr ⟵ ⟵ ⟵ ⟵ /", "1,524157876419052e+18","sqr( -1234567890,567 )  ÷  ");
-        testKey("2 5 6 7 8 9 0 , 1 3 4 ± ⟵ ⟵ ⟵ ⟵ sqr sqrt sqrt sqrt", "40,03078475546843","√( √( √( sqr( -2567890 ) ) ) )");
-
-        testKey("0 , 0 0 0 0 0 0 0 0 0 ⟵", "0,00000000", "");
-        testKey("0 , 0 0 0 0 0 0 0 0 0 ⟵ ⟵ ⟵", "0,000000", "");
-        testKey("0 , 0 0 0 0 0 0 0 0 0 ⟵ ⟵ ⟵ 0 0", "0,00000000", "");
-
-        testKey("1 2 3 0 , 0 0 0 0 0 0 0 0 0 ⟵", "1 230,00000000", "");
-        testKey("1 2 3 0 , 0 0 0 0 0 0 0 0 0 ⟵ ⟵ ⟵", "1 230,000000", "");
+        testMenuList();
+        robot.setAutoDelay(1);
 
         test("1 + 2 0 % - 3 sqr * 4 sqrt / 5 1/x + 6 7 ⟵ - 7 , 8 ± * 8 CE 9 / , 1 +","-5 778","1  +  0,2  -  sqr( 3 )  ×  √( 4 )  ÷  1/( 5 )  +  6  -  -7,8  ×  9  ÷  0,1  +  ");
 
@@ -207,58 +216,55 @@ class UITest extends ApplicationTest{
         test("1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 sqr sqr sqr sqr sqr sqr sqr sqr sqr sqr","Overflow","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 1000000000000000 ) ) ) ) ) ) ) ) ) )");
         test("0 , 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 sqr sqr sqr sqr sqr sqr sqr sqr sqr sqr","Overflow","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) ) ) )");
 
-        testMenuList();
+        test("1 + 2 - 3 C", "0", "");
+        test("1 + 2 - 3 CE 4 -", "-1", "1  +  2  -  4  -  ");
+        test("1 M+ + 2 - MR + M- MR * 3 = MC", "3", "");
+        test("1 + 2 0 % - 3 sqr * 4 sqrt / 5 1/x + 6 7 ⟵ - 7 , 8 ± * 8 CE 9 / , 1 +", "-5 778", "1  +  0,2  -  sqr( 3 )  ×  √( 4 )  ÷  1/( 5 )  +  6  -  -7,8  ×  9  ÷  0,1  +  ");
 
-        testByRobot("1 + 2 - 3 C", "0", "");
-        testByRobot("1 + 2 - 3 CE 4 -", "-1", "1  +  2  -  4  -  ");
-        testByRobot("1 M+ + 2 - MR + M- MR * 3 = MC", "3", "");
-        testByRobot("1 + 2 0 % - 3 sqr * 4 sqrt / 5 1/x + 6 7 ⟵ - 7 , 8 ± * 8 CE 9 / , 1 +", "-5 778", "1  +  0,2  -  sqr( 3 )  ×  √( 4 )  ÷  1/( 5 )  +  6  -  -7,8  ×  9  ÷  0,1  +  ");
+        testKeys(", ±","-0,","");
+        testKeys(", 0 0 ±","-0,00","");
+        testKeys(", 0 0 5 ±","-0,005","");
+        testKeys(", 0 0 ± ±","0,00","");
 
-        testDrag(0, 500, 200, 700);
-        testDrag(0, -500, 200, 200);
+        testKeys("C ⟵","0","");
 
-        testDrag(20, 60, 220, 260);
-        testDrag(-20, -60, 200, 200);
-        testDrag(100, 100, 300, 300);
-        testDrag(100, 200, 400, 500);
-        testDrag(-100, -150, 300, 350);
-        testDrag(-100, -150, 200, 200);
+        testKeys(", 0 0 5 0 0 ,","0,00500","");
 
-        testResize(-100, -100, false, false, 419, 601);
-        testResize(100, 100, false, false, 320, 502);
-        testResize(0, -100, false, false, 320, 601);
-        testResize(0, 100, false, false, 320, 502);
-        testResize(-100, 0, false, false, 419, 502);
-        testResize(100, 0, false, false, 320, 502);
+        testKeys("1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ,","1 111 111 111 111 111,","");
 
-        testResize(100, 150, true, true, 420, 652);
-        testResize(-100, -150, true, true, 320, 502);
-        testResize(0, 100, true, true, 320, 602);
-        testResize(0, -100, true, true, 320, 502);
-        testResize(100, 0, true, true, 420, 502);
-        testResize(-100, 0, true, true, 320, 502);
+        testKeys("2 0 + %","4","20  +  4");
+        testKeys("1 2 + 3 4 - 5 6 * 7 8 / 9 0 = ", "-8,666666666666667","");
+        testKeys("1 , , , 2 + 3 4 - 5 6 * 7 8 / 9 0 = ", "-18,02666666666667","");
+        testKeys("1 , , , 2 + 3 4 - 5 6 * 7 8 / 9 0 = C", "0","");
+        testKeys("1 + 2 + 3 + 4 =", "10","");
 
-        testResize(100, -150, true, false, 420, 651);
-        testResize(-100, 150, true, false, 320, 502);
-        testResize(0, -100, true, false, 320, 601);
-        testResize(0, 100, true, false, 320, 502);
-        testResize(100, 0, true, false, 420, 502);
-        testResize(-100, 0, true, false, 320, 502);
+        testKeys("1 2 3 ± + 4 5 % - 6 7 sqr * 8 9 0 sqrt / 2 4 1/x = + 6 8 - 0 1 * 3 5 / 7 9 + 2 , 4 = - 6 8 * 1 3 / 5 7 =", "-337 673,2047848424","");
+        testKeys("9 8 7 6 5 4 3 2 1 0 + 1 3 5 7 9 1 3 5 % - 2 4 6 8 0 * 1 2 3 4 / 4 3 2 1 = sqr sqrt", "383 010 928 309 372,9","√( sqr( 383010928309372,9 ) )");
+        testKeys("9 8 7 6 5 4 3 2 1 0 + % =", "9,754610676665143e+17","");
+        testKeys("9 8 7 6 5 4 3 2 1 0 ± ± ± ± ± ± ± ± + % % = =", "1,926836657386991e+26","");
+        testKeys("9 8 7 6 5 4 3 2 1 0 ± % = ", "0","");
+        testKeys("1 2 3 4 5 6 7 8 9 0 sqr + sqrt ± % % %", "-4,371241896208856e+57","sqr( 1234567890 )  +  -4,371241896208856e+57");
 
-        testResize(-100, 150, false, true, 419, 652);
-        testResize(100, -150, false, true, 320, 502);
-        testResize(0, 100, false, true, 320, 602);
-        testResize(0, -100, false, true, 320, 502);
-        testResize(-100, 0, false, true, 419, 502);
-        testResize(100, 0, false, true, 320, 502);
+        testKeys(", 0 0 0 0 0 0 0 1", "0,00000001","");
+        testKeys(", 0 0 0 0 0 0 1 ±", "-0,0000001","");
+        testKeys(", 0 0 0 , , , 0 0 0 0 1 = = = =", "0,00000001","");
+        testKeys(", 0 0 0 0 0 0 0 1 - % % %", "1,e-38","0,00000001  -  1,e-38");
+        testKeys("1 2 3 4 5 6 7 8 9 0 , 0 1 2 3 4 5 6 7 *", "1 234 567 890,012345","1234567890,012345  ×  ");
+        testKeys("2 5 ± ⟵","-2","");
+        testKeys("1 2 3 4 ± ⟵ ⟵ ⟵","-1","");
+        testKeys("1 2 3 4 ± ⟵ ⟵ / 2 -","-6","-12  ÷  2  -  ");
 
-        testResize(100, 100, false, false, 320, 502);
-        testResize(-100, -150, true, true, 320, 502);
-        testResize(-100, 150, true, false, 320, 502);
-        testResize(100, -150, false, true, 320, 502);
+        testKeys("1 2 3 4 5 6 7 8 9 0 , 0 1 2 3 4 5 6 7 ⟵ ⟵ ⟵ ⟵ /", "1 234 567 890,01","1234567890,01  ÷  ");
+        testKeys("1 2 3 4 5 6 7 8 9 0 , 5 6 7 ± ⟵ ⟵ ⟵ ⟵ /", "-1 234 567 890","-1234567890  ÷  ");
+        testKeys("1 2 3 4 5 6 7 8 9 0 , 5 6 7 ± sqr ⟵ ⟵ ⟵ ⟵ /", "1,524157876419052e+18","sqr( -1234567890,567 )  ÷  ");
+        testKeys("2 5 6 7 8 9 0 , 1 3 4 ± ⟵ ⟵ ⟵ ⟵ sqr sqrt sqrt sqrt", "40,03078475546843","√( √( √( sqr( -2567890 ) ) ) )");
 
-        testFSWithDrag(0, -300);
-        testFSWithDrag(-300, 0);
+        testKeys("0 , 0 0 0 0 0 0 0 0 0 ⟵", "0,00000000", "");
+        testKeys("0 , 0 0 0 0 0 0 0 0 0 ⟵ ⟵ ⟵", "0,000000", "");
+        testKeys("0 , 0 0 0 0 0 0 0 0 0 ⟵ ⟵ ⟵ 0 0", "0,00000000", "");
+
+        testKeys("1 2 3 0 , 0 0 0 0 0 0 0 0 0 ⟵", "1 230,00000000", "");
+        testKeys("1 2 3 0 , 0 0 0 0 0 0 0 0 0 ⟵ ⟵ ⟵", "1 230,000000", "");
 
         testFullScreen();
         testHide();
@@ -266,23 +272,18 @@ class UITest extends ApplicationTest{
         testExit();
     }
 
+
     private void test(String expression, String display, String history){
 
         String[] buttons = expression.split(" ");
         for (String btnName : buttons) {
-            clickOn(btnName);
+            clickByRobotOn(btnName);
         }
         WaitForAsyncUtils.waitForFxEvents();
         verifyThat("#display",LabeledMatchers.hasText(display));
         verifyThat("#historyField",LabeledMatchers.hasText(history));
-        clickOn("C");
-    }
-
-    private void clickOn(String btnName){
-
         WaitForAsyncUtils.waitForFxEvents();
-        Button button = find(buttons.get(btnName).getId());
-        this.interact(button::fire);
+        clickByRobotOn("C");
     }
 
     private void pressOn(String key){
@@ -301,7 +302,7 @@ class UITest extends ApplicationTest{
                 "","",testButton.getKeyCode(),shiftPressed,false,false,false)));
     }
 
-    private void testKey(String expression, String display, String history){
+    private void testKeys(String expression, String display, String history){
 
         String[] buttons = expression.split(" ");
         for (String btnName : buttons) {
@@ -313,89 +314,80 @@ class UITest extends ApplicationTest{
         pressOn("C");
     }
 
-    private void testByRobot(String expression, String display, String history) {
-
-        String[] buttonKeys = expression.split(" ");
-        for (String key : buttonKeys) {
-            clickByRobot(key);
-        }
-        WaitForAsyncUtils.waitForFxEvents();
-        verifyThat("#display", LabeledMatchers.hasText(display));
-        verifyThat("#historyField", LabeledMatchers.hasText(history));
-    }
-
-    private void clickByRobot(String key) {
-
-        fxRobot.clickOn(buttons.get(key).getId());
-    }
-
     private void testMenuList() {
 
-        clickOn("MENU");
+        clickByRobotOn("MENU");
+        WaitForAsyncUtils.waitForFxEvents();
         verifyThat("#droppedList", Node::isVisible);
         verifyThat("#menuBtnPressed", Node::isVisible);
         verifyThat("#menuBtnPressed", Node::isVisible);
         verifyThat("#aboutBtn", Node::isVisible);
-        clickOn("MENU");
+        WaitForAsyncUtils.waitForFxEvents();
+        clickByRobotOn("MENU");
     }
 
-    private void testDrag(double x, double y, double expectedX, double expectedY) {
+    private void testDrag(int x, int y, int expectedX, int expectedY) {
 
-        double[] coordinates = drag(x, y);
+        int[] coordinates = robotDrag(x, y);
         assertEquals(expectedX, coordinates[0]);
         assertEquals(expectedY, coordinates[1]);
     }
 
 
-    private void testResize(double x, double y, boolean rightBorder, boolean bottomBorder, double expectedWidth, double expectedHeight) {
+    private void testResize(int x, int y, boolean rightBorder, boolean bottomBorder, double expectedWidth, double expectedHeight) {
 
         Window window = scene.getWindow();
-        double leftMargin = 1;
+        int leftMargin = 1;
         if (rightBorder) {
-            leftMargin = window.getWidth() - 1;
+            leftMargin = (int)window.getWidth() - 1;
         }
-        double upMargin = 1;
+        int upMargin = 1;
         if (bottomBorder) {
-            upMargin = window.getHeight() - 1;
+            upMargin = (int)window.getHeight() - 1;
         }
-        double startX = window.getX() + leftMargin;
-        double startY = window.getY() + upMargin;
-        fxRobot.moveTo(startX, startY);
-        fxRobot.press(MouseButton.PRIMARY);
-        fxRobot.moveTo(startX + x, startY + y);
-        fxRobot.release(MouseButton.PRIMARY);
+        int startX = (int)window.getX() + leftMargin;
+        int startY = (int)window.getY() + upMargin;
+        robot.mouseMove(startX,startY);
+        robot.mousePress(InputEvent.BUTTON1_MASK);
+        robot.mouseMove(startX+x,startY+y);
+        robot.mouseRelease(InputEvent.BUTTON1_MASK);
+        WaitForAsyncUtils.waitForFxEvents();
         assertEquals(expectedWidth, scene.getWidth());
         assertEquals(expectedHeight, scene.getHeight());
     }
 
-    private void testFSWithDrag(double x, double y) {
+    private void testFSWithDrag(int x, int y) {
 
-        drag(x, y);
+        robotDrag(x, y);
+        WaitForAsyncUtils.waitForFxEvents();
         assertTrue(((Stage) scene.getWindow()).isMaximized());
-        fxRobot.clickOn("#fullScreenBtn");
+        clickByRobotOn("FS");
     }
 
     private void testFullScreen() {
 
-        fxRobot.clickOn("#fullScreenBtn");
+        clickByRobotOn("FS");
+        WaitForAsyncUtils.waitForFxEvents();
         assertTrue(((Stage) scene.getWindow()).isMaximized());
-        fxRobot.clickOn("#fullScreenBtn");
+        clickByRobotOn("FS");
     }
 
-    private double[] drag(double x, double y) {
+    private int[] robotDrag(int x, int y) {
 
+        WaitForAsyncUtils.waitForFxEvents();
         Window window = scene.getWindow();
-        double minX = window.getX();
-        double minY = window.getY();
-        fxRobot.drag(minX + 5, minY + 5);
-        fxRobot.moveTo(minX + x + 5, minY + y + 5);
-        fxRobot.release(MouseButton.PRIMARY);
-        return new double[]{window.getX(), window.getY()};
+        int minX = (int) window.getX();
+        int minY = (int) window.getY();
+        robot.mouseMove(minX + 5,minY + 5);
+        robot.mousePress(InputEvent.BUTTON1_MASK);
+        robot.mouseMove(minX + x + 5,minY + y + 5);
+        robot.mouseRelease(InputEvent.BUTTON1_MASK);
+        return new int[]{(int)window.getX(),(int)window.getY()};
     }
 
     private void testHide() {
 
-        fxRobot.clickOn("#hideBtn");
+        clickByRobotOn("HD");
         Stage stage = (Stage) scene.getWindow();
         assertTrue(stage.isIconified());
         this.interact(()->stage.setIconified(false));
@@ -415,5 +407,18 @@ class UITest extends ApplicationTest{
         Platform.runLater(close::fire);
         WaitForAsyncUtils.waitForFxEvents();
         assertTrue(closed[0]);
+    }
+
+    private void clickByRobotOn(String key){
+
+//        WaitForAsyncUtils.waitForFxEvents();
+        Node node = scene.lookup(buttons.get(key).getId());
+        Bounds bounds = node.localToScreen(node.getBoundsInLocal());
+        int x = (int)bounds.getMinX()+2;
+        int y = (int)bounds.getMinY()+2;
+        robot.mouseMove(x,y);
+        robot.mousePress(InputEvent.BUTTON1_MASK);
+        robot.mouseRelease(InputEvent.BUTTON1_MASK);
+        WaitForAsyncUtils.waitForFxEvents();
     }
 }
