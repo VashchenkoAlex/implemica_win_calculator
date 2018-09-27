@@ -1,68 +1,68 @@
 package win_calculator.model.nodes;
 
-import win_calculator.model.nodes.actions.Action;
-import win_calculator.model.nodes.actions.Number;
-import win_calculator.model.nodes.actions.ActionType;
+import win_calculator.model.nodes.events.Event;
+import win_calculator.model.nodes.events.Number;
+import win_calculator.model.nodes.events.EventType;
 
 import java.util.LinkedList;
 
-import static win_calculator.model.nodes.actions.ActionType.MAIN_OPERATION;
-import static win_calculator.model.nodes.actions.ActionType.NUMBER;
+import static win_calculator.model.nodes.events.EventType.MAIN_OPERATION;
+import static win_calculator.model.nodes.events.EventType.NUMBER;
 
 public class History {
 
-    private LinkedList<Action> actions;
+    private LinkedList<Event> events;
 
     public History() {
 
-        actions = new LinkedList<>();
+        events = new LinkedList<>();
     }
 
-    public void addAction(Action action) {
+    public void addEvent(Event event) {
 
-        actions.add(action);
+        events.add(event);
     }
 
-    public void setActions(LinkedList<Action> actions) {
+    public void setEvents(LinkedList<Event> events) {
 
-        this.actions = actions;
+        this.events = events;
     }
 
-    public LinkedList<Action> getActions() {
+    public LinkedList<Event> getEvents() {
 
-        return actions;
+        return events;
     }
 
-    private Action getLastAction() {
+    private Event getLastEvent() {
 
-            return actions.getLast();
+            return events.getLast();
     }
 
-    public void changeLastMOperation(Action action) {
+    public void changeLastMOperation(Event event) {
 
-        if (!actions.isEmpty() && isChangingMOperationPossible()) {
-            for (int i = actions.size() - 1; i > 0; i--) {
-                if (MAIN_OPERATION.equals(actions.get(i).getType())) {
-                    actions.set(i, action);
+        if (!events.isEmpty() && isChangingMOperationPossible()) {
+            for (int i = events.size() - 1; i > 0; i--) {
+                if (MAIN_OPERATION.equals(events.get(i).getType())) {
+                    events.set(i, event);
                     break;
                 }
             }
         } else {
-            actions.add(action);
+            events.add(event);
         }
     }
 
     public void changeLastNumber(Number number) {
 
         if (isChangingNumberPossible()) {
-            for (int i = actions.size() - 1; i >= 0; i--) {
-                if (NUMBER.equals(actions.get(i).getType())) {
-                    actions.set(i, number);
+            for (int i = events.size() - 1; i >= 0; i--) {
+                if (NUMBER.equals(events.get(i).getType())) {
+                    events.set(i, number);
                     break;
                 }
             }
         } else {
-            actions.add(number);
+            events.add(number);
         }
 
     }
@@ -70,21 +70,21 @@ public class History {
     private boolean isChangingNumberPossible() {
 
         boolean result = false;
-        for (Action action : actions) {
-            if (NUMBER.equals(action.getType())) {
+        for (Event event : events) {
+            if (NUMBER.equals(event.getType())) {
                 result = true;
                 break;
             }
         }
-        result = result && !MAIN_OPERATION.equals(getLastAction().getType());
+        result = result && !MAIN_OPERATION.equals(getLastEvent().getType());
         return result;
     }
 
     private boolean isChangingMOperationPossible() {
 
         boolean result = false;
-        for (Action action : actions) {
-            if (MAIN_OPERATION.equals(action.getType())) {
+        for (Event event : events) {
+            if (MAIN_OPERATION.equals(event.getType())) {
                 result = true;
                 break;
             }
@@ -94,18 +94,18 @@ public class History {
 
     public void changeNumberAtFirstPosition(Number number) {
 
-        if (NUMBER.equals(actions.getFirst().getType())) {
-            actions.set(0, number);
+        if (NUMBER.equals(events.getFirst().getType())) {
+            events.set(0, number);
         }
     }
 
-    public boolean isContain(ActionType expectedType){
+    public boolean isContain(EventType expectedType){
 
         boolean result = false;
-        ActionType type;
-        if (!actions.isEmpty()) {
-            for (int i = actions.size() - 1; i > 0; i--) {
-                type = actions.get(i).getType();
+        EventType type;
+        if (!events.isEmpty()) {
+            for (int i = events.size() - 1; i > 0; i--) {
+                type = events.get(i).getType();
                 if (expectedType.equals(type)){
                     result = true;
                 }

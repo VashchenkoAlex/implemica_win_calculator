@@ -1,12 +1,12 @@
 package win_calculator.controller.memory;
 
-import win_calculator.model.nodes.actions.ActionType;
+import win_calculator.model.nodes.events.EventType;
 
 import static win_calculator.controller.memory.MemoryType.ADD_TO_MEMORY;
 
-public class AddToMemory implements MemoryAction {
+public class AddToMemory implements MemoryEvent {
 
-    private static final ActionType TYPE = ActionType.MEMORY;
+    private static final EventType TYPE = EventType.MEMORY;
     private static final MemoryType MEMORY_TYPE = ADD_TO_MEMORY;
 
     @Override
@@ -15,7 +15,7 @@ public class AddToMemory implements MemoryAction {
     }
 
     @Override
-    public ActionType getType() {
+    public EventType getType() {
         return TYPE;
     }
 }

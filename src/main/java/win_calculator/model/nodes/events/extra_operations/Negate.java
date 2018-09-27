@@ -1,12 +1,12 @@
-package win_calculator.model.nodes.actions.extra_operations;
+package win_calculator.model.nodes.events.extra_operations;
 
-import win_calculator.model.nodes.actions.ActionType;
+import win_calculator.model.nodes.events.EventType;
 
 import java.math.BigDecimal;
 
 public class Negate implements ExtraOperation {
 
-    private static final ActionType TYPE = ActionType.NEGATE;
+    private static final EventType TYPE = EventType.NEGATE;
     private static final String VALUE = "negate( ";
 
     @Override
@@ -27,7 +27,7 @@ public class Negate implements ExtraOperation {
     }
 
     @Override
-    public ActionType getType() {
+    public EventType getType() {
         return TYPE;
     }
 }

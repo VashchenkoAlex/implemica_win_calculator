@@ -1,7 +1,7 @@
 package win_calculator.model;
 
-import win_calculator.model.nodes.actions.Number;
-import win_calculator.model.nodes.actions.extra_operations.Percent;
+import win_calculator.model.nodes.events.Number;
+import win_calculator.model.nodes.events.extra_operations.Percent;
 
 import java.math.BigDecimal;
 

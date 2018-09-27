@@ -1,19 +1,20 @@
-package win_calculator.model.nodes.actions.extra_operations;
+package win_calculator.model.nodes.events.extra_operations;
 
-import win_calculator.model.nodes.actions.ActionType;
+import win_calculator.model.nodes.events.EventType;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Sqr implements ExtraOperation {
 
     private static final String SYMBOL = "sqr( ";
     private static final int POW = 2;
-    private static final ActionType TYPE = ActionType.EXTRA_OPERATION;
+    private static final EventType TYPE = EventType.EXTRA_OPERATION;
 
     @Override
     public BigDecimal calculate(BigDecimal number){
 
-        return number.pow(POW);
+        return number.setScale(10050,RoundingMode.HALF_UP).pow(POW);
     }
 
     @Override
@@ -23,7 +24,7 @@ public class Sqr implements ExtraOperation {
     }
 
     @Override
-    public ActionType getType() {
+    public EventType getType() {
 
         return TYPE;
     }

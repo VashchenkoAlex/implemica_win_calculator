@@ -1,12 +1,12 @@
 package win_calculator.controller.memory;
 
-import win_calculator.model.nodes.actions.ActionType;
+import win_calculator.model.nodes.events.EventType;
 
 import static win_calculator.controller.memory.MemoryType.SUBTRACT_FROM_MEMORY;
 
-public class SubtractMemory implements MemoryAction {
+public class SubtractMemory implements MemoryEvent {
 
-    private static final ActionType TYPE = ActionType.MEMORY;
+    private static final EventType TYPE = EventType.MEMORY;
     private static final MemoryType MEMORY_TYPE = SUBTRACT_FROM_MEMORY;
 
     @Override
@@ -15,7 +15,7 @@ public class SubtractMemory implements MemoryAction {
     }
 
     @Override
-    public ActionType getType() {
+    public EventType getType() {
         return TYPE;
     }
 }

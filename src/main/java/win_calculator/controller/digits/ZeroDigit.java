@@ -1,11 +1,11 @@
 package win_calculator.controller.digits;
 
-import win_calculator.model.nodes.actions.ActionType;
+import win_calculator.model.nodes.events.EventType;
 
 public class ZeroDigit implements Digit {
 
     private static final String VALUE = "0";
-    private static final ActionType TYPE = ActionType.DIGIT;
+    private static final EventType TYPE = EventType.DIGIT;
 
     @Override
     public String getValue() {
@@ -14,7 +14,7 @@ public class ZeroDigit implements Digit {
     }
 
     @Override
-    public ActionType getType() {
+    public EventType getType() {
         return TYPE;
     }
 }

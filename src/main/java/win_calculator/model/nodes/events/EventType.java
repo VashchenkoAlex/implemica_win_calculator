@@ -1,6 +1,6 @@
-package win_calculator.model.nodes.actions;
+package win_calculator.model.nodes.events;
 
-public enum ActionType {
+public enum EventType {
     DIGIT,
     MAIN_OPERATION,
     EXTRA_OPERATION,

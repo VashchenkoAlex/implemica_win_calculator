@@ -1,10 +1,10 @@
 package win_calculator.controller;
 
-import win_calculator.model.nodes.actions.Action;
+import win_calculator.model.nodes.events.Event;
 import win_calculator.controller.digits.Digit;
-import win_calculator.model.nodes.actions.Number;
+import win_calculator.model.nodes.events.Number;
 import win_calculator.controller.digits.ZeroDigit;
-import win_calculator.model.nodes.actions.ActionType;
+import win_calculator.model.nodes.events.EventType;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;
@@ -12,7 +12,7 @@ import java.util.LinkedList;
 import static win_calculator.controller.utils.ControllerUtils.addCapacity;
 import static win_calculator.controller.utils.ControllerUtils.convertToString;
 import static win_calculator.controller.utils.ControllerUtils.replaceDotToComa;
-import static win_calculator.model.nodes.actions.ActionType.*;
+import static win_calculator.model.nodes.events.EventType.*;
 
 public class NumberBuilder {
 
@@ -25,12 +25,12 @@ public class NumberBuilder {
     private LinkedList<Digit> digitsChain = new LinkedList<>();
     private LinkedList<Digit> previousChain;
 
-    String toDo(Action action) {
+    String toDo(Event event) {
 
-        ActionType actionType = action.getType();
-        if (DIGIT.equals(actionType) && isNotMaxDigits()) {
-            add((Digit) action);
-        } else if (BACKSPACE.equals(actionType)) {
+        EventType eventType = event.getType();
+        if (DIGIT.equals(eventType) && isNotMaxDigits()) {
+            add((Digit) event);
+        } else if (BACKSPACE.equals(eventType)) {
             backSpace();
         }
         return convertChainToString();
@@ -79,19 +79,24 @@ public class NumberBuilder {
             digitsChain = previousChain;
             cutLastDigit();
             BigDecimal value = new BigDecimal(getValue());
-            if (!positive && value.compareTo(BigDecimal.ZERO) > 0) {
-                value = value.negate();
-            }
+            value = setSign(value);
             number.setBigDecimalValue(value);
         } else if (!digitsChain.isEmpty()) {
             cutLastDigit();
             BigDecimal value = new BigDecimal(getValue());
-            if (!positive && value.compareTo(BigDecimal.ZERO) > 0) {
-                value = value.negate();
-            }
+            value = setSign(value);
             number.setBigDecimalValue(value);
         }
 
+    }
+
+    private BigDecimal setSign(BigDecimal value){
+
+        BigDecimal result = value;
+        if (!positive && result.compareTo(BigDecimal.ZERO) > 0) {
+            result = result.negate();
+        }
+        return result;
     }
 
     private void addDigit(Digit digit) {
@@ -207,25 +212,15 @@ public class NumberBuilder {
 
         if (digitsChain.isEmpty() && isPreviousChainNotEmpty()) {
             digitsChain = previousChain;
-            BigDecimal value = new BigDecimal(getValue());
-            if (!positive && value.compareTo(BigDecimal.ZERO) > 0) {
-                value = value.negate();
-            }
-            number = new Number(value);
+            number = new Number(setSign(new BigDecimal(getValue())));
         } else if (isChainNotEmpty()) {
-            BigDecimal value = number.getBigDecimalValue();
-            boolean positiveValue = value.compareTo(BigDecimal.ZERO) > 0;
-            if (!positive && positiveValue) {
-                value = value.negate();
-            }else if (positive && !positiveValue){
+            BigDecimal value = setSign(number.getBigDecimalValue());
+            if (positive && value.compareTo(BigDecimal.ZERO) < 0){
                 value = value.abs();
             }
             number = new Number(value);
         }else if (number != null && number.getBigDecimalValue() != null){
-            BigDecimal value = number.getBigDecimalValue();
-            if (!positive && value.compareTo(BigDecimal.ZERO) > 0){
-                number.setBigDecimalValue(value.negate());
-            }
+            number.setBigDecimalValue(setSign(number.getBigDecimalValue()));
         }
     }
 

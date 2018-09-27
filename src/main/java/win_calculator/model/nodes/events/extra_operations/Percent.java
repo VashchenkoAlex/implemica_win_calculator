@@ -1,15 +1,15 @@
-package win_calculator.model.nodes.actions.extra_operations;
+package win_calculator.model.nodes.events.extra_operations;
 
-import win_calculator.model.nodes.actions.Action;
-import win_calculator.model.nodes.actions.ActionType;
+import win_calculator.model.nodes.events.Event;
+import win_calculator.model.nodes.events.EventType;
 
 import java.math.BigDecimal;
 
-public class Percent implements Action {
+public class Percent implements Event {
 
     private static final String VALUE = "";
     private static final BigDecimal PERCENT = BigDecimal.valueOf(0.01);
-    private static final ActionType TYPE = ActionType.PERCENT;
+    private static final EventType TYPE = EventType.PERCENT;
 
     public BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber){
 
@@ -21,7 +21,7 @@ public class Percent implements Action {
     }
 
     @Override
-    public ActionType getType() {
+    public EventType getType() {
 
         return TYPE;
     }

@@ -21,18 +21,18 @@ import javafx.util.Callback;
 import javafx.util.Duration;
 import win_calculator.controller.memory.*;
 import win_calculator.controller.digits.*;
-import win_calculator.model.nodes.actions.Number;
+import win_calculator.model.nodes.events.Number;
 import win_calculator.controller.view_handlers.*;
 import win_calculator.model.AppModel;
-import win_calculator.model.nodes.actions.Action;
-import win_calculator.model.nodes.actions.clear.BaskSpace;
-import win_calculator.model.nodes.actions.clear.ClearDisplay;
-import win_calculator.model.nodes.actions.clear.LastExtraCleaner;
-import win_calculator.model.nodes.actions.enter.Enter;
-import win_calculator.model.nodes.actions.clear.Clear;
-import win_calculator.model.nodes.actions.extra_operations.*;
-import win_calculator.model.nodes.actions.main_operations.*;
-import win_calculator.model.nodes.actions.ActionType;
+import win_calculator.model.nodes.events.Event;
+import win_calculator.model.nodes.events.clear.BaskSpace;
+import win_calculator.model.nodes.events.clear.ClearDisplay;
+import win_calculator.model.nodes.events.clear.LastExtraCleaner;
+import win_calculator.model.nodes.events.enter.Enter;
+import win_calculator.model.nodes.events.clear.Clear;
+import win_calculator.model.nodes.events.extra_operations.*;
+import win_calculator.model.nodes.events.main_operations.*;
+import win_calculator.model.nodes.events.EventType;
 import win_calculator.controller.enums.MenuListOption;
 
 import java.math.BigDecimal;
@@ -41,11 +41,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static win_calculator.controller.memory.MemoryType.*;
 import static win_calculator.controller.utils.ControllerUtils.*;
-import static win_calculator.model.nodes.actions.ActionType.*;
-import static win_calculator.controller.memory.MemoryType.ADD_TO_MEMORY;
-import static win_calculator.controller.memory.MemoryType.STORE;
-import static win_calculator.controller.memory.MemoryType.SUBTRACT_FROM_MEMORY;
+import static win_calculator.model.nodes.events.EventType.*;
 import static win_calculator.controller.enums.MenuListOption.*;
 
 public class FXMLViewController implements Initializable {
@@ -131,7 +129,7 @@ public class FXMLViewController implements Initializable {
     private DisplayHandler displayHandler = new DisplayHandler();
     private MemoryHandler memoryHandler = new MemoryHandler();
     private NumberBuilder numberBuilder = new NumberBuilder();
-    private ActionType lastActionType;
+    private EventType lastEventType;
     private String lastHistoryText;
     private String lastDisplay;
     private double xOffset = 0;
@@ -176,151 +174,151 @@ public class FXMLViewController implements Initializable {
 
     public void clearEnteredBtnClick() {
 
-        makeAction(new ClearDisplay());
+        makeEvent(new ClearDisplay());
     }
 
     public void clearBtnClick() {
 
-        makeAction(new Clear());
+        makeEvent(new Clear());
     }
 
     public void backspaceBtnClick() {
 
-        makeAction(new BaskSpace());
+        makeEvent(new BaskSpace());
     }
 
     public void oneBtnClick() {
 
-        makeAction(new OneDigit());
+        makeEvent(new OneDigit());
     }
 
     public void twoBtnClick() {
 
-        makeAction(new TwoDigit());
+        makeEvent(new TwoDigit());
     }
 
     public void threeBtnClick() {
 
-        makeAction(new ThreeDigit());
+        makeEvent(new ThreeDigit());
     }
 
     public void fourBtnClick() {
 
-        makeAction(new FourDigit());
+        makeEvent(new FourDigit());
     }
 
     public void fiveBtnClick() {
 
-        makeAction(new FiveDigit());
+        makeEvent(new FiveDigit());
     }
 
     public void sixBtnClick() {
 
-        makeAction(new SixDigit());
+        makeEvent(new SixDigit());
     }
 
     public void sevenBtnClick() {
 
-        makeAction(new SevenDigit());
+        makeEvent(new SevenDigit());
     }
 
     public void eightBtnClick() {
 
-        makeAction(new EightDigit());
+        makeEvent(new EightDigit());
     }
 
     public void nineBtnClick() {
 
-        makeAction(new NineDigit());
+        makeEvent(new NineDigit());
     }
 
     public void zeroBtnClick() {
 
-        makeAction(new ZeroDigit());
+        makeEvent(new ZeroDigit());
     }
 
     public void comaBtnClick() {
 
-        makeAction(new Coma());
+        makeEvent(new Coma());
         displayHandler.addComa();
     }
 
     public void divideBtnClick() {
 
-        makeAction(new Divide());
+        makeEvent(new Divide());
     }
 
     public void multiplyBtnClick() {
 
-        makeAction(new Multiply());
+        makeEvent(new Multiply());
     }
 
     public void subtractBtnClick() {
 
-        makeAction(new Subtract());
+        makeEvent(new Subtract());
     }
 
     public void addBtnClick() {
 
-        makeAction(new Add());
+        makeEvent(new Add());
     }
 
     public void equalsBtnClick() {
 
-        makeAction(new Enter());
+        makeEvent(new Enter());
     }
 
     public void percentBtnClick() {
 
-        makeAction(new Percent());
+        makeEvent(new Percent());
     }
 
     public void sqrtBtnClick() {
 
-        makeAction(new Sqrt());
+        makeEvent(new Sqrt());
     }
 
     public void sqrBtnClick() {
 
-        makeAction(new Sqr());
+        makeEvent(new Sqr());
     }
 
     public void fractionBtnOneClick() {
 
-        makeAction(new Fraction());
+        makeEvent(new Fraction());
     }
 
     public void negateBtnClick() {
 
-        makeAction(new Negate());
+        makeEvent(new Negate());
     }
 
     public void clearMemoryBtnClick() {
 
-        makeAction(new ClearMemory());
+        makeEvent(new ClearMemory());
         setDisableMemoryButtons(true);
     }
 
     public void memoryRecallBtnClick() {
 
-        makeAction(new RecallMemory());
+        makeEvent(new RecallMemory());
     }
 
     public void memoryAddBtnClick() {
 
-        makeAction(new AddToMemory());
+        makeEvent(new AddToMemory());
         setDisableMemoryButtons(false);
     }
 
     public void memorySubtractBtnClick() {
 
-        makeAction(new SubtractMemory());
+        makeEvent(new SubtractMemory());
         setDisableMemoryButtons(false);
     }
 
     public void memoryStoreBtnClick() {
 
-        makeAction(new StoreMemory());
+        makeEvent(new StoreMemory());
         setDisableMemoryButtons(false);
     }
 
@@ -328,7 +326,7 @@ public class FXMLViewController implements Initializable {
 
         ObservableList<Node> menuNodes = dropDownContainer.getChildren();
         menuNodes.add(prepareBackground());
-        menuNodes.add(prepareDropDownLabel(memoryHandler.doAction(new RecallMemory(),null).toString(), "memoryPane"));
+        menuNodes.add(prepareDropDownLabel(memoryHandler.doEvent(new RecallMemory(), null).toString(), "memoryPane"));
     }
 
     @Override
@@ -354,123 +352,128 @@ public class FXMLViewController implements Initializable {
         rows.get(4).setPercentHeight(77);
     }
 
-    private void makeAction(Action action) {
+    private void makeEvent(Event event) {
 
         setDisableOperationButtons(false);
-        ActionType previousActionType = lastActionType;
-        Response response = handleAction(action);
-        displayHandler.sendToDisplay(action, response.getDisplay(), previousActionType);
+        EventType previousEventType = lastEventType;
+        Response response = handleEvent(event);
+        displayHandler.sendToDisplay(event, response.getDisplay(), previousEventType);
         if (isNotNumber(response.getDisplay())) {
             setDisableOperationButtons(true);
             historyFieldHandler.setHistoryText(response.getHistory());
 
-        } else if (CLEAR.equals(lastActionType) || ENTER.equals(lastActionType)) {
+        } else if (CLEAR.equals(lastEventType) || ENTER.equals(lastEventType)) {
             historyFieldHandler.clear();
         } else {
             historyFieldHandler.setHistoryText(response.getHistory());
         }
     }
 
-    public Response handleAction(Action action) {
+    public Response handleEvent(Event event) {
 
         Response response;
-        ActionType type = action.getType();
+        EventType type = event.getType();
         if (DIGIT.equals(type)) {
-            response = handleDigit(action);
+            response = handleDigit(event);
         } else if (CLEAR_ENTERED.equals(type)) {
-            response = handleClearEntered(action);
+            response = handleClearEntered(event);
         } else if (BACKSPACE.equals(type)) {
-            response = handleBackSpace(action);
+            response = handleBackSpace(event);
         } else if (NEGATE.equals(type) && numberBuilder.containsNumber()) {
             response = handleNegate();
         } else if (MEMORY.equals(type)) {
-            response = handleMemory((MemoryAction) action, lastDisplay);
+            response = handleMemory((MemoryEvent) event, lastDisplay);
         } else {
-            response = handleOperation(action);
+            response = handleOperation(event);
         }
         lastDisplay = response.getDisplay();
         lastHistoryText = response.getHistory();
         return response;
     }
 
-    private Response handleOperation(Action action) {
+    private Response handleOperation(Event event) {
 
         Number currentNum;
-        if (MEMORY.equals(lastActionType) && numberBuilder.containsNumber()) {
+        if (MEMORY.equals(lastEventType) && numberBuilder.containsNumber()) {
             currentNum = numberBuilder.getNumber();
         } else {
             currentNum = numberBuilder.finish();
         }
-        Response response = convertDataFromModel(model.toDo(currentNum, action));
-        if (!NEGATE.equals(action.getType())) {
+        Response response = getDataFromModel(currentNum, event);
+        if (!NEGATE.equals(event.getType())) {
             numberBuilder.clear();
         }
-        lastActionType = action.getType();
+        lastEventType = event.getType();
         return response;
     }
 
-    private Response handleDigit(Action digit) {
+    private Response handleDigit(Event digit) {
 
         Response response;
         if (lastDisplay != null && isNotNumber(lastDisplay)) {
             lastHistoryText = "";
         }
         String historyText = lastHistoryText;
-        if (EXTRA_OPERATION.equals(lastActionType)) {
-            response = convertDataFromModel(model.toDo(null, new LastExtraCleaner()));
+        if (EXTRA_OPERATION.equals(lastEventType)) {
+            response = getDataFromModel(null, new LastExtraCleaner());
             historyText = response.getHistory();
         }
         response = new Response(numberBuilder.toDo(digit), historyText);
-        lastActionType = digit.getType();
+        lastEventType = digit.getType();
         return response;
     }
 
     private boolean isBackSpacePossible() {
 
-        return !MAIN_OPERATION.equals(lastActionType)
-                && !EXTRA_OPERATION.equals(lastActionType)
-                && !ENTER.equals(lastActionType)
+        return !MAIN_OPERATION.equals(lastEventType)
+                && !EXTRA_OPERATION.equals(lastEventType)
+                && !ENTER.equals(lastEventType)
                 && numberBuilder.containsNumber();
     }
 
-    private Response handleMemory(MemoryAction action, String number) {
+    private Response handleMemory(MemoryEvent event, String number) {
 
-        MemoryType memoryType = action.getMemoryType();
+        MemoryType memoryType = event.getMemoryType();
         String currentNum = "";
-        if ((STORE.equals(memoryType) || SUBTRACT_FROM_MEMORY.equals(memoryType) || ADD_TO_MEMORY.equals(memoryType)) && numberBuilder.containsNumber()) {
-            currentNum = numberBuilder.convertChainToString();
-            numberBuilder.finish();
-        }
-        if ("".equals(currentNum) && number != null) {
-            currentNum = number;
-        }
-        if ("".equals(currentNum) && numberBuilder.containsNumber()) {
-            currentNum = numberBuilder.getNumber().getValue();
-        }
-        if ("".equals(currentNum)) {
-            currentNum = "0";
-        }
-        BigDecimal result = memoryHandler.doAction(action, new BigDecimal(replaceCapacity(replaceComaToDot(currentNum))));
-        if (result != null) {
-            currentNum = convertToString(result, DISPLAY_PATTERN);
-            numberBuilder.setNumber(new Number(result));
-        } else {
+        if (CLEAR_MEMORY.equals(memoryType)) {
+            memoryHandler = new MemoryHandler();
             currentNum = lastDisplay;
+        } else {
+            if ((STORE.equals(memoryType) || SUBTRACT_FROM_MEMORY.equals(memoryType) || ADD_TO_MEMORY.equals(memoryType)) && numberBuilder.containsNumber()) {
+                currentNum = numberBuilder.convertChainToString();
+                numberBuilder.finish();
+            }
+            if ("".equals(currentNum) && number != null) {
+                currentNum = number;
+            }
+            if ("".equals(currentNum) && numberBuilder.containsNumber()) {
+                currentNum = numberBuilder.getNumber().getValue();
+            }
+            if ("".equals(currentNum)) {
+                currentNum = "0";
+            }
+            BigDecimal result = memoryHandler.doEvent(event, new BigDecimal(replaceCapacity(replaceComaToDot(currentNum))));
+            if (result != null) {
+                currentNum = convertToString(result, DISPLAY_PATTERN);
+                numberBuilder.setNumber(new Number(result));
+            } else {
+                currentNum = lastDisplay;
+            }
         }
-        lastActionType = action.getType();
+        lastEventType = event.getType();
         return new Response(currentNum, lastHistoryText);
     }
 
     private Response handleNegate() {
 
-        return new Response(numberBuilder.negate(MEMORY.equals(lastActionType)), lastHistoryText);
+        return new Response(numberBuilder.negate(MEMORY.equals(lastEventType)), lastHistoryText);
     }
 
-    private Response handleBackSpace(Action action) {
+    private Response handleBackSpace(Event event) {
 
         Response response;
         if (isBackSpacePossible()) {
-            response = handleDigit(action);
+            response = handleDigit(event);
         } else {
             if (lastDisplay == null || isNotNumber(lastDisplay)) {
                 lastDisplay = "0";
@@ -480,9 +483,10 @@ public class FXMLViewController implements Initializable {
         return response;
     }
 
-    private Response handleClearEntered(Action action) {
+    private Response handleClearEntered(Event event) {
 
-        return convertDataFromModel(model.toDo(null, action));
+        numberBuilder.clear();
+        return getDataFromModel(null, event);
     }
 
     private void setDisableMemoryButtons(boolean val) {
@@ -650,5 +654,18 @@ public class FXMLViewController implements Initializable {
         AnchorPane.setLeftAnchor(label, 2.0);
         label.setPrefSize(rootPane.getWidth() - 4, mainButtonsGrid.getHeight());
         return label;
+    }
+
+    private Response getDataFromModel(Number number, Event event) {
+
+        BigDecimal result = model.toDo(number, event);
+        String resultString;
+        if (result == null) {
+            resultString = model.getErrorMessage();
+        } else {
+            resultString = convertToString(result, DISPLAY_PATTERN);
+        }
+        String historyString = getHistoryString(model.getHistory());
+        return new Response(resultString, historyString);
     }
 }

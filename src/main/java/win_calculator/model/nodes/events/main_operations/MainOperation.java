@@ -1,11 +1,11 @@
-package win_calculator.model.nodes.actions.main_operations;
+package win_calculator.model.nodes.events.main_operations;
 
 import win_calculator.model.exceptions.MyException;
-import win_calculator.model.nodes.actions.Action;
+import win_calculator.model.nodes.events.Event;
 
 import java.math.BigDecimal;
 
-public interface MainOperation extends Action {
+public interface MainOperation extends Event {
 
     BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber) throws MyException;
 

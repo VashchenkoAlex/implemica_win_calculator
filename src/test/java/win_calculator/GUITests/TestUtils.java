@@ -31,7 +31,7 @@ class TestUtils {
         map.put("1/x",new TestButton("#fractionBtn",KeyCode.R,false));
         map.put("CE",new TestButton("#clearEnteredBtn",KeyCode.DELETE,false));
         map.put("C",new TestButton("#clearBtn",KeyCode.C,false));
-        map.put("<-",new TestButton("#backSpaceBtn",KeyCode.BACK_SPACE,false));
+        map.put("⟵",new TestButton("#backSpaceBtn",KeyCode.BACK_SPACE,false));
         map.put("=",new TestButton("#equalsBtn",KeyCode.ENTER,false));
         map.put("±",new TestButton("#negateBtn",KeyCode.F9,false));
         map.put("MC",new TestButton("#clearAllMemoryBtn",KeyCode.L,false));

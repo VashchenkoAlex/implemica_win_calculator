@@ -5,13 +5,13 @@ import win_calculator.controller.memory.*;
 import win_calculator.controller.Response;
 import win_calculator.controller.FXMLViewController;
 import win_calculator.controller.digits.*;
-import win_calculator.model.nodes.actions.Action;
-import win_calculator.model.nodes.actions.clear.BaskSpace;
-import win_calculator.model.nodes.actions.clear.Clear;
-import win_calculator.model.nodes.actions.clear.ClearDisplay;
-import win_calculator.model.nodes.actions.enter.Enter;
-import win_calculator.model.nodes.actions.extra_operations.*;
-import win_calculator.model.nodes.actions.main_operations.*;
+import win_calculator.model.nodes.events.Event;
+import win_calculator.model.nodes.events.clear.BaskSpace;
+import win_calculator.model.nodes.events.clear.Clear;
+import win_calculator.model.nodes.events.clear.ClearDisplay;
+import win_calculator.model.nodes.events.enter.Enter;
+import win_calculator.model.nodes.events.extra_operations.*;
+import win_calculator.model.nodes.events.main_operations.*;
 
 import java.util.HashMap;
 
@@ -20,13 +20,13 @@ import static org.junit.gen5.api.Assertions.assertEquals;
 class AppModelTest {
 
     private FXMLViewController controller = new FXMLViewController();
-    private static final HashMap<String, Action> actions = createMap();
+    private static final HashMap<String, Event> events = createMap();
     private static final String IS_DIGIT_REGEX = "\\d+(,\\d+)?";
     private static final String COMA = ",";
 
-    private static HashMap<String, Action> createMap() {
+    private static HashMap<String, Event> createMap() {
 
-        HashMap<String, Action> map = new HashMap<>();
+        HashMap<String, Event> map = new HashMap<>();
         map.put("0", new ZeroDigit());
         map.put("1", new OneDigit());
         map.put("2", new TwoDigit());
@@ -48,7 +48,7 @@ class AppModelTest {
         map.put("1/x", new Fraction());
         map.put("CE", new ClearDisplay());
         map.put("C", new Clear());
-        map.put("<-", new BaskSpace());
+        map.put("⟵", new BaskSpace());
         map.put("=", new Enter());
         map.put("±", new Negate());
         map.put("MC", new ClearMemory());
@@ -347,6 +347,13 @@ class AppModelTest {
         test("2 / 3 ± / 4 / 5 ± = =", "-0,0066666666666667", "");
         test("101 ± / 102 / 103 ± / 104 = =", "8,888271227374158e-7", "");
         test("102 / 103 ± / 104 / 105 ± = =", "-8,636763144391438e-7", "");
+
+        test("/ =","Result is undefined","0  ÷  ");
+        test("1 / 0 =","Cannot divide by zero","1  ÷  ");
+        test("/ , , -","Result is undefined","0  ÷  0  -  ");
+        test("+ / 0 -","Result is undefined","0  ÷  0  -  ");
+        test(", = + / , , -","Result is undefined","0  ÷  0  -  ");
+        test(", , , , , = = , , , , , = = + - * / , , , , , -","Result is undefined","0  ÷  0  -  ");
     }
 
     @Test
@@ -442,6 +449,28 @@ class AppModelTest {
         test("5 sqrt sqr", "5", "sqr( √( 5 ) )");
         test("16 sqr + sqr = =", "131 328", "");
         test("1 + 2 sqr * 3 = =", "45", "");
+
+        test("1000000000000000 sqr","1,e+30","sqr( 1000000000000000 )");
+        test("1000000000000000 sqr sqr","1,e+60","sqr( sqr( 1000000000000000 ) )");
+        test("1000000000000000 sqr sqr sqr","1,e+120","sqr( sqr( sqr( 1000000000000000 ) ) )");
+        test("1000000000000000 sqr sqr sqr sqr","1,e+240","sqr( sqr( sqr( sqr( 1000000000000000 ) ) ) )");
+        test("1000000000000000 sqr sqr sqr sqr sqr","1,e+480","sqr( sqr( sqr( sqr( sqr( 1000000000000000 ) ) ) ) )");
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr","1,e+960","sqr( sqr( sqr( sqr( sqr( sqr( 1000000000000000 ) ) ) ) ) )");
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr","1,e+1920","sqr( sqr( sqr( sqr( sqr( sqr( sqr( 1000000000000000 ) ) ) ) ) ) )");
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr","1,e+3840","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 1000000000000000 ) ) ) ) ) ) ) )");
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr","1,e+7680","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 1000000000000000 ) ) ) ) ) ) ) ) )");
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr sqr","Overflow","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 1000000000000000 ) ) ) ) ) ) ) ) ) )");
+
+        test("0,0000000000000001 sqr","1,e-32","sqr( 0,0000000000000001 )");
+        test("0,0000000000000001 sqr sqr","1,e-64","sqr( sqr( 0,0000000000000001 ) )");
+        test("0,0000000000000001 sqr sqr sqr","1,e-128","sqr( sqr( sqr( 0,0000000000000001 ) ) )");
+        test("0,0000000000000001 sqr sqr sqr sqr","1,e-256","sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) )");
+        test("0,0000000000000001 sqr sqr sqr sqr sqr","1,e-512","sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) )");
+        test("0,0000000000000001 sqr sqr sqr sqr sqr sqr","1,e-1024","sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) )");
+        test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr","1,e-2048","sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) )");
+        test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr","1,e-4096","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) )");
+        test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr","1,e-8192","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) ) )");
+        test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr sqr","Overflow","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) ) ) )");
     }
 
     @Test
@@ -475,6 +504,12 @@ class AppModelTest {
         test("5 sqrt sqr sqrt sqr - 3 sqrt sqr sqrt sqr = =", "-1", "");
         test("5 sqrt sqr sqrt sqr + 3 sqrt sqr sqrt sqr +", "8", "sqr( √( sqr( √( 5 ) ) ) )  +  sqr( √( sqr( √( 3 ) ) ) )  +  ");
         test("5 sqrt sqr sqrt sqr + 3 sqrt sqr sqrt sqr = =", "11", "");
+
+        test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr", "1,e-8192", "sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) ) )");
+
+
+        test("0,1 sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt","0,9999999999999999","√( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( 0,1 ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) )");
+        test("0,1 sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt","1","√( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( 0,1 ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) )");
     }
 
     @Test
@@ -556,6 +591,9 @@ class AppModelTest {
 
         test("3 1/x + % 1/x","900","1/( 3 )  +  1/( 0,0011111111111111 )");
         test("3 1/x + % 1/x =","900,3333333333333","");
+
+        test("0 1/x","Cannot divide by zero","1/( 0 )");
+        test("3 - 3 + 1/x","Cannot divide by zero","3  -  3  +  1/( 0 )");
     }
 
     @Test
@@ -587,7 +625,7 @@ class AppModelTest {
         test("1 ± ± ± = =", "-1", "");
         test("16 ± ± ± = =", "-16", "");
         test("256 ± ± ± = =", "-256", "");
-        test("1 + 20 % - 3 sqr * 4 sqrt / 5 1/x + 67 <- - 7,8 ±", "-7,8", "1  +  0,2  -  sqr( 3 )  ×  √( 4 )  ÷  1/( 5 )  +  6  -  ");
+        test("1 + 20 % - 3 sqr * 4 sqrt / 5 1/x + 67 ⟵ - 7,8 ±", "-7,8", "1  +  0,2  -  sqr( 3 )  ×  √( 4 )  ÷  1/( 5 )  +  6  -  ");
 
     }
 
@@ -725,6 +763,17 @@ class AppModelTest {
 
         test("9999999999 * 9999999999 * 99 / 9999999999999999 =", "989 999,9998020001", "");
 
+        test("1000000000000000 + 0,1 + 0,1 + 0,1 + 0,1 + ","1 000 000 000 000 000","1000000000000000  +  0,1  +  0,1  +  0,1  +  0,1  +  ");
+        test("1000000000000000 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 +","1 000 000 000 000 001","1000000000000000  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  ");
+        test("1000000000000000 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 +","1 000 000 000 000 001","1000000000000000  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  ");
+        test("1000000000000000 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 +","1 000 000 000 000 002","1000000000000000  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  ");
+
+        test("1,000000000000001 * 0,01 = ","0,01","");
+        test("1,000000000000005 * 0,01 = ","0,0100000000000001","");
+        test("9,999999999999999 * 0,01 = ","0,1","");
+
+        test("9999999999999999 * 10 + 10 -","1,e+17","9999999999999999  ×  10  +  10  -  ");
+        test("9999999999999999 * 10 + 1 = = = = =","1,e+17","");
     }
 
     @Test
@@ -761,6 +810,9 @@ class AppModelTest {
         test("1 / 1000000000000000 " + addEquals(100), "1,e-1500", "");
         test("1 / 1000000000000000 " + addEquals(666), "1,e-9990", "");
         test("1 / 10 " + addEquals(9999), "1,e-9999", "");
+        test("1 / 10 " + addEquals(9999) + " MS * 10 - MR * 0,1 =", "Overflow", "1,e-9999  ×  10  -  1,e-9999  ×  ");
+        test("1 / 10 " + addEquals(9999) + " + =", "2,e-9999", "");
+        test("1 / 10 " + addEquals(9999) + " + = = = = = = = = = =", "1,1e-9998", "");
 
         test("0,0000000000000023 * 0,1 =", "2,3e-16", "");
         test("0,0000000000000234 * 0,1 =", "2,34e-15", "");
@@ -800,8 +852,6 @@ class AppModelTest {
         test("0,1111111111111111 * 0,1 = = = = =", "1,111111111111111e-6", "");
         test("0,1111111111111111 * 0,1 = = = = = =", "1,111111111111111e-7", "");
 
-        test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr", "1,e-8192", "sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) ) )");
-
         test("5 / 10000 / 3 =", "1,666666666666667e-4", "");
         test("5 / 3 = = = = / 100 =", "6,17283950617284e-4", "");
     }
@@ -815,18 +865,11 @@ class AppModelTest {
         test("1000000000000000 * 10 * 10 / 10 /", "1,e+16", "1000000000000000  ×  10  ×  10  ÷  10  ÷  ");
         test("1000000000000000 + = = = = = = = = =", "1,e+16", "");
         test("1000000000000000 + = = = = = = = = = + 1 =", "1,e+16", "");
-        test("1000000000000000 sqr","1,e+30","sqr( 1000000000000000 )");
-        test("1000000000000000 sqr sqr","1,e+60","sqr( sqr( 1000000000000000 ) )");
-        test("1000000000000000 sqr sqr sqr","1,e+120","sqr( sqr( sqr( 1000000000000000 ) ) )");
-        test("1000000000000000 sqr sqr sqr sqr","1,e+240","sqr( sqr( sqr( sqr( 1000000000000000 ) ) ) )");
-        test("1000000000000000 sqr sqr sqr sqr sqr","1,e+480","sqr( sqr( sqr( sqr( sqr( 1000000000000000 ) ) ) ) )");
-        test("1000000000000000 sqr sqr sqr sqr sqr sqr","1,e+960","sqr( sqr( sqr( sqr( sqr( sqr( 1000000000000000 ) ) ) ) ) )");
-        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr","1,e+1920","sqr( sqr( sqr( sqr( sqr( sqr( sqr( 1000000000000000 ) ) ) ) ) ) )");
-        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr","1,e+3840","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 1000000000000000 ) ) ) ) ) ) ) )");
         test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr * 1000000000000000 =","1,e+9999","");
 
         test("1000000000000000 * =", "1,e+30", "");
         test("1000000000000000 * = *", "1,e+30", "1,e+30  ×  ");
+        test("1000000000000000 * = * =", "1,e+60", "");
         test("256 sqr sqr sqr = =", "1,844674407370955e+19", "");
         test("9999999999999999 + " + addEquals(20), "2,1e+17", "");
     }
@@ -866,42 +909,55 @@ class AppModelTest {
     @Test
     void testClearEntered(){
 
+        test("1 CE 2 - 4 +", "-2", "2  -  4  +  ");
+        test("12 CE 34 - 12 +", "22", "34  -  12  +  ");
+
+        test("16 sqr CE 16 - 12 +", "4", "16  -  12  +  ");
+        test("16 sqrt CE 16 - 12 +", "4", "16  -  12  +  ");
+        test("10 1/x CE 16 - 12 +", "4", "16  -  12  +  ");
+        test("10 + 30 % CE", "0", "10  +  ");
+
         test("5 - 2333 CE", "0", "5  -  ");
         test("9 ± ± sqrt - CE", "0", "√( 9 )  -  ");
         test("9 ± ± sqrt - 2 = CE", "0", "");
         test("5 ± ± ± - 6 - ± ± ± CE", "0", "-5  -  6  -  ");
         test("5 ± ± ± - 6 - ± ± ± CE 25 -", "-36", "-5  -  6  -  25  -  ");
+
+        test("10 + 30 % CE 16 -", "26", "10  +  16  -  ");
+        test("10 + 30 % CE 16 - 12 +", "14", "10  +  16  -  12  +  ");
+
+        test("10 + 30 = CE 16 - 12 +", "4", "16  -  12  +  ");
     }
 
     @Test
     void testBackSpace(){
 
-        test("<-","0","");
-        test("C <-","0","");
-        test(", <-", "0", "");
-        test("5 <-", "0", "");
-        test("5 , <-", "5", "");
-        test("5 , ± <-", "-5", "");
-        test("25 ± <-", "-2", "");
-        test("1234 <- <- <-", "1", "");
-        test("1234 ± <- <- <-", "-1", "");
+        test("⟵","0","");
+        test("C ⟵","0","");
+        test(", ⟵", "0", "");
+        test("5 ⟵", "0", "");
+        test("5 , ⟵", "5", "");
+        test("5 , ± ⟵", "-5", "");
+        test("25 ± ⟵", "-2", "");
+        test("1234 ⟵ ⟵ ⟵", "1", "");
+        test("1234 ± ⟵ ⟵ ⟵", "-1", "");
 
-        test("987 <- <- sqrt 2 -", "2", "2  -  ");
-        test("987 <- <- sqrt ± -", "-3", "negate( √( 9 ) )  -  ");
-        test("987 <- <- sqrt + 2 -", "5", "√( 9 )  +  2  -  ");
-        test("987 ± <- <- + 10 % -", "-9,9", "-9  +  -0,9  -  ");
-        test("1234 ± <- <- / 2 -", "-6", "-12  ÷  2  -  ");
+        test("987 ⟵ ⟵ sqrt 2 -", "2", "2  -  ");
+        test("987 ⟵ ⟵ sqrt ± -", "-3", "negate( √( 9 ) )  -  ");
+        test("987 ⟵ ⟵ sqrt + 2 -", "5", "√( 9 )  +  2  -  ");
+        test("987 ± ⟵ ⟵ + 10 % -", "-9,9", "-9  +  -0,9  -  ");
+        test("1234 ± ⟵ ⟵ / 2 -", "-6", "-12  ÷  2  -  ");
 
-        test("1234567890 <- <- <- <- <- <- <- <- <- <-", "0", "");
-        test("1234567890,01234567 <- <- <- <- <- <- <- <- <- <- <- <- <- <- <- <- <- <- <-", "0", "");
-        test("1234567890,01234567 <- <- <- <- /", "1 234 567 890,01", "1234567890,01  ÷  ");
-        test("1234567890,567 ± <- <- <- <- /", "-1 234 567 890", "-1234567890  ÷  ");
-        test("1234567890,567 ± sqr <- <- <- <- /", "1,524157876419052e+18", "sqr( -1234567890,567 )  ÷  ");
-        test("1234567890,567 ± sqr <- <- <- <- / =", "1", "");
-        test("2567890,134 ± <- <- <- <- sqr sqrt sqrt sqrt", "40,03078475546843", "√( √( √( sqr( -2567890 ) ) ) )");
-        test("9 ± ± sqrt - <- +", "3", "√( 9 )  +  ");
-        test("9 ± ± 1/x - <- +", "0,1111111111111111", "1/( 9 )  +  ");
-        test("25 - 200 <- % +", "20", "25  -  5  +  ");
+        test("1234567890 ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵", "0", "");
+        test("1234567890,01234567 ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵", "0", "");
+        test("1234567890,01234567 ⟵ ⟵ ⟵ ⟵ /", "1 234 567 890,01", "1234567890,01  ÷  ");
+        test("1234567890,567 ± ⟵ ⟵ ⟵ ⟵ /", "-1 234 567 890", "-1234567890  ÷  ");
+        test("1234567890,567 ± sqr ⟵ ⟵ ⟵ ⟵ /", "1,524157876419052e+18", "sqr( -1234567890,567 )  ÷  ");
+        test("1234567890,567 ± sqr ⟵ ⟵ ⟵ ⟵ / =", "1", "");
+        test("2567890,134 ± ⟵ ⟵ ⟵ ⟵ sqr sqrt sqrt sqrt", "40,03078475546843", "√( √( √( sqr( -2567890 ) ) ) )");
+        test("9 ± ± sqrt - ⟵ +", "3", "√( 9 )  +  ");
+        test("9 ± ± 1/x - ⟵ +", "0,1111111111111111", "1/( 9 )  +  ");
+        test("25 - 200 ⟵ % +", "20", "25  -  5  +  ");
     }
 
     @Test
@@ -911,7 +967,7 @@ class AppModelTest {
         test("20 MS", "20", "");
         test("20 MS + 10 + MR", "20", "20  +  10  +  ");
         test("20 MS + 10 + MR =", "50", "");
-        test("20 MS + 10 + MR = <-", "50", "");
+        test("20 MS + 10 + MR = ⟵", "50", "");
         test("20 MS + 10 + MR = MC", "50", "");
         test("20 MS + 10 + MR 5 =", "35", "");
         test("20 MS + 10 + MR ±", "-20", "20  +  10  +  ");
@@ -970,23 +1026,11 @@ class AppModelTest {
     @Test
     void testExceptions(){
 
-        test("/ =","Result is undefined","0  ÷  ");
-        test("1 / 0 =","Cannot divide by zero","1  ÷  ");
-
-        test("/ , , -","Result is undefined","0  ÷  0  -  ");
-        test("+ / 0 -","Result is undefined","0  ÷  0  -  ");
-        test(", = + / , , -","Result is undefined","0  ÷  0  -  ");
-        test(", , , , , = = , , , , , = = + - * / , , , , , -","Result is undefined","0  ÷  0  -  ");
-
-        test("0 1/x","Cannot divide by zero","1/( 0 )");
-        test("3 - 3 + 1/x","Cannot divide by zero","3  -  3  +  1/( 0 )");
         test("2 / 0 +","Cannot divide by zero","2  ÷  0  +  ");
         test("3 / 0 sqr +","Cannot divide by zero","3  ÷  sqr( 0 )  +  ");
         test("4 / 0 sqrt +","Cannot divide by zero","4  ÷  √( 0 )  +  ");
 
         test("1 ± sqrt","Invalid input","√( -1 )");
-        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr sqr","Overflow","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 1000000000000000 ) ) ) ) ) ) ) ) ) )");
-        test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr sqr","Overflow","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) ) ) )");
     }
 
     private void test(String expression, String display, String history){
@@ -994,21 +1038,21 @@ class AppModelTest {
         Response response = prepareTest(expression);
         assertEquals(display, response.getDisplay());
         assertEquals(history, response.getHistory());
-        controller.handleAction(new Clear());
-        controller.handleAction(new ClearMemory());
+        controller.handleEvent(new Clear());
+        controller.handleEvent(new ClearMemory());
     }
 
     private Response prepareTest(String expression){
 
-        String[] parsedActionStrings = expression.split(" ");
+        String[] parsedEventStrings = expression.split(" ");
         Response response = null;
-        for (String str : parsedActionStrings) {
+        for (String str : parsedEventStrings) {
             if (str.matches(IS_DIGIT_REGEX) || COMA.equals(str)) {
                 for (char ch : str.toCharArray()) {
-                    response = controller.handleAction(actions.get(ch + ""));
+                    response = controller.handleEvent(events.get(ch + ""));
                 }
             } else {
-                response = controller.handleAction(actions.get(str));
+                response = controller.handleEvent(events.get(str));
             }
         }
         return response;

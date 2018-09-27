@@ -1,7 +1,7 @@
-package win_calculator.model.nodes.actions.main_operations;
+package win_calculator.model.nodes.events.main_operations;
 
 import win_calculator.model.exceptions.MyException;
-import win_calculator.model.nodes.actions.ActionType;
+import win_calculator.model.nodes.events.EventType;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -9,7 +9,7 @@ import java.math.RoundingMode;
 public class Divide implements MainOperation {
 
     private static final String VALUE = "  \u00F7  ";
-    private static final ActionType TYPE = ActionType.MAIN_OPERATION;
+    private static final EventType TYPE = EventType.MAIN_OPERATION;
     private static final String CANNOT_DIVIDE_EXCEPTION_MSG = "Cannot divide by zero";
     private static final String UNDEFINED_EXCEPTION_MSG = "Result is undefined";
     private static final int SCALE = 10030;
@@ -47,7 +47,7 @@ public class Divide implements MainOperation {
     }
 
     @Override
-    public ActionType getType() {
+    public EventType getType() {
         return TYPE;
     }
 

@@ -1,7 +1,7 @@
-package win_calculator.model.nodes.actions.extra_operations;
+package win_calculator.model.nodes.events.extra_operations;
 
 import win_calculator.model.exceptions.MyException;
-import win_calculator.model.nodes.actions.ActionType;
+import win_calculator.model.nodes.events.EventType;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -9,7 +9,7 @@ import java.math.RoundingMode;
 public class Sqrt implements ExtraOperation {
 
     private static final String SYMBOL = "√( ";//"\uE94B(";
-    private static final ActionType TYPE = ActionType.EXTRA_OPERATION;
+    private static final EventType TYPE = EventType.EXTRA_OPERATION;
     private static final String EXCEPTION_MSG = "Invalid input";
     private static final int SCALE = 10050;
     @Override
@@ -38,7 +38,7 @@ public class Sqrt implements ExtraOperation {
     }
 
     @Override
-    public ActionType getType() {
+    public EventType getType() {
 
         return TYPE;
     }

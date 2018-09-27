@@ -3,7 +3,6 @@ package win_calculator.model.utils;
 import win_calculator.model.exceptions.MyException;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public abstract class ModelUtils {
 
@@ -41,8 +40,6 @@ public abstract class ModelUtils {
             if (Integer.parseInt(str.charAt(length - 1)+"") > ROUND_MODULE){
                 result = result.add(ROUND_VALUE);
             }
-        }else {
-            result = number.setScale(10000,RoundingMode.HALF_UP);
         }
         return result;
     }

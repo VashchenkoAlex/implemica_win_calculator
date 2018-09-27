@@ -1,11 +1,11 @@
-package win_calculator.model.nodes.actions;
+package win_calculator.model.nodes.events;
 
 import java.math.BigDecimal;
 
-public class Number implements Action {
+public class Number implements Event {
 
     private BigDecimal bigDecimalValue;
-    private static final ActionType TYPE = ActionType.NUMBER;
+    private static final EventType TYPE = EventType.NUMBER;
 
     public Number(BigDecimal bigDecimalValue) {
         this.bigDecimalValue = bigDecimalValue;
@@ -21,7 +21,7 @@ public class Number implements Action {
     }
 
     @Override
-    public ActionType getType() {
+    public EventType getType() {
         return TYPE;
     }
 

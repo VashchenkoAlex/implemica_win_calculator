@@ -2,12 +2,12 @@ package win_calculator.controller.utils;
 
 import win_calculator.controller.Response;
 import win_calculator.model.DTOs.ResponseDTO;
-import win_calculator.model.nodes.actions.Action;
-import win_calculator.model.nodes.actions.ActionType;
-import win_calculator.model.nodes.actions.Number;
-import win_calculator.model.nodes.actions.extra_operations.ExtraOperation;
-import win_calculator.model.nodes.actions.extra_operations.Percent;
-import win_calculator.model.nodes.actions.main_operations.MainOperation;
+import win_calculator.model.nodes.events.Event;
+import win_calculator.model.nodes.events.EventType;
+import win_calculator.model.nodes.events.Number;
+import win_calculator.model.nodes.events.extra_operations.ExtraOperation;
+import win_calculator.model.nodes.events.extra_operations.Percent;
+import win_calculator.model.nodes.events.main_operations.MainOperation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -15,7 +15,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.LinkedList;
 
-import static win_calculator.model.nodes.actions.ActionType.*;
+import static win_calculator.model.nodes.events.EventType.*;
 
 public abstract class ControllerUtils {
 
@@ -93,21 +93,21 @@ public abstract class ControllerUtils {
         return string.replaceAll(" ","");
     }
 
-    private static String getHistoryString(LinkedList<Action> history) {
+    public static String getHistoryString(LinkedList<Event> history) {
 
         String result = "";
-        for (Action action : history) {
-            ActionType type = action.getType();
+        for (Event event : history) {
+            EventType type = event.getType();
             if (EXTRA_OPERATION.equals(type)) {
-                result = addExtraOperationToString(result, ((ExtraOperation) action).getValue());
+                result = addExtraOperationToString(result, ((ExtraOperation) event).getValue());
             } else if (NUMBER.equals(type)) {
-                result += convertToString(((Number) action).getBigDecimalValue(), HISTORY_PATTERN);
+                result += convertToString(((Number) event).getBigDecimalValue(), HISTORY_PATTERN);
             } else if (NEGATE.equals(type)) {
-                result = addExtraOperationToString(result, ((ExtraOperation) action).getValue());
+                result = addExtraOperationToString(result, ((ExtraOperation) event).getValue());
             } else if (PERCENT.equals(type)){
-                result += ((Percent)action).getValue();
+                result += ((Percent) event).getValue();
             } else {
-                result += ((MainOperation)action).getValue();
+                result += ((MainOperation) event).getValue();
             }
         }
         return result;

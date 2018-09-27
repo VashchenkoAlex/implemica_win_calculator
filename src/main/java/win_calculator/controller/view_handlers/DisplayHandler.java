@@ -4,13 +4,13 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import win_calculator.controller.digits.Digit;
-import win_calculator.model.nodes.actions.Action;
-import win_calculator.model.nodes.actions.ActionType;
+import win_calculator.model.nodes.events.Event;
+import win_calculator.model.nodes.events.EventType;
 
 import static win_calculator.controller.utils.ControllerUtils.addCapacity;
 import static win_calculator.controller.utils.ControllerUtils.isComaAbsent;
-import static win_calculator.model.nodes.actions.ActionType.BACKSPACE;
-import static win_calculator.model.nodes.actions.ActionType.DIGIT;
+import static win_calculator.model.nodes.events.EventType.BACKSPACE;
+import static win_calculator.model.nodes.events.EventType.DIGIT;
 
 public class DisplayHandler {
 
@@ -75,16 +75,16 @@ public class DisplayHandler {
         return display.getText().replace("0,","").replaceAll("[ ,]","").length() < MAX_DIGITS;
     }
 
-    public void sendToDisplay(Action action, String number, ActionType previousActionType){
+    public void sendToDisplay(Event event, String number, EventType previousEventType){
 
-        if (DIGIT.equals(action.getType())){
+        if (DIGIT.equals(event.getType())){
             if (isNotMax()) {
-                if (ZERO.equals(((Digit)action).getValue()) && DIGIT.equals(previousActionType) || BACKSPACE.equals(previousActionType)) {
+                if (ZERO.equals(((Digit) event).getValue()) && DIGIT.equals(previousEventType) || BACKSPACE.equals(previousEventType)) {
                     addZero();
                 }else {
                     setDisplayedText(number);
                 }
-            }else if (!DIGIT.equals(previousActionType)){
+            }else if (!DIGIT.equals(previousEventType)){
                 setDisplayedText(number);
             }
         }else {
