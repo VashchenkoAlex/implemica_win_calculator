@@ -10,11 +10,11 @@ public class Number implements Event {
     public Number(BigDecimal bigDecimalValue) {
         this.bigDecimalValue = bigDecimalValue;
     }
-
-    public String getValue() {
-
-        return bigDecimalValue.toString();
-    }
+//
+//    public String getValue() {
+//
+//        return bigDecimalValue.toString();
+//    }
 
     @Override
     public EventType getType() {

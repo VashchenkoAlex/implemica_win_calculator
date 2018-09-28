@@ -1,63 +1,23 @@
-package win_calculator.model;
+package win_calculator.ControllerTests;
 
 import org.junit.jupiter.api.Test;
 import win_calculator.controller.memory.*;
 import win_calculator.controller.Response;
 import win_calculator.controller.FXMLViewController;
-import win_calculator.controller.digits.*;
 import win_calculator.model.nodes.events.Event;
-import win_calculator.model.nodes.events.clear.BaskSpace;
 import win_calculator.model.nodes.events.clear.Clear;
-import win_calculator.model.nodes.events.clear.ClearDisplay;
-import win_calculator.model.nodes.events.enter.Enter;
-import win_calculator.model.nodes.events.extra_operations.*;
-import win_calculator.model.nodes.events.main_operations.*;
 
 import java.util.HashMap;
 
 import static org.junit.gen5.api.Assertions.assertEquals;
+import static win_calculator.TestUtils.createMap;
 
-class AppModelTest {
+class ControllerTestClass {
 
-    private FXMLViewController controller = new FXMLViewController();
+    private static final FXMLViewController controller = new FXMLViewController();
     private static final HashMap<String, Event> events = createMap();
     private static final String IS_DIGIT_REGEX = "\\d+(,\\d+)?";
     private static final String COMA = ",";
-
-    private static HashMap<String, Event> createMap() {
-
-        HashMap<String, Event> map = new HashMap<>();
-        map.put("0", new ZeroDigit());
-        map.put("1", new OneDigit());
-        map.put("2", new TwoDigit());
-        map.put("3", new ThreeDigit());
-        map.put("4", new FourDigit());
-        map.put("5", new FiveDigit());
-        map.put("6", new SixDigit());
-        map.put("7", new SevenDigit());
-        map.put("8", new EightDigit());
-        map.put("9", new NineDigit());
-        map.put(",", new Coma());
-        map.put("+", new Add());
-        map.put("-", new Subtract());
-        map.put("*", new Multiply());
-        map.put("/", new Divide());
-        map.put("%", new Percent());
-        map.put("sqrt", new Sqrt());
-        map.put("sqr", new Sqr());
-        map.put("1/x", new Fraction());
-        map.put("CE", new ClearDisplay());
-        map.put("C", new Clear());
-        map.put("⟵", new BaskSpace());
-        map.put("=", new Enter());
-        map.put("±", new Negate());
-        map.put("MC", new ClearMemory());
-        map.put("MS", new StoreMemory());
-        map.put("MR", new RecallMemory());
-        map.put("M+", new AddToMemory());
-        map.put("M-", new SubtractMemory());
-        return map;
-    }
 
     @Test
     void testAddOperation(){
@@ -906,10 +866,14 @@ class AppModelTest {
         test("1000000000000000 * 10 * 10 / 10 /", "1,e+16", "1000000000000000  ×  10  ×  10  ÷  10  ÷  ");
         test("1000000000000000 + = = = = = = = = =", "1,e+16", "");
         test("1000000000000000 + = = = = = = = = = + 1 =", "1,e+16", "");
-        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr * 1000000000000000 =","1,e+9999","");
 
-        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr * 10 * MS 100000000000000 = - MR * 10 = + MR = = = = = = = = =","9,99999999999999e+9999","");
-        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr * 10 * MS 100000000000000 = - MR * 10 = + MR = = = = = = = = = =","Overflow","");
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = + MR = = =","9,999999999999999e+9999","");
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = + MR = = = =","9,999999999999999e+9999","");
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = + MR = = = = =","Overflow","");
+
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = ± - MR = = =","-9,999999999999999e+9999","");
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = ± - MR = = = =","-9,999999999999999e+9999","");
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = ± - MR = = = = =","Overflow","");
 
         test("12 * 1000000000000000 +","1,2e+16","12  ×  1000000000000000  +  ");
         test("123 * 1000000000000000 +","1,23e+17","123  ×  1000000000000000  +  ");
@@ -1061,27 +1025,28 @@ class AppModelTest {
 
         test("MS MR", "0", "");
         test("C MS MR", "0", "");
-        test("10 M+ MR", "10", "");
-        test("10 M+ 20 + MR +", "30", "20  +  10  +  ");
+        test("3 M+ MR", "3", "");
+        test("3 M+ ⟵ MR", "3", "");
+        test("1 M+ 2 + MR +", "3", "2  +  1  +  ");
         test("123 M- MR", "-123", "");
-        test("100 MS 987654321 M+ M- MR", "100", "");
-        test("100 M+ 200", "200", "");
-        test("100 M- 200", "200", "");
-        test("100 M+ 200 M- MR", "-100", "");
+        test("10 MS 123456789 M+ M- MR", "10", "");
+        test("1 M+ 2", "2", "");
+        test("1 M- 2", "2", "");
+        test("1 M+ 2 M- MR", "-1", "");
 
-        test("12 + 1 = M+ MR", "13", "");
-        test("12 + 1 = M+ 987654321 + 987654321 = M+ MR", "1 975 308 655", "");
-        test("12 + 1 = M+ 987654321 + 987654321 = M+ 100000000 M+ MR", "2 075 308 655", "");
-        test("987654321 + 1 M+", "1", "987654321  +  ");
-        test("987654321 + 1 M+ + 2 M+ MR", "3", "987654321  +  1  +  ");
-        test("987654321 + 1 M+ + 2 M+ = 32 + 3 = M+ MR", "38", "");
-        test("987654321 + 1 M+ + 2 M+ = 32 + 3 = M+ 10", "10", "");
-        test("987654321 + 123456789 = M+ + 123 - + / * MR = =", "1,371742260219478e+27", "");
+        test("12 + 3 = M+ MR", "15", "");
+        test("12 + 3 = M+ 123456789 + = M+ MR", "246 913 593", "");
+        test("12 + 3 = M+ 123456789 + = M+ 100000000 M+ MR", "346 913 593", "");
+        test("123456789 + 1 M+", "1", "123456789  +  ");
+        test("123456789 + 1 M+ + 2 M+ MR", "3", "123456789  +  1  +  ");
+        test("123456789 + 1 M+ + 2 M+ = 34 + 5 = M+ MR", "42", "");
+        test("123456789 + 1 M+ + 2 M+ = 34 + 5 = M+ 1", "1", "");
+        test("123456789 + 987654321 = M+ + 321 / - + * MR = =", "1,371742504663922e+27", "");
 
-        test("12 + 1 = M- MR", "-13", "");
-        test("12 + 1 = M- MR 15", "15", "");
-        test("12 + 1 = M- 987654321 + 987654321 = M- MR", "-1 975 308 655", "");
-        test("12 + 1 = M- 987654321 + 987654321 = M- 100000000 M- MR", "-2 075 308 655", "");
+        test("12 + 3 = M- MR", "-15", "");
+        test("12 + 3 = M- MR 21", "21", "");
+        test("12 + 3 = M- 123456789 + 123456789 = M- MR", "-246 913 593", "");
+        test("12 + 3 = M- 123456789 + 123456789 = M- 100000000 M- MR", "-346 913 593", "");
         test("987654321 + 1 M- + 2 M- MR", "-3", "987654321  +  1  +  ");
         test("987654321 + 1 M- + 2 M- = 32 + 3 = M- MR", "-38", "");
         test("987654321 + 1 M- + 2 M- = 32 + 3 = M- 10", "10", "");
@@ -1099,6 +1064,44 @@ class AppModelTest {
         test("1000000000000000 * = M- MR", "-1,e+30", "");
         test("1000000000000000 * = M- M- MR", "-2,e+30", "");
         test("1000000000 * = M+ MR M+ MR", "2,e+18", "");
+
+        test("M+","0","");
+        test("M-","0","");
+        test("MS","0","");
+        test("M+","0","");
+        test("MS M+","0","");
+        test("M+ M- MR","0","");
+        test("2 MS MR MC","2","");
+        test("4 MS C MR + 16 -","20","4  +  16  -  ");
+        test("2 MS 0 MR","2","");
+        test("8 M+ MS MR","8","");
+        test("124 MS M- MR","0","");
+        test("5 ± MS 4 MR","-5","");
+        test("1 + 2 MS 5 MR","2","1  +  ");
+        test("2 MS 90 MR","2","");
+        test("51 + MS 1 MR","51","51  +  ");
+        test("91 MS 1 M+ MR","92","");
+        test("30 MS 4 M+ MR","34","");
+        test("0,5 MS 2 MR + 2 * 3 =","7,5","");
+        test("4 MS / 2 + MR =","6","");
+        test("34 MS 2 + 1 = MR","34","");
+        test("1 MS C C M+ C 32 MR","1","");
+        test("2 + 1 MS C MR * 34","34","1  ×  ");
+        test("1244 MS 57422 MR","1 244","");
+        test("2 MS 3 M+ 2 MR * 38 =","190","");
+        test("64 MS CE 300 M+ MR", "364","");
+        test("5 MS 53 / 2 M- M- + 4","4","53  ÷  2  +  ");
+        test("4 MS + 3 M+ * 2 MR","7","4  +  3  ×  ");
+        test("22 - 2 MS / 2 C MR * 2","2","2  ×  ");
+        test("0,53 MS - 3 M+ MR","3,53","0,53  -  ");
+        test("1 MS 0,12 M- M- * 3 = MR","0,76","");
+        test("93 MS - 4 M+ * 2 MR M-","97","93  -  4  ×  ");
+        test("53 + 4 MS 4 M- 5 M+ * 12 MR =","290","");
+        test("64 sqrt MS CE 300 + 22 - MR / 2 =", "157","");
+        test("40 MS 2,341 M- M- / 2 + MR =","36,4885","");
+        test("57 MS 2 M+ M+ M+ MR / 2 +","31,5","63  ÷  2  +  ");
+        test("43 MS + 5325 1/x C ⟵ M- - 3 * MR =", "-129","");
+        test("7320 / 3 * 1 + 3 sqrt MS C MR * 2" , "2","1,732050807568877  ×  ");
     }
 
     private void test(String expression, String display, String history){

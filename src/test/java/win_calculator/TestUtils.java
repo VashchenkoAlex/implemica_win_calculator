@@ -1,12 +1,24 @@
-package win_calculator.GUITests;
+package win_calculator;
 
 import javafx.scene.input.KeyCode;
+import win_calculator.controller.digits.*;
+import win_calculator.controller.memory.*;
+import win_calculator.model.nodes.events.Event;
+import win_calculator.model.nodes.events.clear.BaskSpace;
+import win_calculator.model.nodes.events.clear.Clear;
+import win_calculator.model.nodes.events.clear.ClearDisplay;
+import win_calculator.model.nodes.events.enter.Enter;
+import win_calculator.model.nodes.events.extra_operations.*;
+import win_calculator.model.nodes.events.main_operations.Add;
+import win_calculator.model.nodes.events.main_operations.Divide;
+import win_calculator.model.nodes.events.main_operations.Multiply;
+import win_calculator.model.nodes.events.main_operations.Subtract;
 
 import java.util.HashMap;
 
-class TestUtils {
+public class TestUtils {
 
-    static HashMap<String,TestButton> createButtonsMap(){
+    public static HashMap<String,TestButton> createButtonsMap(){
 
         HashMap<String, TestButton> map = new HashMap<>();
         map.put("0",new TestButton("#zeroBtn",KeyCode.DIGIT0,false));
@@ -42,6 +54,41 @@ class TestUtils {
         map.put("MENU",new TestButton("#menuBtn",KeyCode.M,true));
         map.put("FS",new TestButton("#fullScreenBtn",KeyCode.F,true));
         map.put("HD",new TestButton("#hideBtn",KeyCode.H,true));
+        return map;
+    }
+
+    public static HashMap<String, Event> createMap() {
+
+        HashMap<String, Event> map = new HashMap<>();
+        map.put("0", new ZeroDigit());
+        map.put("1", new OneDigit());
+        map.put("2", new TwoDigit());
+        map.put("3", new ThreeDigit());
+        map.put("4", new FourDigit());
+        map.put("5", new FiveDigit());
+        map.put("6", new SixDigit());
+        map.put("7", new SevenDigit());
+        map.put("8", new EightDigit());
+        map.put("9", new NineDigit());
+        map.put(",", new Coma());
+        map.put("+", new Add());
+        map.put("-", new Subtract());
+        map.put("*", new Multiply());
+        map.put("/", new Divide());
+        map.put("%", new Percent());
+        map.put("sqrt", new Sqrt());
+        map.put("sqr", new Sqr());
+        map.put("1/x", new Fraction());
+        map.put("CE", new ClearDisplay());
+        map.put("C", new Clear());
+        map.put("⟵", new BaskSpace());
+        map.put("=", new Enter());
+        map.put("±", new Negate());
+        map.put("MC", new ClearMemory());
+        map.put("MS", new StoreMemory());
+        map.put("MR", new RecallMemory());
+        map.put("M+", new AddToMemory());
+        map.put("M-", new SubtractMemory());
         return map;
     }
 

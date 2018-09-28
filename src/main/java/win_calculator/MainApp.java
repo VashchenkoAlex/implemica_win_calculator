@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class MainApp extends Application {
 
-    private Stage stage;
+    private static Stage stage;
     public static void main(String[] args){
         launch(args);
     }

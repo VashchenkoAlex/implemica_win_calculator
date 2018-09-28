@@ -15,6 +15,7 @@ import org.testfx.framework.junit5.*;
 import org.testfx.matcher.control.LabeledMatchers;
 import org.testfx.util.WaitForAsyncUtils;
 import win_calculator.MainApp;
+import win_calculator.TestButton;
 import win_calculator.controller.view_handlers.CaptionHandler;
 
 import java.awt.*;
@@ -27,14 +28,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.loadui.testfx.GuiTest.find;
 import static org.testfx.api.FxAssert.verifyThat;
-import static win_calculator.GUITests.TestUtils.createButtonsMap;
+import static win_calculator.TestUtils.createButtonsMap;
 
 class UITest extends ApplicationTest{
 
     private Robot robot;
     private Scene scene;
     private MainApp app = new MainApp();
-    private static final HashMap<String,TestButton> buttons = createButtonsMap();
+    private static final HashMap<String, TestButton> buttons = createButtonsMap();
 
     @Start
     public void start(Stage primaryStage) throws IOException{
@@ -48,10 +49,10 @@ class UITest extends ApplicationTest{
         }
     }
 
+
     @Test
     void testKeyBoard(){
 
-        robot.setAutoDelay(20);
         testDrag(0, 500, 200, 700);
         testDrag(0, -500, 200, 200);
         testDrag(20, 60, 220, 260);
@@ -279,16 +280,13 @@ class UITest extends ApplicationTest{
         for (String btnName : buttons) {
             clickByRobotOn(btnName);
         }
-        WaitForAsyncUtils.waitForFxEvents();
         verifyThat("#display",LabeledMatchers.hasText(display));
         verifyThat("#historyField",LabeledMatchers.hasText(history));
-        WaitForAsyncUtils.waitForFxEvents();
         clickByRobotOn("C");
     }
 
     private void pressOn(String key){
 
-        WaitForAsyncUtils.waitForFxEvents();
         TestButton testButton = buttons.get(key);
         Button button = find(testButton.getId());
         boolean shiftPressed = testButton.isShiftPressed();
@@ -311,6 +309,7 @@ class UITest extends ApplicationTest{
         WaitForAsyncUtils.waitForFxEvents();
         verifyThat("#display",LabeledMatchers.hasText(display));
         verifyThat("#historyField",LabeledMatchers.hasText(history));
+        WaitForAsyncUtils.waitForFxEvents();
         pressOn("C");
     }
 
@@ -322,7 +321,7 @@ class UITest extends ApplicationTest{
         verifyThat("#menuBtnPressed", Node::isVisible);
         verifyThat("#menuBtnPressed", Node::isVisible);
         verifyThat("#aboutBtn", Node::isVisible);
-        WaitForAsyncUtils.waitForFxEvents();
+//        WaitForAsyncUtils.waitForFxEvents();
         clickByRobotOn("MENU");
     }
 
@@ -374,7 +373,6 @@ class UITest extends ApplicationTest{
 
     private int[] robotDrag(int x, int y) {
 
-        WaitForAsyncUtils.waitForFxEvents();
         Window window = scene.getWindow();
         int minX = (int) window.getX();
         int minY = (int) window.getY();
@@ -382,6 +380,7 @@ class UITest extends ApplicationTest{
         robot.mousePress(InputEvent.BUTTON1_MASK);
         robot.mouseMove(minX + x + 5,minY + y + 5);
         robot.mouseRelease(InputEvent.BUTTON1_MASK);
+        WaitForAsyncUtils.waitForFxEvents();
         return new int[]{(int)window.getX(),(int)window.getY()};
     }
 
@@ -389,6 +388,7 @@ class UITest extends ApplicationTest{
 
         clickByRobotOn("HD");
         Stage stage = (Stage) scene.getWindow();
+        WaitForAsyncUtils.waitForFxEvents();
         assertTrue(stage.isIconified());
         this.interact(()->stage.setIconified(false));
         assertFalse(stage.isIconified());
@@ -411,7 +411,7 @@ class UITest extends ApplicationTest{
 
     private void clickByRobotOn(String key){
 
-//        WaitForAsyncUtils.waitForFxEvents();
+        WaitForAsyncUtils.waitForFxEvents();
         Node node = scene.lookup(buttons.get(key).getId());
         Bounds bounds = node.localToScreen(node.getBoundsInLocal());
         int x = (int)bounds.getMinX()+2;
@@ -420,5 +420,6 @@ class UITest extends ApplicationTest{
         robot.mousePress(InputEvent.BUTTON1_MASK);
         robot.mouseRelease(InputEvent.BUTTON1_MASK);
         WaitForAsyncUtils.waitForFxEvents();
+
     }
 }

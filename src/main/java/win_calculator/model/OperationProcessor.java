@@ -282,7 +282,6 @@ class OperationProcessor {
             }
             rejectLastNumberWithExtraOperations();
             addNumberToHistory(response);
-//            resetResultNumber();
             lastNumber = response;
             enterRepeated = false;
             addEventToHistory(event);
@@ -373,7 +372,7 @@ class OperationProcessor {
 
         boolean done = rejectLastNumberWithExtraOperations();
         if (!done) {
-            rejectLastNumber();
+            rejectLastNumber(); // ??
         }
         if (!enterRepeated) {
             lastExtraResult = operationResult;
