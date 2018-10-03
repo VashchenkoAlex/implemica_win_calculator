@@ -19,11 +19,14 @@ import javafx.scene.layout.RowConstraints;
 import javafx.stage.Window;
 import javafx.util.Callback;
 import javafx.util.Duration;
-import win_calculator.controller.memory.*;
+import win_calculator.model.exceptions.OverflowException;
 import win_calculator.controller.digits.*;
-import win_calculator.model.exceptions.OperationException;
+import win_calculator.model.exceptions.DivideByZeroException;
+import win_calculator.model.exceptions.NegativeValueForSQRTException;
 import win_calculator.controller.view_handlers.*;
-import win_calculator.model.AppModel;
+import win_calculator.model.CalcModel;
+import win_calculator.model.exceptions.UndefinedResultException;
+import win_calculator.model.memory.*;
 import win_calculator.model.nodes.events.Event;
 import win_calculator.model.nodes.events.clear.BaskSpace;
 import win_calculator.model.nodes.events.clear.ClearDisplay;
@@ -41,8 +44,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static win_calculator.controller.memory.MemoryType.*;
-import static win_calculator.controller.utils.ControllerUtils.*;
+import static win_calculator.utils.CalculatorUtils.*;
+import static win_calculator.model.memory.MemoryType.STORE;
 import static win_calculator.model.nodes.events.EventType.*;
 import static win_calculator.controller.enums.MenuListOption.*;
 
@@ -123,19 +126,24 @@ public class FXMLViewController implements Initializable {
     @FXML
     private GridPane mainButtonsGrid;
 
-    private AppModel model = new AppModel();
+    private CalcModel model = new CalcModel();
     private HistoryFieldHandler historyFieldHandler = new HistoryFieldHandler();
     private CaptionHandler captionHandler = new CaptionHandler();
     private DisplayHandler displayHandler = new DisplayHandler();
-    private MemoryHandler memoryHandler = new MemoryHandler();
     private NumberBuilder numberBuilder = new NumberBuilder();
     private EventType lastEventType;
     private String lastHistoryText;
     private String lastDisplay;
     private double xOffset = 0;
     private double yOffset = 0;
+    private boolean wasExeption = false;
     private static final double MENU_LIST_WIDTH = 260;
     private static final String DISPLAY_PATTERN = "#############,###.################";
+    private static final String MSG_FOR_NEGATIVE_VALUE_FOR_SQRT = "Invalid input";
+    private static final String OVERFLOW_MSG = "Overflow";
+    private static final String CANNOT_DIVIDE_EXCEPTION_MSG = "Cannot divide by zero";
+    private static final String UNDEFINED_EXCEPTION_MSG = "Result is undefined";
+
 
     @FXML
     private void dropMenu() {
@@ -326,7 +334,8 @@ public class FXMLViewController implements Initializable {
 
         ObservableList<Node> menuNodes = dropDownContainer.getChildren();
         menuNodes.add(prepareBackground());
-        menuNodes.add(prepareDropDownLabel(memoryHandler.doEvent(new RecallMemory(), null).toString(), "memoryPane"));
+        String[] response = handleEvent(new RecallMemory());
+        menuNodes.add(prepareDropDownLabel(response[0] , "memoryPane"));
     }
 
     @Override
@@ -356,70 +365,93 @@ public class FXMLViewController implements Initializable {
 
         setDisableOperationButtons(false);
         EventType previousEventType = lastEventType;
-        Response response = handleEvent(event);
-        displayHandler.sendToDisplay(event, response.getDisplay(), previousEventType);
-        if (isNotNumber(response.getDisplay())) {
+        String[] response = handleEvent(event);
+        displayHandler.sendToDisplay(event, response[0], previousEventType);
+        if (isNotNumber(response[0])) {
             setDisableOperationButtons(true);
-            historyFieldHandler.setHistoryText(response.getHistory());
+            historyFieldHandler.setHistoryText(response[1]);
 
         } else if (CLEAR.equals(lastEventType) || ENTER.equals(lastEventType)) {
             historyFieldHandler.clear();
         } else {
-            historyFieldHandler.setHistoryText(response.getHistory());
+            historyFieldHandler.setHistoryText(response[1]);
         }
     }
 
-    public Response handleEvent(Event event) {
+    public String[] handleEvent(Event event) {
 
-        Response response;
         EventType type = event.getType();
-        if (DIGIT.equals(type)) {
-            response = handleDigit(event);
-        } else if (CLEAR_ENTERED.equals(type)) {
-            response = handleClearEntered(event);
-        } else if (BACKSPACE.equals(type)) {
-            response = handleBackSpace(event);
-        } else if (NEGATE.equals(type) && numberBuilder.containsNumber()) {
-            response = handleNegate();
-        } else if (MEMORY.equals(type)) {
-            response = handleMemory((MemoryEvent) event, lastDisplay);
-        } else {
-            response = handleOperation(event);
+        try {
+            if (DIGIT.equals(type)) {
+                lastDisplay = handleDigit(event);
+            } else if (CLEAR_ENTERED.equals(type)) {
+                handleClearEntered(event);
+                lastDisplay = "0";
+            } else if (BACKSPACE.equals(type)) {
+                lastDisplay = handleBackSpace(event);
+            } else if (NEGATE.equals(type) && numberBuilder.containsNumber()) {
+                lastDisplay = handleNegate();
+            } else {
+                lastDisplay = convertToString(handleOperation(event), DISPLAY_PATTERN);
+            }
+        } catch (NegativeValueForSQRTException e) {
+            wasExeption = true;
+            lastDisplay = MSG_FOR_NEGATIVE_VALUE_FOR_SQRT;
+        } catch (UndefinedResultException e) {
+            wasExeption = true;
+            lastDisplay = UNDEFINED_EXCEPTION_MSG;
+        } catch (DivideByZeroException e) {
+            wasExeption = true;
+            lastDisplay = CANNOT_DIVIDE_EXCEPTION_MSG;
+        } catch (OverflowException e) {
+            wasExeption = true;
+            lastDisplay = OVERFLOW_MSG;
         }
-        lastDisplay = response.getDisplay();
-        lastHistoryText = response.getHistory();
-        return response;
+        if (wasExeption && isEventTypeResettingOverflow(type)) {
+            lastHistoryText = "";
+            wasExeption = false;
+        } else {
+            lastHistoryText = getHistoryString(model.getHistory());
+        }
+
+        lastEventType = event.getType();
+        return new String[]{lastDisplay, lastHistoryText};
     }
 
-    private Response handleOperation(Event event) {
+    private BigDecimal handleOperation(Event event) throws UndefinedResultException, NegativeValueForSQRTException, DivideByZeroException, OverflowException {
 
-        BigDecimal currentNum;
-        if (MEMORY.equals(lastEventType) && numberBuilder.containsNumber()) {
-            currentNum = numberBuilder.getNumber();
-        } else {
-            currentNum = numberBuilder.finish();
-        }
-        Response response = getDataFromModel(currentNum, event);
-        if (!NEGATE.equals(event.getType())) {
+        BigDecimal currentNum = numberBuilder.finish();
+        BigDecimal result = model.toDo(currentNum, event);
+        if (MEMORY.equals(event.getType())) {
+            MemoryType memoryType = ((MemoryEvent) event).getMemoryType();
+            if (!STORE.equals(memoryType)){
+                numberBuilder.clear();
+                numberBuilder.setNumber(result);
+            } else if (currentNum != null){
+                numberBuilder.setNumber(currentNum);
+                result = currentNum;
+            }
+        } else if (!NEGATE.equals(event.getType()) && !MEMORY.equals(event.getType())) {
             numberBuilder.clear();
         }
-        lastEventType = event.getType();
-        return response;
-    }
-
-    private Response handleDigit(Event digit) {
-
-        Response response;
-        if (lastDisplay != null && isNotNumber(lastDisplay)) {
+        if (ENTER.equals(event.getType())) {
             lastHistoryText = "";
         }
-        String historyText = lastHistoryText;
-        if (EXTRA_OPERATION.equals(lastEventType)) {
-            response = getDataFromModel(null, new LastExtraCleaner());
-            historyText = response.getHistory();
+        return result;
+    }
+
+    private String handleDigit(Event digit) throws UndefinedResultException, NegativeValueForSQRTException, DivideByZeroException, OverflowException {
+
+        String response;
+        if (lastDisplay != null && isNotNumber(lastDisplay)) {
+            lastHistoryText = "";
+            numberBuilder.clear();
         }
-        response = new Response(numberBuilder.toDo(digit), historyText);
-        lastEventType = digit.getType();
+        if (EXTRA_OPERATION.equals(lastEventType)) {
+            model.toDo(null, new LastExtraCleaner());
+            lastHistoryText = getHistoryString(model.getHistory());
+        }
+        response = numberBuilder.toDo(digit);
         return response;
     }
 
@@ -431,62 +463,29 @@ public class FXMLViewController implements Initializable {
                 && numberBuilder.containsNumber();
     }
 
-    private Response handleMemory(MemoryEvent event, String number) {
+    private String handleNegate() {
 
-        MemoryType memoryType = event.getMemoryType();
-        String currentNum = "";
-        if (CLEAR_MEMORY.equals(memoryType)) {
-            memoryHandler = new MemoryHandler();
-            currentNum = lastDisplay;
-        } else {
-            if ((STORE.equals(memoryType) || SUBTRACT_FROM_MEMORY.equals(memoryType) || ADD_TO_MEMORY.equals(memoryType)) && numberBuilder.containsNumber()) {
-                currentNum = numberBuilder.convertChainToString();
-                numberBuilder.finish();
-            }
-            if ("".equals(currentNum) && number != null) {
-                currentNum = number;
-            }
-            if ("".equals(currentNum) && numberBuilder.containsNumber()) {
-                currentNum = numberBuilder.getNumber().toString();
-            }
-            if ("".equals(currentNum)) {
-                currentNum = "0";
-            }
-            BigDecimal result = memoryHandler.doEvent(event, new BigDecimal(replaceCapacity(replaceComaToDot(currentNum))));
-            if (result != null) {
-                currentNum = convertToString(result, DISPLAY_PATTERN);
-                numberBuilder.setNumber(result);
-            } else {
-                currentNum = lastDisplay;
-            }
-        }
-        lastEventType = event.getType();
-        return new Response(currentNum, lastHistoryText);
+        return numberBuilder.negate(MEMORY.equals(lastEventType));
     }
 
-    private Response handleNegate() {
+    private String handleBackSpace(Event event) throws UndefinedResultException, NegativeValueForSQRTException, DivideByZeroException, OverflowException {
 
-        return new Response(numberBuilder.negate(MEMORY.equals(lastEventType)), lastHistoryText);
-    }
-
-    private Response handleBackSpace(Event event) {
-
-        Response response;
+        String response;
         if (isBackSpacePossible()) {
             response = handleDigit(event);
         } else {
             if (lastDisplay == null || isNotNumber(lastDisplay)) {
                 lastDisplay = "0";
             }
-            response = new Response(lastDisplay, lastHistoryText);
+            response = lastDisplay;
         }
         return response;
     }
 
-    private Response handleClearEntered(Event event) {
+    private void handleClearEntered(Event event) throws UndefinedResultException, NegativeValueForSQRTException, DivideByZeroException, OverflowException {
 
         numberBuilder.clear();
-        return getDataFromModel(null, event);
+        model.toDo(null, event);
     }
 
     private void setDisableMemoryButtons(boolean val) {
@@ -656,15 +655,9 @@ public class FXMLViewController implements Initializable {
         return label;
     }
 
-    private Response getDataFromModel(BigDecimal number, Event event) {
+    private boolean isEventTypeResettingOverflow(EventType type) {
 
-        String resultString;
-        try {
-            resultString = convertToString(model.toDo(number, event), DISPLAY_PATTERN);
-        } catch (OperationException e) {
-            resultString = e.getMessage();
-        }
-        String historyString = getHistoryString(model.getHistory());
-        return new Response(resultString, historyString);
+        return BACKSPACE.equals(type) || CLEAR.equals(type) || DIGIT.equals(type) || CLEAR_ENTERED.equals(type) || (ENTER.equals(lastEventType) && ENTER.equals(type));
     }
+
 }

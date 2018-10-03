@@ -1,17 +1,24 @@
 package win_calculator.model;
 
-import win_calculator.model.exceptions.OperationException;
+import win_calculator.model.exceptions.OverflowException;
+import win_calculator.model.exceptions.DivideByZeroException;
+import win_calculator.model.exceptions.NegativeValueForSQRTException;
+import win_calculator.model.exceptions.UndefinedResultException;
+import win_calculator.model.memory.MemoryEvent;
 import win_calculator.model.nodes.events.Event;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;
 
-public class AppModel {
+import static win_calculator.model.utils.ModelUtils.checkOnOverflow;
+import static win_calculator.model.utils.ModelUtils.roundNumber;
+
+public class CalcModel {
 
     private OperationProcessor operationProcessor = new OperationProcessor();
     private BigDecimal responseNumber;
 
-    public BigDecimal toDo(BigDecimal number, Event event) throws OperationException {
+    public BigDecimal toDo(BigDecimal number, Event event) throws UndefinedResultException, DivideByZeroException, NegativeValueForSQRTException, OverflowException {
 
         switch (event.getType()) {
             case MAIN_OPERATION: {
@@ -47,13 +54,20 @@ public class AppModel {
                 operationProcessor.rejectLastNumberWithExtraOperations();
                 break;
             }
+            case MEMORY: {
+                BigDecimal result = operationProcessor.processMemory((MemoryEvent) event, number);
+                if (result!=null){
+                    responseNumber = result;
+                }
+                break;
+            }
         }
-        return responseNumber;
+        checkOnOverflow(responseNumber);
+        return roundNumber(responseNumber);
     }
 
     public LinkedList<Event> getHistory() {
 
         return operationProcessor.getHistory();
     }
-
 }

@@ -1,13 +1,13 @@
-package win_calculator.controller.memory;
+package win_calculator.model.memory;
 
 import win_calculator.model.nodes.events.EventType;
 
-import static win_calculator.controller.memory.MemoryType.RECALL;
+import static win_calculator.model.memory.MemoryType.ADD_TO_MEMORY;
 
-public class RecallMemory implements MemoryEvent {
+public class AddToMemory implements MemoryEvent {
 
     private static final EventType TYPE = EventType.MEMORY;
-    private static final MemoryType MEMORY_TYPE = RECALL;
+    private static final MemoryType MEMORY_TYPE = ADD_TO_MEMORY;
 
     @Override
     public MemoryType getMemoryType() {
@@ -18,6 +18,4 @@ public class RecallMemory implements MemoryEvent {
     public EventType getType() {
         return TYPE;
     }
-
-
 }

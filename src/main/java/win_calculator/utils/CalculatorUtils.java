@@ -1,4 +1,4 @@
-package win_calculator.controller.utils;
+package win_calculator.utils;
 
 import win_calculator.model.nodes.events.Event;
 import win_calculator.model.nodes.events.EventType;
@@ -15,7 +15,7 @@ import java.util.LinkedList;
 
 import static win_calculator.model.nodes.events.EventType.*;
 
-public abstract class ControllerUtils {
+public abstract class CalculatorUtils {
 
     private static final String COMA = ",";
     private static final String DOT = ".";
@@ -39,25 +39,18 @@ public abstract class ControllerUtils {
     private static final String SPACES_REGEX = "\\s\\s";
     private static final String ADD_EXTRA_OPERATION_REGEX = "^.+[\\s{2}][^\\s{2}]+$";
 
-
     public static boolean isComaAbsent(String number) {
 
         return !number.contains(COMA);
     }
 
 
-    public static String replaceDotToComa(String string){
+    public static String replaceDotToComa(String string) {
 
-        return string.replace(DOT,COMA);
+        return string.replace(DOT, COMA);
     }
 
-    public static String replaceComaToDot(String string){
-
-        return string.replace(COMA,DOT);
-    }
-
-
-    public static boolean isNotNumber(String string){
+    public static boolean isNotNumber(String string) {
 
         return string.matches(IS_TEXT_REGEX);
     }
@@ -77,17 +70,12 @@ public abstract class ControllerUtils {
         }
         parts[0] = String.format("%,d", Long.parseLong(parts[0].replaceAll(" ", "")));
         String result;
-        if (parts.length>1){
+        if (parts.length > 1) {
             result = minus + parts[0] + coma + parts[1];
-        }else {
+        } else {
             result = minus + parts[0] + coma;
         }
         return result;
-    }
-
-    public static String replaceCapacity(String string){
-
-        return string.replaceAll(" ","");
     }
 
     public static String getHistoryString(LinkedList<Event> history) {
@@ -101,7 +89,7 @@ public abstract class ControllerUtils {
                 result += convertToString(((Number) event).getBigDecimalValue(), HISTORY_PATTERN);
             } else if (NEGATE.equals(type)) {
                 result = addExtraOperationToString(result, ((ExtraOperation) event).getValue());
-            } else if (PERCENT.equals(type)){
+            } else if (PERCENT.equals(type)) {
                 result += ((Percent) event).getValue();
             } else {
                 result += ((MainOperation) event).getValue();
@@ -112,13 +100,16 @@ public abstract class ControllerUtils {
 
     public static String convertToString(BigDecimal incomeNumber, String pattern) {
 
-        String result = null;
+        String result;
         if (incomeNumber != null) {
             BigDecimal number = incomeNumber;
             int scale = selectScale(number);
             number = setNewScale(number, scale);
+            number = number.stripTrailingZeros();
             String thePattern = selectPattern(number, pattern);
             result = initFormatter(thePattern, selectSeparator(number)).format(number);
+        } else {
+            result = "0";
         }
         return result;
     }
@@ -151,7 +142,10 @@ public abstract class ControllerUtils {
         if (containsE(number) && !numberStr.matches(IS_ZERO_FIRST_REGEX)) {
             String[] parts = numberStr.split(E);
             int expCount = Math.abs(Integer.parseInt(parts[1]));
-            number = setNewScale(number, SCALE + expCount);
+            if (number.toPlainString().contains(".")){
+                number = setNewScale(number, SCALE + expCount);
+                number = number.stripTrailingZeros();
+            }
             int unscaledLnth = getUnscaledLength(number);
             if (parts[1].contains(MINUS)) {
                 if (expCount > MAX_DECIMAL - unscaledLnth) {
@@ -167,13 +161,10 @@ public abstract class ControllerUtils {
                 currentPattern = preparePattern(getUnscaledLength(number)) + E_PART_OF_FORMAT;
             }
         }
-        if (containsE(number) && getWholeLength(number) > MAX_ROUND) {
-            currentPattern = FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT;
-        }
         return currentPattern;
     }
 
-    private static int selectScale(BigDecimal number){
+    private static int selectScale(BigDecimal number) {
 
         int scale = SCALE;
         String result = number.abs().toString();
@@ -194,8 +185,7 @@ public abstract class ControllerUtils {
 
     private static String preparePattern(int count) {
 
-        count = MAX_DECIMAL - count;
-        return INTEGER_AND_DECIMAL_PART.substring(0, INTEGER_AND_DECIMAL_PART.length() - count);
+        return INTEGER_AND_DECIMAL_PART.substring(0, INTEGER_AND_DECIMAL_PART.length() - MAX_DECIMAL + count);
     }
 
     private static boolean isCorrectExponent(BigDecimal number) {
@@ -210,9 +200,9 @@ public abstract class ControllerUtils {
         return result;
     }
 
-    private static int getExponent(BigDecimal number){
+    private static int getExponent(BigDecimal number) {
 
-        DecimalFormat formatter = new DecimalFormat(FOURTEEN_DECIMAL_PART+E_PART_OF_FORMAT);
+        DecimalFormat formatter = new DecimalFormat(FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT);
         String[] parts = formatter.format(number).split(E);
         return Math.abs(Integer.parseInt(parts[1]));
     }
@@ -229,7 +219,7 @@ public abstract class ControllerUtils {
 
     private static BigDecimal setNewScale(BigDecimal number, int scale) {
 
-        return number.setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros();
+        return number.setScale(scale, RoundingMode.HALF_UP);
     }
 
     private static boolean containsE(BigDecimal number) {
@@ -256,5 +246,4 @@ public abstract class ControllerUtils {
         }
         return resultStr + BRACKET;
     }
-
 }

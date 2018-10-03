@@ -1,4 +1,4 @@
-package win_calculator.controller.memory;
+package win_calculator.model.memory;
 
 public enum MemoryType {
     ADD_TO_MEMORY,

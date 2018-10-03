@@ -1,13 +1,9 @@
 package win_calculator;
 
 import org.junit.jupiter.api.Test;
-import win_calculator.model.exceptions.OperationException;
-
-import java.math.BigDecimal;
 
 import static org.junit.gen5.api.Assertions.assertEquals;
-import static win_calculator.controller.utils.ControllerUtils.addCapacity;
-import static win_calculator.model.utils.ModelUtils.checkOnOverflow;
+import static win_calculator.utils.CalculatorUtils.addCapacity;
 
 
 class UtilsTest {
@@ -74,29 +70,10 @@ class UtilsTest {
         testCapacity("111 111 111,1111111","111 111 111,1111111");
     }
 
-    @Test
-    void testOnOverflow(){
-
-        testOverflow("1e10000");
-        testOverflow("1e10001");
-        testOverflow("1e-10000");
-        testOverflow("1e-10001");
-    }
 
     private void testCapacity(String inserted, String expected){
 
         assertEquals(expected,addCapacity(inserted));
-    }
-
-    private void testOverflow(String inserted){
-
-        String result = "";
-        try {
-            checkOnOverflow(new BigDecimal(inserted));
-        } catch (OperationException e) {
-            result = e.getMessage();
-        }
-        assertEquals("Overflow",result);
     }
 
 }

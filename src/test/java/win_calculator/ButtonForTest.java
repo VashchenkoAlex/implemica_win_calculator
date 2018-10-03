@@ -2,13 +2,15 @@ package win_calculator;
 
 import javafx.scene.input.KeyCode;
 
-public class TestButton {
+import java.awt.event.KeyEvent;
+
+public class ButtonForTest {
 
     private String id;
-    private KeyCode keyCode;
+    private /*KeyCode*/int keyCode;
     private boolean shiftPressed;
 
-    public TestButton(String id, KeyCode keyCode, boolean shiftPressed) {
+    ButtonForTest(String id, /*KeyCode*/int keyCode, boolean shiftPressed) {
         this.id = id;
         this.keyCode = keyCode;
         this.shiftPressed = shiftPressed;
@@ -18,7 +20,7 @@ public class TestButton {
         return id;
     }
 
-    public KeyCode getKeyCode() {
+    public /*KeyCode*/int getKeyCode() {
         return keyCode;
     }
 

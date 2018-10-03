@@ -1,6 +1,11 @@
 package win_calculator.model;
 
-import win_calculator.model.exceptions.OperationException;
+import win_calculator.model.exceptions.DivideByZeroException;
+import win_calculator.model.exceptions.NegativeValueForSQRTException;
+import win_calculator.model.exceptions.UndefinedResultException;
+import win_calculator.model.memory.Memory;
+import win_calculator.model.memory.MemoryEvent;
+import win_calculator.model.memory.MemoryType;
 import win_calculator.model.nodes.History;
 import win_calculator.model.nodes.events.Event;
 import win_calculator.model.nodes.events.Number;
@@ -13,13 +18,15 @@ import win_calculator.model.nodes.events.main_operations.MainOperation;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 
+import static win_calculator.model.memory.MemoryType.*;
+import static win_calculator.model.memory.MemoryType.SUBTRACT_FROM_MEMORY;
 import static win_calculator.model.nodes.events.EventType.*;
-import static win_calculator.model.utils.ModelUtils.checkOnOverflow;
 import static win_calculator.model.utils.ModelUtils.roundNumber;
 
 class OperationProcessor {
 
     private History history = new History();
+    private Memory memory = new Memory();
     private EventType lastEventType = EventType.CLEAR;
     private MainOperation lastOperation;
 
@@ -244,7 +251,7 @@ class OperationProcessor {
         return history.getEvents();
     }
 
-    BigDecimal processExtraOperation(Event event, BigDecimal number, BigDecimal responseNumber) throws OperationException {
+    BigDecimal processExtraOperation(Event event, BigDecimal number, BigDecimal responseNumber) throws DivideByZeroException, NegativeValueForSQRTException {
 
         BigDecimal resultNum;
         if (number != null) {
@@ -264,16 +271,14 @@ class OperationProcessor {
             addZeroToHistory();
         }
         addEventToHistory(event);
-        resultNum = roundNumber(((ExtraOperation) event).calculate(resultNum));
-        checkOnOverflow(resultNum);
+        resultNum = ((ExtraOperation) event).calculate(resultNum);
         setLastExtraResult(resultNum);
         return resultNum;
     }
 
-    BigDecimal processPercent(Event event, BigDecimal number) throws OperationException {
+    BigDecimal processPercent(Event event, BigDecimal number){
 
         BigDecimal response = roundNumber(doPercent((Percent) event, number));
-        checkOnOverflow(response);
         if (!BigDecimal.ZERO.equals(response) && !"0.00".equals(response.toString())) {
             if (previousNumber == null) {
                 previousNumber = lastNumber;
@@ -307,7 +312,7 @@ class OperationProcessor {
         return result;
     }
 
-    BigDecimal processMainOperation(Event event, BigDecimal number, BigDecimal responseNumber) throws OperationException {
+    BigDecimal processMainOperation(Event event, BigDecimal number, BigDecimal responseNumber) throws UndefinedResultException, DivideByZeroException {
 
         BigDecimal result = responseNumber;
         if (number != null) {
@@ -326,6 +331,7 @@ class OperationProcessor {
             }
         } else {
             addZeroToHistory();
+            result = BigDecimal.ZERO;
         }
         BigDecimal operationResult = doOperation(event);
         if (operationResult != null) {
@@ -343,7 +349,7 @@ class OperationProcessor {
         return null;
     }
 
-    BigDecimal processEnter(BigDecimal number, BigDecimal previousResponse) throws OperationException {
+    BigDecimal processEnter(BigDecimal number, BigDecimal previousResponse) throws UndefinedResultException, DivideByZeroException {
 
         BigDecimal response = previousResponse;
         if (number != null) {
@@ -365,6 +371,7 @@ class OperationProcessor {
         enterRepeated = true;
         resetLastExtraResult();
         lastEventType = EventType.CLEAR;
+        history = new History();
         return response;
     }
 
@@ -382,7 +389,7 @@ class OperationProcessor {
         }
     }
 
-    private BigDecimal doOperation(Event event) throws OperationException {
+    private BigDecimal doOperation(Event event) throws UndefinedResultException, DivideByZeroException {
 
         initVariables();
         enterForOperationRepeated = false;
@@ -398,7 +405,7 @@ class OperationProcessor {
         return result;
     }
 
-    private BigDecimal doCalculation() throws OperationException {
+    private BigDecimal doCalculation() throws UndefinedResultException, DivideByZeroException {
         BigDecimal result = null;
         if (mOperationBefore || enterForOperationRepeated) {
             if (isPreviousNumberEmpty()) {
@@ -414,15 +421,13 @@ class OperationProcessor {
                     result = lastOperation.calculate(previousNumber, lastNumber);
                 }
             }
-            result = roundNumber(result);
-            checkOnOverflow(result);
             this.result = result;
         }
         operationResult = result;
         return result;
     }
 
-    private BigDecimal doEnter() throws OperationException {
+    private BigDecimal doEnter() throws UndefinedResultException, DivideByZeroException {
 
         initVariables();
         if (mOperationBefore || enterForOperationRepeated) {
@@ -471,5 +476,51 @@ class OperationProcessor {
         if (result != null) {
             operationResult = result;
         }
+    }
+
+    BigDecimal processMemory(MemoryEvent event, BigDecimal number) {
+
+        MemoryType memoryType = event.getMemoryType();
+        BigDecimal response = number ;
+        if (CLEAR_MEMORY.equals(memoryType)) {
+            memory = new Memory();
+        } else {
+            if (response == null && lastExtraResult != null){
+                response = lastExtraResult;
+            }
+            if (response == null && operationResult != null) {
+                response = operationResult;
+            }
+            if (response == null && lastNumber != null){
+                response = lastNumber;
+            }
+            if (response == null){
+                response = BigDecimal.ZERO;
+            }
+            BigDecimal result = doEvent(event, response);
+            if (result != null){
+                response = result;
+            }
+        }
+        lastEventType = event.getType();
+        return response;
+    }
+
+    private BigDecimal doEvent(MemoryEvent event, BigDecimal number){
+
+        MemoryType memoryType = event.getMemoryType();
+        BigDecimal result = null;
+        if (ADD_TO_MEMORY.equals(memoryType)){
+            memory.addToStoredNumber(number);
+        }else if (CLEAR_MEMORY.equals(memoryType)){
+            memory.clear();
+        }else if (STORE.equals(memoryType)){
+            memory.storeNumber(number);
+        }else if (RECALL.equals(memoryType)){
+            result = memory.getStoredNumber();
+        }else if (SUBTRACT_FROM_MEMORY.equals(memoryType)){
+            memory.subtractFromStoredNumber(number);
+        }
+        return result;
     }
 }

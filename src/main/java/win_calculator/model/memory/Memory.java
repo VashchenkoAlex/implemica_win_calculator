@@ -1,4 +1,4 @@
-package win_calculator.controller.memory;
+package win_calculator.model.memory;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;

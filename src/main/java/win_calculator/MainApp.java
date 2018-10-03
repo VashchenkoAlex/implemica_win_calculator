@@ -18,7 +18,7 @@ public class MainApp extends Application {
         launch(args);
     }
 
-    public void start(final Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) throws IOException {
 
         setUpApp();
     }

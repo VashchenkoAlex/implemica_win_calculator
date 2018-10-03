@@ -1,9 +1,8 @@
-package win_calculator.ControllerTests;
+package win_calculator;
 
 import org.junit.jupiter.api.Test;
-import win_calculator.controller.memory.*;
-import win_calculator.controller.Response;
 import win_calculator.controller.FXMLViewController;
+import win_calculator.model.memory.ClearMemory;
 import win_calculator.model.nodes.events.Event;
 import win_calculator.model.nodes.events.clear.Clear;
 
@@ -12,7 +11,7 @@ import java.util.HashMap;
 import static org.junit.gen5.api.Assertions.assertEquals;
 import static win_calculator.TestUtils.createMap;
 
-class ControllerTestClass {
+class ControllerTest {
 
     private static final FXMLViewController controller = new FXMLViewController();
     private static final HashMap<String, Event> events = createMap();
@@ -59,7 +58,6 @@ class ControllerTestClass {
         test("2 ± + 0 =", "-2", "");
         test("0 + 2 ± =", "-2", "");
         test("0 + 0002 ± =", "-2", "");
-
 
         test("2 + 3 = 123456789 ± + 01111 +", "-123 455 678", "-123456789  +  1111  +  ");
         test("2 + 3 = = 00003456 + 00002 ± +", "3 454", "3456  +  -2  +  ");
@@ -560,6 +558,7 @@ class ControllerTestClass {
         test( "9876543210 sqrt 1/x sqrt ± ±","0,0031721137903118","negate( negate( √( 1/( √( 9876543210 ) ) ) ) )");
         test( "9876543210 1/x ± sqr" ,"1,025156249974371e-20","sqr( negate( 1/( 9876543210 ) ) )");
         test( "9876543210 ± sqr sqrt sqrt sqrt sqr","99 380,79900061178","sqr( √( √( √( sqr( -9876543210 ) ) ) ) )");
+        test( "9876543210 1/x - 0,0000000001012499 =","9,999873437500002e-17","");
         test( "9876543210 1/x sqr sqrt sqr sqr 1/x ±","-9,515242752647292e+39","negate( 1/( sqr( sqr( √( sqr( 1/( 9876543210 ) ) ) ) ) ) )");
         test( "9876543210 sqrt sqrt 1/x ± sqr sqrt ±","-0,0031721137903118","negate( √( sqr( negate( 1/( √( √( 9876543210 ) ) ) ) ) ) )");
         test( "9876543210 ± sqr sqr sqrt ± ± 1/x","1,025156249974371e-20","1/( negate( negate( √( sqr( sqr( -9876543210 ) ) ) ) ) )");
@@ -735,7 +734,6 @@ class ControllerTestClass {
         test("3 1/x", "0,3333333333333333", "1/( 3 )");
         test("1 / 6 /", "0,1666666666666667", "1  ÷  6  ÷  ");
         test("1 / 3 * 3 +", "1", "1  ÷  3  ×  3  +  ");
-        test("1 / 3 * 3 - 1 =", "0", "");
         test("1 / 3 * 0,0000000000000001 * 0,00000000001 * 10000000000000000 * 10000000000000 * 3 *","10","1  ÷  3  ×  0,0000000000000001  ×  0,00000000001  ×  1000000000000000  ×  10000000000000  ×  3  ×  ");
 
         test("2 sqrt", "1,414213562373095", "√( 2 )");
@@ -809,13 +807,7 @@ class ControllerTestClass {
 
         test("333 / 1000000000000000 = =", "3,33e-28", "");
         test("333 / 1000000000000000 = =", "3,33e-28", "");
-
         test("1 / 1000000000000000 " + addEquals(100), "1,e-1500", "");
-        test("1 / 1000000000000000 " + addEquals(666), "1,e-9990", "");
-        test("1 / 10 " + addEquals(9999), "1,e-9999", "");
-        test("1 / 10 " + addEquals(9999) + " MS * 10 - MR * 0,1 =", "Overflow", "1,e-9999  ×  10  -  1,e-9999  ×  ");
-        test("1 / 10 " + addEquals(9999) + " + =", "2,e-9999", "");
-        test("1 / 10 " + addEquals(9999) + " + = = = = = = = = = =", "1,1e-9998", "");
 
         test("0,0000000000000023 * 0,1 =", "2,3e-16", "");
         test("0,0000000000000234 * 0,1 =", "2,34e-15", "");
@@ -858,6 +850,27 @@ class ControllerTestClass {
     }
 
     @Test
+    void testMaxPossibleValues(){
+
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = + MR = = = =","9,999999999999999e+9999","");
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = + MR = = = = =","Overflow","");
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 100 * MS 1000000000000000 * 100 = - MR = = = = = = * 10 = + MR "+addEquals(9),"9,999999999999999e+9999","");
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 100 * MS 1000000000000000 * 100 = - MR = = = = = = * 10 = + MR "+addEquals(10),"Overflow","");
+
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = ± - MR = = = =","-9,999999999999999e+9999","");
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = ± - MR = = = = =","Overflow","");
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 100 * MS 1000000000000000 * 100 = - MR = = = = = = * 10 = ± - MR "+addEquals(9),"-9,999999999999999e+9999","");
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 100 * MS 1000000000000000 * 100 = - MR = = = = = = * 10 = ± - MR "+addEquals(10),"Overflow","");
+
+        test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 0,00000000000001 sqr sqr sqr sqr sqr sqr sqr * 0,000000000000001 *","1,e-9999","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) ) )  ×  sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,00000000000001 ) ) ) ) ) ) )  ×  0,000000000000001  ×  ");
+        test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 0,00000000000001 sqr sqr sqr sqr sqr sqr sqr * 0,000000000000001 * 0,9999999999999999 =","Overflow","");
+
+        test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 0,00000000000001 sqr sqr sqr sqr sqr sqr sqr * 0,000000000000001 ± *","-1,e-9999","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) ) )  ×  sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,00000000000001 ) ) ) ) ) ) )  ×  -0,000000000000001  ×  ");
+        test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 0,00000000000001 sqr sqr sqr sqr sqr sqr sqr * 0,000000000000001 ± * 0,9999999999999999 =","Overflow","");
+
+    }
+
+    @Test
     void testEPlusValues(){
 
         test("1000000000000000 + ", "1 000 000 000 000 000", "1000000000000000  +  ");
@@ -866,14 +879,6 @@ class ControllerTestClass {
         test("1000000000000000 * 10 * 10 / 10 /", "1,e+16", "1000000000000000  ×  10  ×  10  ÷  10  ÷  ");
         test("1000000000000000 + = = = = = = = = =", "1,e+16", "");
         test("1000000000000000 + = = = = = = = = = + 1 =", "1,e+16", "");
-
-        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = + MR = = =","9,999999999999999e+9999","");
-        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = + MR = = = =","9,999999999999999e+9999","");
-        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = + MR = = = = =","Overflow","");
-
-        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = ± - MR = = =","-9,999999999999999e+9999","");
-        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = ± - MR = = = =","-9,999999999999999e+9999","");
-        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = ± - MR = = = = =","Overflow","");
 
         test("12 * 1000000000000000 +","1,2e+16","12  ×  1000000000000000  +  ");
         test("123 * 1000000000000000 +","1,23e+17","123  ×  1000000000000000  +  ");
@@ -1106,17 +1111,17 @@ class ControllerTestClass {
 
     private void test(String expression, String display, String history){
 
-        Response response = prepareTest(expression);
-        assertEquals(display, response.getDisplay());
-        assertEquals(history, response.getHistory());
+        String[] response = prepareTest(expression);
+        assertEquals(display, response[0]);
+        assertEquals(history, response[1]);
         controller.handleEvent(new Clear());
         controller.handleEvent(new ClearMemory());
     }
 
-    private Response prepareTest(String expression){
+    private String[] prepareTest(String expression){
 
         String[] parsedEventStrings = expression.split(" ");
-        Response response = null;
+        String[] response = null;
         for (String str : parsedEventStrings) {
             if (str.matches(IS_DIGIT_REGEX) || COMA.equals(str)) {
                 for (char ch : str.toCharArray()) {
