@@ -852,20 +852,41 @@ class ControllerTest {
     @Test
     void testMaxPossibleValues(){
 
+        //get 9,9999999999999990e+9999 and add 1,e+9983 4 times
         test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = + MR = = = =","9,999999999999999e+9999","");
+        //get 9,9999999999999990e+9999 and add 1,e+9983 5 times
         test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = + MR = = = = =","Overflow","");
+        //get 9,99999999999999940e+9999 and add 1,e+9982 9 times
         test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 100 * MS 1000000000000000 * 100 = - MR = = = = = = * 10 = + MR "+addEquals(9),"9,999999999999999e+9999","");
+        //get 9,99999999999999940e+9999 and add 1,e+9982 10 times
         test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 100 * MS 1000000000000000 * 100 = - MR = = = = = = * 10 = + MR "+addEquals(10),"Overflow","");
+        //get 9,999999999999999499999...
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 100 * MS 1000000000000000 * 100 = - MR = = = = = - 0,0000000000000001 * 10 =","9,999999999999999e+9999","");
+        //get 9,999999999999999499999... and add 0,000000000000001
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 100 * MS 1000000000000000 * 100 = - MR = = = = = - 0,0000000000000001 * 10 = + 0,000000000000001 =","Overflow","");
 
+        //get -9,9999999999999990e+9999 and subtract 1,e+9983 4 times
         test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = ± - MR = = = =","-9,999999999999999e+9999","");
+        //get -9,9999999999999990e+9999 and subtract 1,e+9983 5 times
         test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 10 * MS 1000000000000000 * 10 = - MR * 10 = ± - MR = = = = =","Overflow","");
+        //get -9,99999999999999940e+9999 and subtract 1,e+9982 9 times
         test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 100 * MS 1000000000000000 * 100 = - MR = = = = = = * 10 = ± - MR "+addEquals(9),"-9,999999999999999e+9999","");
+        //get -9,99999999999999940e+9999 and subtract 1,e+9982 10 times
         test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 100 * MS 1000000000000000 * 100 = - MR = = = = = = * 10 = ± - MR "+addEquals(10),"Overflow","");
+        //get -9,999999999999999499999...
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 100 * MS 1000000000000000 * 100 = - MR = = = = = ± + 0,0000000000000001 * 10 =","-9,999999999999999e+9999","");
+        //get -9,999999999999999499999... and subtract 0,000000000000001
+        test("1000000000000000 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 1000000000000000 sqr sqr sqr sqr sqr sqr sqr * 1000000 sqr sqr sqr sqr sqr sqr / 100 * MS 1000000000000000 * 100 = - MR = = = = = ± + 0,0000000000000001 * 10 = - 0,000000000000001 =","Overflow","");
 
+
+        //get 1,e-9999
         test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 0,00000000000001 sqr sqr sqr sqr sqr sqr sqr * 0,000000000000001 *","1,e-9999","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) ) )  ×  sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,00000000000001 ) ) ) ) ) ) )  ×  0,000000000000001  ×  ");
+        //get 1,e-9999 and multiply 0,9999999999999999
         test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 0,00000000000001 sqr sqr sqr sqr sqr sqr sqr * 0,000000000000001 * 0,9999999999999999 =","Overflow","");
 
+        //get -1,e-9999
         test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 0,00000000000001 sqr sqr sqr sqr sqr sqr sqr * 0,000000000000001 ± *","-1,e-9999","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) ) )  ×  sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,00000000000001 ) ) ) ) ) ) )  ×  -0,000000000000001  ×  ");
+        //get -1,e-9999 and multiply 0,9999999999999999
         test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 0,00000000000001 sqr sqr sqr sqr sqr sqr sqr * 0,000000000000001 ± * 0,9999999999999999 =","Overflow","");
 
     }
