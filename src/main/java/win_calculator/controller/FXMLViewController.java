@@ -19,13 +19,10 @@ import javafx.scene.layout.RowConstraints;
 import javafx.stage.Window;
 import javafx.util.Callback;
 import javafx.util.Duration;
-import win_calculator.model.exceptions.OverflowException;
+import win_calculator.model.exceptions.*;
 import win_calculator.controller.digits.*;
-import win_calculator.model.exceptions.DivideByZeroException;
-import win_calculator.model.exceptions.NegativeValueForSQRTException;
 import win_calculator.controller.view_handlers.*;
 import win_calculator.model.CalcModel;
-import win_calculator.model.exceptions.UndefinedResultException;
 import win_calculator.model.memory.*;
 import win_calculator.model.nodes.events.Event;
 import win_calculator.model.nodes.events.clear.BaskSpace;
@@ -44,7 +41,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static win_calculator.utils.CalculatorUtils.*;
+import static win_calculator.controller.utils.CalculatorUtils.*;
 import static win_calculator.model.memory.MemoryType.STORE;
 import static win_calculator.model.nodes.events.EventType.*;
 import static win_calculator.controller.enums.MenuListOption.*;
@@ -139,9 +136,9 @@ public class FXMLViewController implements Initializable {
     private boolean wasExeption = false;
     private static final double MENU_LIST_WIDTH = 260;
     private static final String DISPLAY_PATTERN = "#############,###.################";
-    private static final String MSG_FOR_NEGATIVE_VALUE_FOR_SQRT = "Invalid input";
+    private static final String NEGATIVE_VALUE_FOR_SQRT_MSG = "Invalid input";
     private static final String OVERFLOW_MSG = "Overflow";
-    private static final String CANNOT_DIVIDE_EXCEPTION_MSG = "Cannot divide by zero";
+    private static final String DIVIDE_BY_ZERO_EXCEPTION_MSG = "Cannot divide by zero";
     private static final String UNDEFINED_EXCEPTION_MSG = "Result is undefined";
 
 
@@ -394,18 +391,9 @@ public class FXMLViewController implements Initializable {
             } else {
                 lastDisplay = convertToString(handleOperation(event), DISPLAY_PATTERN);
             }
-        } catch (NegativeValueForSQRTException e) {
+        } catch (OperationException e) {
+            lastDisplay = selectMessageAfterException(e.getType());
             wasExeption = true;
-            lastDisplay = MSG_FOR_NEGATIVE_VALUE_FOR_SQRT;
-        } catch (UndefinedResultException e) {
-            wasExeption = true;
-            lastDisplay = UNDEFINED_EXCEPTION_MSG;
-        } catch (DivideByZeroException e) {
-            wasExeption = true;
-            lastDisplay = CANNOT_DIVIDE_EXCEPTION_MSG;
-        } catch (OverflowException e) {
-            wasExeption = true;
-            lastDisplay = OVERFLOW_MSG;
         }
         if (wasExeption && isEventTypeResettingOverflow(type)) {
             lastHistoryText = "";
@@ -418,7 +406,7 @@ public class FXMLViewController implements Initializable {
         return new String[]{lastDisplay, lastHistoryText};
     }
 
-    private BigDecimal handleOperation(Event event) throws UndefinedResultException, NegativeValueForSQRTException, DivideByZeroException, OverflowException {
+    private BigDecimal handleOperation(Event event) throws OperationException {
 
         BigDecimal currentNum = numberBuilder.finish();
         BigDecimal result = model.toDo(currentNum, event);
@@ -440,7 +428,7 @@ public class FXMLViewController implements Initializable {
         return result;
     }
 
-    private String handleDigit(Event digit) throws UndefinedResultException, NegativeValueForSQRTException, DivideByZeroException, OverflowException {
+    private String handleDigit(Event digit) throws OperationException {
 
         String response;
         if (lastDisplay != null && isNotNumber(lastDisplay)) {
@@ -468,7 +456,7 @@ public class FXMLViewController implements Initializable {
         return numberBuilder.negate(MEMORY.equals(lastEventType));
     }
 
-    private String handleBackSpace(Event event) throws UndefinedResultException, NegativeValueForSQRTException, DivideByZeroException, OverflowException {
+    private String handleBackSpace(Event event) throws OperationException {
 
         String response;
         if (isBackSpacePossible()) {
@@ -482,7 +470,7 @@ public class FXMLViewController implements Initializable {
         return response;
     }
 
-    private void handleClearEntered(Event event) throws UndefinedResultException, NegativeValueForSQRTException, DivideByZeroException, OverflowException {
+    private void handleClearEntered(Event event) throws OperationException {
 
         numberBuilder.clear();
         model.toDo(null, event);
@@ -660,4 +648,27 @@ public class FXMLViewController implements Initializable {
         return BACKSPACE.equals(type) || CLEAR.equals(type) || DIGIT.equals(type) || CLEAR_ENTERED.equals(type) || (ENTER.equals(lastEventType) && ENTER.equals(type));
     }
 
+    private String selectMessageAfterException(ExceptionType type){
+
+        String message = "";
+        switch (type){
+            case OVERFLOW: {
+                message = OVERFLOW_MSG;
+                break;
+            }
+            case DIVIDE_BY_ZERO: {
+                message = DIVIDE_BY_ZERO_EXCEPTION_MSG;
+                break;
+            }
+            case UNDEFINED_RESULT: {
+                message = UNDEFINED_EXCEPTION_MSG;
+                break;
+            }
+            case NEGATIVE_VALUE_FOR_SQRT: {
+                message = NEGATIVE_VALUE_FOR_SQRT_MSG;
+                break;
+            }
+        }
+        return message;
+    }
 }

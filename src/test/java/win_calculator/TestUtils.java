@@ -1,8 +1,6 @@
 package win_calculator;
 
-import javafx.scene.input.KeyCode;
 import win_calculator.controller.digits.*;
-//import win_calculator.controller.memory.*;
 import win_calculator.model.memory.*;
 import win_calculator.model.nodes.events.Event;
 import win_calculator.model.nodes.events.clear.BaskSpace;
@@ -18,9 +16,9 @@ import win_calculator.model.nodes.events.main_operations.Subtract;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
-public class TestUtils {
+class TestUtils {
 
-    public static HashMap<String, ButtonForTest> createButtonsMap(){
+    static HashMap<String, ButtonForTest> createButtonsMap(){
 
         HashMap<String, ButtonForTest> map = new HashMap<>();
         map.put("0",new ButtonForTest("#zeroBtn",/*KeyCode.DIGIT0*/KeyEvent.VK_0,false));
@@ -59,7 +57,7 @@ public class TestUtils {
         return map;
     }
 
-    public static HashMap<String, Event> createMap() {
+    static HashMap<String, Event> createMap() {
 
         HashMap<String, Event> map = new HashMap<>();
         map.put("0", new ZeroDigit());

@@ -8,9 +8,9 @@ import win_calculator.model.nodes.events.EventType;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 
-import static win_calculator.utils.CalculatorUtils.addCapacity;
-import static win_calculator.utils.CalculatorUtils.convertToString;
-import static win_calculator.utils.CalculatorUtils.replaceDotToComa;
+import static win_calculator.controller.utils.CalculatorUtils.addCapacity;
+import static win_calculator.controller.utils.CalculatorUtils.convertToString;
+import static win_calculator.controller.utils.CalculatorUtils.replaceDotToComa;
 import static win_calculator.model.nodes.events.EventType.*;
 
 public class NumberBuilder {

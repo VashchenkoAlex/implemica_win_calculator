@@ -1,8 +1,6 @@
 package win_calculator.model;
 
-import win_calculator.model.exceptions.DivideByZeroException;
-import win_calculator.model.exceptions.NegativeValueForSQRTException;
-import win_calculator.model.exceptions.UndefinedResultException;
+import win_calculator.model.exceptions.OperationException;
 import win_calculator.model.memory.Memory;
 import win_calculator.model.memory.MemoryEvent;
 import win_calculator.model.memory.MemoryType;
@@ -251,7 +249,7 @@ class OperationProcessor {
         return history.getEvents();
     }
 
-    BigDecimal processExtraOperation(Event event, BigDecimal number, BigDecimal responseNumber) throws DivideByZeroException, NegativeValueForSQRTException {
+    BigDecimal processExtraOperation(Event event, BigDecimal number, BigDecimal responseNumber) throws OperationException {
 
         BigDecimal resultNum;
         if (number != null) {
@@ -312,7 +310,7 @@ class OperationProcessor {
         return result;
     }
 
-    BigDecimal processMainOperation(Event event, BigDecimal number, BigDecimal responseNumber) throws UndefinedResultException, DivideByZeroException {
+    BigDecimal processMainOperation(Event event, BigDecimal number, BigDecimal responseNumber) throws OperationException {
 
         BigDecimal result = responseNumber;
         if (number != null) {
@@ -344,12 +342,11 @@ class OperationProcessor {
 
     BigDecimal processClear() {
 
-        clearHistory();
         resetValues();
         return null;
     }
 
-    BigDecimal processEnter(BigDecimal number, BigDecimal previousResponse) throws UndefinedResultException, DivideByZeroException {
+    BigDecimal processEnter(BigDecimal number, BigDecimal previousResponse) throws OperationException {
 
         BigDecimal response = previousResponse;
         if (number != null) {
@@ -389,7 +386,7 @@ class OperationProcessor {
         }
     }
 
-    private BigDecimal doOperation(Event event) throws UndefinedResultException, DivideByZeroException {
+    private BigDecimal doOperation(Event event) throws OperationException {
 
         initVariables();
         enterForOperationRepeated = false;
@@ -405,7 +402,7 @@ class OperationProcessor {
         return result;
     }
 
-    private BigDecimal doCalculation() throws UndefinedResultException, DivideByZeroException {
+    private BigDecimal doCalculation() throws OperationException {
         BigDecimal result = null;
         if (mOperationBefore || enterForOperationRepeated) {
             if (isPreviousNumberEmpty()) {
@@ -427,7 +424,7 @@ class OperationProcessor {
         return result;
     }
 
-    private BigDecimal doEnter() throws UndefinedResultException, DivideByZeroException {
+    private BigDecimal doEnter() throws OperationException {
 
         initVariables();
         if (mOperationBefore || enterForOperationRepeated) {

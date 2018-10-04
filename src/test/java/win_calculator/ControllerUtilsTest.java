@@ -3,10 +3,10 @@ package win_calculator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.gen5.api.Assertions.assertEquals;
-import static win_calculator.utils.CalculatorUtils.addCapacity;
+import static win_calculator.controller.utils.CalculatorUtils.addCapacity;
 
 
-class UtilsTest {
+class ControllerUtilsTest {
 
     @Test
     void addCapacityTest() {

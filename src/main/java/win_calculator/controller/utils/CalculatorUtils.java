@@ -1,4 +1,4 @@
-package win_calculator.utils;
+package win_calculator.controller.utils;
 
 import win_calculator.model.nodes.events.Event;
 import win_calculator.model.nodes.events.EventType;

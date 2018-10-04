@@ -1,9 +1,6 @@
 package win_calculator.model;
 
-import win_calculator.model.exceptions.OverflowException;
-import win_calculator.model.exceptions.DivideByZeroException;
-import win_calculator.model.exceptions.NegativeValueForSQRTException;
-import win_calculator.model.exceptions.UndefinedResultException;
+import win_calculator.model.exceptions.*;
 import win_calculator.model.memory.MemoryEvent;
 import win_calculator.model.nodes.events.Event;
 
@@ -18,7 +15,7 @@ public class CalcModel {
     private OperationProcessor operationProcessor = new OperationProcessor();
     private BigDecimal responseNumber;
 
-    public BigDecimal toDo(BigDecimal number, Event event) throws UndefinedResultException, DivideByZeroException, NegativeValueForSQRTException, OverflowException {
+    public BigDecimal toDo(BigDecimal number, Event event) throws OperationException {
 
         switch (event.getType()) {
             case MAIN_OPERATION: {

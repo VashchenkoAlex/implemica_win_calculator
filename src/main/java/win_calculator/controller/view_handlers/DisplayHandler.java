@@ -7,8 +7,8 @@ import win_calculator.controller.digits.Digit;
 import win_calculator.model.nodes.events.Event;
 import win_calculator.model.nodes.events.EventType;
 
-import static win_calculator.utils.CalculatorUtils.addCapacity;
-import static win_calculator.utils.CalculatorUtils.isComaAbsent;
+import static win_calculator.controller.utils.CalculatorUtils.addCapacity;
+import static win_calculator.controller.utils.CalculatorUtils.isComaAbsent;
 import static win_calculator.model.nodes.events.EventType.BACKSPACE;
 import static win_calculator.model.nodes.events.EventType.DIGIT;
 

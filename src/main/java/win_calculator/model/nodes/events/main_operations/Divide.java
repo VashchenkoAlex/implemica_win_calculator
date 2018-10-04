@@ -1,12 +1,13 @@
 package win_calculator.model.nodes.events.main_operations;
 
-import win_calculator.model.exceptions.DivideByZeroException;
 import win_calculator.model.exceptions.OperationException;
-import win_calculator.model.exceptions.UndefinedResultException;
 import win_calculator.model.nodes.events.EventType;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
+import static win_calculator.model.exceptions.ExceptionType.DIVIDE_BY_ZERO;
+import static win_calculator.model.exceptions.ExceptionType.UNDEFINED_RESULT;
 
 public class Divide implements MainOperation {
 
@@ -15,28 +16,28 @@ public class Divide implements MainOperation {
     private static final int SCALE = 10030;
 
     @Override
-    public BigDecimal calculate(BigDecimal number) throws UndefinedResultException {
+    public BigDecimal calculate(BigDecimal number) throws OperationException {
 
         BigDecimal result;
         try{
             result = number.divide(number,SCALE,RoundingMode.HALF_DOWN);
         }catch (ArithmeticException e){
-            throw new UndefinedResultException();
+            throw new OperationException(UNDEFINED_RESULT);
         }
         return result;
     }
 
     @Override
-    public BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber) throws UndefinedResultException, DivideByZeroException {
+    public BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber) throws OperationException {
 
         BigDecimal result;
         if (firstNumber.equals(BigDecimal.ZERO) && secondNumber.equals(BigDecimal.ZERO)){
-            throw new UndefinedResultException();
+            throw new OperationException(UNDEFINED_RESULT);
         }
         try{
             result = firstNumber.divide(secondNumber,SCALE,RoundingMode.HALF_UP);
         }catch (ArithmeticException e){
-            throw new DivideByZeroException();
+            throw new OperationException(DIVIDE_BY_ZERO);
         }
         return result;
     }
