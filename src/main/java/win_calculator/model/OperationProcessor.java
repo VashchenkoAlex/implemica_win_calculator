@@ -33,6 +33,7 @@ class OperationProcessor {
     private BigDecimal result;
     private BigDecimal lastExtraResult;
     private BigDecimal operationResult;
+    private BigDecimal lastInputedNumber;
 
     private boolean enterForOperationRepeated;
     private boolean enterRepeated;
@@ -47,11 +48,6 @@ class OperationProcessor {
 
         history.addEvent(event);
         lastEventType = event.getType();
-    }
-
-    private void clearHistory() {
-
-
     }
 
     private void setHistory(History history) {
@@ -107,7 +103,7 @@ class OperationProcessor {
 
     private void rejectLastNumber() {
 
-        if (historyNotEmpty() && !lastEventNotNumber()) {
+        if (historyNotEmpty() && !lastEventNotNumberAndNotNegate()) {
             LinkedList<Event> events = new LinkedList<>(history.getEvents());
             EventType type;
             for (int i = events.size() - 1; i > 0; i--) {
@@ -132,7 +128,7 @@ class OperationProcessor {
         lastExtraResult = null;
     }
 
-    private boolean lastEventNotNumber() {
+    private boolean lastEventNotNumberAndNotNegate() {
 
         boolean result = true;
         if (lastEventType != null) {
@@ -190,6 +186,8 @@ class OperationProcessor {
         } else if (result != null) {
             if (PERCENT.equals(lastEventType)) {
                 secondNumber = lastNumber;
+            } else if (EXTRA_OPERATION.equals(lastEventType) && lastExtraResult != null) {
+                secondNumber = lastExtraResult;
             } else {
                 secondNumber = result;
             }
@@ -218,7 +216,7 @@ class OperationProcessor {
     BigDecimal processNegate(Event negate, BigDecimal number, BigDecimal responseNumber) {
 
         BigDecimal result = responseNumber;
-        if (number == null && lastEventNotNumber()) {
+        if (number == null && lastEventNotNumberAndNotNegate()) {
             if (responseNumber != null) {
                 if (MAIN_OPERATION.equals(lastEventType) || CLEAR.equals(lastEventType)) {
                     addNumberToHistory(result);
@@ -253,6 +251,7 @@ class OperationProcessor {
 
         BigDecimal resultNum;
         if (number != null) {
+            lastInputedNumber = number;
             addNumberToHistory(number);
             setLastNumber(number);
             resultNum = number;
@@ -274,8 +273,11 @@ class OperationProcessor {
         return resultNum;
     }
 
-    BigDecimal processPercent(Event event, BigDecimal number){
+    BigDecimal processPercent(Event event, BigDecimal number) {
 
+        if (number != null) {
+            lastInputedNumber = number;
+        }
         BigDecimal response = roundNumber(doPercent((Percent) event, number));
         if (!BigDecimal.ZERO.equals(response) && !"0.00".equals(response.toString())) {
             if (previousNumber == null) {
@@ -317,6 +319,7 @@ class OperationProcessor {
             addNumberToHistory(number);
             setLastNumber(number);
             result = number;
+            lastInputedNumber = number;
             if (enterRepeated) {
                 resetResultNumber();
             }
@@ -353,9 +356,13 @@ class OperationProcessor {
             resetResultNumber();
             setLastNumber(number);
             response = number;
+            lastInputedNumber = number;
         } else {
             if (PERCENT.equals(lastEventType)) {
                 result = previousNumber;
+            }
+            if (EXTRA_OPERATION.equals(lastEventType) && enterRepeated) {
+                result = lastInputedNumber;
             }
             if (!enterRepeated && result != null && (MAIN_OPERATION.equals(lastEventType) || MEMORY.equals(lastEventType))) {
                 setLastNumber(result);
@@ -374,11 +381,12 @@ class OperationProcessor {
 
     void processClearEntered() {
 
+        lastInputedNumber = null;
         boolean done = rejectLastNumberWithExtraOperations();
         if (!done) {
             rejectLastNumber(); // ??
         }
-        if (!enterRepeated) {
+        if (!enterRepeated ) {
             lastExtraResult = operationResult;
             if (lastExtraResult == null) {
                 lastExtraResult = previousNumber;
@@ -449,6 +457,7 @@ class OperationProcessor {
         result = null;
         enterRepeated = false;
         lastExtraResult = null;
+        lastInputedNumber = null;
     }
 
     private boolean isResultEmpty() {
@@ -464,9 +473,9 @@ class OperationProcessor {
     private void initVariables() {
 
         if (lastExtraResult != null) {
-            if (lastEventNotNumber()) {
+            if (lastEventNotNumberAndNotNegate()) {
                 lastNumber = lastExtraResult;
-            } else {
+            } else if (result != null || NUMBER.equals(lastEventType)){
                 operationResult = lastExtraResult;
             }
         }
@@ -478,24 +487,27 @@ class OperationProcessor {
     BigDecimal processMemory(MemoryEvent event, BigDecimal number) {
 
         MemoryType memoryType = event.getMemoryType();
-        BigDecimal response = number ;
+        BigDecimal response = number;
         if (CLEAR_MEMORY.equals(memoryType)) {
             memory = new Memory();
         } else {
-            if (response == null && lastExtraResult != null){
+            if (response != null) {
+                lastInputedNumber = number;
+            }
+            if (response == null && lastExtraResult != null) {
                 response = lastExtraResult;
             }
             if (response == null && operationResult != null) {
                 response = operationResult;
             }
-            if (response == null && lastNumber != null){
+            if (response == null && lastNumber != null) {
                 response = lastNumber;
             }
-            if (response == null){
+            if (response == null) {
                 response = BigDecimal.ZERO;
             }
-            BigDecimal result = doEvent(event, response);
-            if (result != null){
+            BigDecimal result = doMemoryEvent(event, response);
+            if (result != null) {
                 response = result;
             }
         }
@@ -503,19 +515,19 @@ class OperationProcessor {
         return response;
     }
 
-    private BigDecimal doEvent(MemoryEvent event, BigDecimal number){
+    private BigDecimal doMemoryEvent(MemoryEvent event, BigDecimal number) {
 
         MemoryType memoryType = event.getMemoryType();
         BigDecimal result = null;
-        if (ADD_TO_MEMORY.equals(memoryType)){
+        if (ADD_TO_MEMORY.equals(memoryType)) {
             memory.addToStoredNumber(number);
-        }else if (CLEAR_MEMORY.equals(memoryType)){
+        } else if (CLEAR_MEMORY.equals(memoryType)) {
             memory.clear();
-        }else if (STORE.equals(memoryType)){
+        } else if (STORE.equals(memoryType)) {
             memory.storeNumber(number);
-        }else if (RECALL.equals(memoryType)){
+        } else if (RECALL.equals(memoryType)) {
             result = memory.getStoredNumber();
-        }else if (SUBTRACT_FROM_MEMORY.equals(memoryType)){
+        } else if (SUBTRACT_FROM_MEMORY.equals(memoryType)) {
             memory.subtractFromStoredNumber(number);
         }
         return result;

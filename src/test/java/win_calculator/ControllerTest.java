@@ -352,6 +352,7 @@ class ControllerTest {
         test("3 / 0 sqr +","Cannot divide by zero","3  ÷  sqr( 0 )  +  ");
         test("4 / 0 sqrt +","Cannot divide by zero","4  ÷  √( 0 )  +  ");
 
+
         test("12 / 34 = = / 56 * ± /","-3,436139365170045e-8","0,0103806228373702  ÷  56  ×  negate( -0,000185368264953 )  ÷  ");
         test("12 / 34 = = / 56 / ± =","-1","");
         test("12 / 34 = = 56 ± / % / sqr / 1/x /","0,3136","-56  ÷  31,36  ÷  sqr( -1,785714285714286 )  ÷  1/( -0,56 )  ÷  ");
@@ -475,14 +476,14 @@ class ControllerTest {
         test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr","1,e-8192","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) ) )");
         test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr sqr","Overflow","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) ) ) )");
 
+
         test("3 sqr sqrt - 3 =","0","");
         test("3 sqr sqrt - 10 % = sqr sqr 1/x + sqr * sqr - sqr / sqr % sqr =","5,759700640885393e+29","");
         test("0,9999999999999999 sqr - 0,9999999999999999 * ± sqrt * sqr -","-9,999999999999996e-73","sqr( 0,9999999999999999 )  -  0,9999999999999999  ×  √( negate( -9,999999999999999e-17 ) )  ×  sqr( -9,999999999999999e-25 )  -  ");
-//        test("25 * 25 = = = = = sqrt sqrt sqrt = sqrt sqrt = sqrt =","10,11042428608922","");
-        test("25 * 25 * sqrt sqrt sqrt * sqrt sqrt = sqrt =","10,11042428608922","");
-//        test("25 * 25 = = = = = sqrt 1/x sqrt 1/x = sqrt 1/x = sqrt 1/x =","37,38371953053051","");
-        test("25 * 25 = = = = = sqrt 1/x sqrt 1/x = sqrt 1/x = sqrt 1/x =","37,38371953053051","");
-
+        test("25 * 25 = = = = = sqr sqr sqr =","3,155443620884047e+68","");
+        test("25 * 25 = = = = = sqr sqr sqr = sqr sqr = sqr =","1,535689537429126e+552","");
+        test("25 * 25 * sqr sqr sqr * sqr sqr = sqr","4,257959840008151e+251","sqr( 6,525304467998525e+125 )");
+        test("25 * 25 = = = = = sqr 1/x sqr 1/x = sqr 1/x = sqr 1/x =","2,489206111144457e+138","");
 }
 
     @Test
@@ -527,8 +528,13 @@ class ControllerTest {
         test("0,1 sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt","0,9999999999999999","√( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( 0,1 ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) )");
         test("0,1 sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt","1","√( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( 0,1 ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) )");
 
-        test("128 sqrt sqr - 10 % = sqrt sqrt 1/x + sqrt * sqrt - sqrt / ± sqrt % - sqrt =","303,3092363991881","");
-        test("0,9999999999999999 sqrt - 1 + 9 sqrt * sqr -","27","sqr( 0,9999999999999999 )  -  0,9999999999999999  ×  √( negate( -9,999999999999999e-17 ) )  ×  sqr( -9,999999999999999e-25 )  -  ");
+
+        test("128 sqrt sqrt - 10 % = sqrt sqrt 1/x +","0,7581213888342921","1/( √( √( 3,027227094913372 ) ) )  +  ");
+        test("128 sqrt sqrt - 10 % = sqrt sqrt 1/x + sqrt * sqrt - sqrt / sqrt % - sqrt ±","-11,19352517702115","1/( √( √( 3,027227094913372 ) ) )  +  √( 0,7581213888342921 )  ×  √( 1,628823053490041 )  -  √( 2,078791159415937 )  ÷  0,0050839201106993  -  negate( √( 125,2950058886063 ) )");
+        test("128 sqrt sqrt - 10 % = sqrt sqrt 1/x + sqrt * sqrt - sqrt / sqrt % - sqrt ± +","136,4885310656274","1/( √( √( 3,027227094913372 ) ) )  +  √( 0,7581213888342921 )  ×  √( 1,628823053490041 )  -  √( 2,078791159415937 )  ÷  0,0050839201106993  -  negate( √( 125,2950058886063 ) )  +  ");
+        test("0,9999999999999999 sqrt - 1 + 9 sqrt * sqrt -","5,196152422706632","√( 0,9999999999999999 )  -  1  +  √( 9 )  ×  √( 3 )  -  ");
+        test("9999999999999999 sqrt - sqrt =","99 990 000","");
+
     }
 
     @Test
@@ -647,6 +653,12 @@ class ControllerTest {
         test("256 ± ± ± = =", "-256", "");
         test("1 + 20 % - 3 sqr * 4 sqrt / 5 1/x + 67 ⟵ - 7,8 ±", "-7,8", "1  +  0,2  -  sqr( 3 )  ×  √( 4 )  ÷  1/( 5 )  +  6  -  ");
 
+
+        test("20 + 40 % ± =","12","");
+        test("20 + 40 % ± = ±","-12","negate( 12 )");
+        test("20 + 40 % ± = ± sqr ± ± sqrt","12","√( negate( negate( sqr( negate( 12 ) ) ) ) )");
+        test("5 - ± = ± / 4 * 6 ± 1/x -","0,4166666666666667","negate( 10 )  ÷  4  ×  1/( -6 )  -  ");
+        test("5 sqr ± * ± sqrt - + / 5 ± = ± / 4 * 6 ± 1/x =","-1,041666666666667","");
     }
 
     @Test
@@ -657,8 +669,6 @@ class ControllerTest {
         test("0 % =", "0", "");
         test("1 % % %", "0", "0");
         test("10 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %", "0", "0");
-        test("1 %", "0", "0");
-        test("20 %", "0", "0");
         test("1 %", "0", "0");
         test("20 %", "0", "0");
         test("9999999999999999 % =", "0", "");
@@ -758,6 +768,13 @@ class ControllerTest {
         test("25 + sqrt %", "1,25", "25  +  1,25");
         test("25 + sqrt ± %", "-1,25", "25  +  -1,25");
         test("25 sqr + sqrt ± % % %", "-6 103,515625", "sqr( 25 )  +  -6103,515625");
+
+        test("37 + 48 = % sqrt","8,5","√( 72,25 )");
+        test("37 + 48 = % sqrt %","7,225","7,225");
+        test("128 sqrt sqrt - 10 %","0,3363585661014858","√( √( 128 ) )  -  0,3363585661014858");
+        test("3 + 3 = % =","3,36","");
+        test("3 * 3 = % =","2,43","");
+
     }
 
     @Test
@@ -976,7 +993,10 @@ class ControllerTest {
         test("1000000000000000 * = * =", "1,e+60", "");
         test("256 sqr sqr sqr = =", "1,844674407370955e+19", "");
         test("9999999999999999 + " + addEquals(20), "2,1e+17", "");
-        }
+
+
+//        test("","","");
+    }
 
     @Test
     void testClear(){
@@ -1030,9 +1050,12 @@ class ControllerTest {
         test("10 + 30 % CE 16 -", "26", "10  +  16  -  ");
         test("10 + 30 % CE 16 - 12 +", "14", "10  +  16  -  12  +  ");
 
+
         test("10 + 30 = CE 16 - 12 +", "4", "16  -  12  +  ");
         test("1 + 20 % - 3 sqr * 4 sqrt / 5 1/x + 67 ⟵ - 7,8 ± * 8 CE 9 *","-577,8","1  +  0,2  -  sqr( 3 )  ×  √( 4 )  ÷  1/( 5 )  +  6  -  -7,8  ×  9  ×  ");
-
+        test("1234 CE 3456 ⟵ ⟵ ⟵ + % -","3,09","3  +  0,09  -  ");
+        test("1234 sqrt CE 3456 ⟵ ⟵ ⟵ + =","6","");
+        test("1234 + 3456 = CE sqrt ⟵ ⟵ ⟵ +","0","√( 0 )  +  ");
     }
 
     @Test
@@ -1055,7 +1078,6 @@ class ControllerTest {
         test("1234 ± ⟵ ⟵ / 2 -", "-6", "-12  ÷  2  -  ");
 
         test("1234567890 ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵", "0", "");
-        test("1234567890 ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵", "0", "");
         test("1234567890,01234567 ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵", "0", "");
         test("1234567890,01234567 ⟵ ⟵ ⟵ ⟵ /", "1 234 567 890,01", "1234567890,01  ÷  ");
         test("1234567890,567 ± ⟵ ⟵ ⟵ ⟵ /", "-1 234 567 890", "-1234567890  ÷  ");
@@ -1065,6 +1087,15 @@ class ControllerTest {
         test("9 ± ± sqrt - ⟵ +", "3", "√( 9 )  +  ");
         test("9 ± ± 1/x - ⟵ +", "0,1111111111111111", "1/( 9 )  +  ");
         test("25 - 200 ⟵ % +", "20", "25  -  5  +  ");
+
+
+        test("12 ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵", "0", "");
+        test("0 ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ 1", "1", "");
+        test("0 ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ 1 + 2 -", "3", "1  +  2  -  ");
+        test("1234567890 ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵", "0", "");
+        test("12 + 34 = ⟵ ⟵ ⟵ + 5678 ⟵ ⟵ =","102","");
+        test("1234 CE 3456 ⟵ ⟵ ⟵ sqr","9","sqr( 3 )");
+        test("1234 + % ⟵ ⟵ ⟵ sqrt","123,4","1234  +  √( 15227,56 )");
     }
 
     @Test
