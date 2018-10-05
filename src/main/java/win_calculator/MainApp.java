@@ -13,7 +13,6 @@ import java.io.IOException;
 
 public class MainApp extends Application {
 
-    private static Stage stage;
     public static void main(String[] args){
         launch(args);
     }
@@ -23,10 +22,10 @@ public class MainApp extends Application {
         setUpApp();
     }
 
-    public void setUpApp() throws IOException {
+    private void setUpApp() throws IOException {
 
         String fxmlFile = "/fxml/calculator.fxml";
-        stage = FXMLLoader.load(getClass().getResource(fxmlFile));
+        Stage stage = FXMLLoader.load(getClass().getResource(fxmlFile));
 
         stage.setResizable(true);
         stage.initStyle(StageStyle.UNDECORATED);
@@ -42,7 +41,4 @@ public class MainApp extends Application {
         stage.toFront();
     }
 
-    public Stage getStage() {
-        return stage;
-    }
 }

@@ -126,6 +126,12 @@
             <artifactId>testFx</artifactId>
             <version>3.1.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.apfloat</groupId>
+            <artifactId>apfloat</artifactId>
+            <version>1.8.2</version>
+        </dependency>
+
 
     </dependencies>
 

@@ -1,9 +1,12 @@
 package win_calculator.model.nodes.events.extra_operations;
 
+import org.apfloat.Apfloat;
+import org.apfloat.ApfloatMath;
 import win_calculator.model.exceptions.OperationException;
 import win_calculator.model.nodes.events.EventType;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import static win_calculator.model.exceptions.ExceptionType.NEGATIVE_VALUE_FOR_SQRT;
@@ -31,6 +34,17 @@ public class Sqrt implements ExtraOperation {
         }
         return x1;
     }
+
+//    @Override
+//    public BigDecimal calculate(BigDecimal number){
+//
+//        if (number.compareTo(BigDecimal.ZERO)<0){
+//            throw new OperationException()
+//        }
+//        Apfloat xx = new Apfloat(number, 10000);   // Value 2, precision 1000 digits
+//        Apfloat y = ApfloatMath.sqrt(xx);    // Square root of 2, to 1000 digits
+//        return new BigDecimal(y.toString());
+//    }
 
     @Override
     public String getValue() {
