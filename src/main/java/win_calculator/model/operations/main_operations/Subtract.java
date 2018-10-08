@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 
 public class Subtract implements MainOperation {
 
-    private static final String VALUE = "  -  ";
     private static final OperationType TYPE = OperationType.MAIN_OPERATION;
     private static final OperationKind kind = OperationKind.SUBTRACT;
 
@@ -21,11 +20,6 @@ public class Subtract implements MainOperation {
     public BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber){
 
         return firstNumber.subtract(secondNumber);
-    }
-
-    @Override
-    public String getValue() {
-        return VALUE;
     }
 
     @Override

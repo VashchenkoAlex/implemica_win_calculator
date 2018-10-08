@@ -11,7 +11,6 @@ import static win_calculator.model.exceptions.ExceptionType.NEGATIVE_VALUE_FOR_S
 
 public class Sqrt implements ExtraOperation {
 
-    private static final String SYMBOL = "√( ";
     private static final OperationType TYPE = OperationType.EXTRA_OPERATION;
     private static final OperationKind kind = OperationKind.SQRT;
     private static final int SCALE = 10001;
@@ -36,12 +35,6 @@ public class Sqrt implements ExtraOperation {
             result = new BigDecimal(firstVar, SCALE);
         }
         return result;
-    }
-
-    @Override
-    public String getValue() {
-
-        return SYMBOL;
     }
 
     @Override

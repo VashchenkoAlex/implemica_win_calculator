@@ -5,7 +5,6 @@ import win_calculator.model.operations.OperationKind;
 import win_calculator.model.operations.OperationType;
 import win_calculator.model.operations.Number;
 import win_calculator.model.operations.extra_operations.ExtraOperation;
-import win_calculator.model.operations.extra_operations.Percent;
 import win_calculator.model.operations.main_operations.MainOperation;
 
 import java.math.BigDecimal;
@@ -14,8 +13,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.LinkedList;
 
-import static win_calculator.model.operations.OperationKind.FRACTION;
-import static win_calculator.model.operations.OperationKind.SQR;
+import static win_calculator.model.operations.OperationKind.*;
 import static win_calculator.model.operations.OperationType.*;
 
 public abstract class CalculatorUtils {
@@ -44,6 +42,11 @@ public abstract class CalculatorUtils {
     private static final String FRACTION_SYMBOL = "1/( ";
     private static final String NEGATE_SYMBOL = "negate( ";
     private static final String SQR_SYMBOL = "sqr( ";
+    private static final String SQRT_SYMBOL = "√( ";
+    private static final String ADD_SYMBOL = "  +  ";
+    private static final String DIVIDE_SYMBOL = "  \u00F7  ";
+    private static final String MULTIPLY_SYMBOL = "  \u00D7  ";
+    private static final String SUBTRACT_SYMBOL = "  -  ";
 
     public static boolean isComaAbsent(String number) {
 
@@ -90,22 +93,38 @@ public abstract class CalculatorUtils {
         for (Operation operation : history) {
             OperationType type = operation.getType();
             if (EXTRA_OPERATION.equals(type)) {
-                String value = selectSymbolByKindOfExtraOperation((ExtraOperation) operation);
+                String value = selectExtraOperationSymbol((ExtraOperation) operation);
                 result = addExtraOperationToString(result, value);
             } else if (NUMBER.equals(type)) {
                 result += convertToString(((Number) operation).getBigDecimalValue(), HISTORY_PATTERN);
             } else if (NEGATE.equals(type)) {
                 result = addExtraOperationToString(result, NEGATE_SYMBOL);
             } else if (PERCENT.equals(type)) {
-                result += ((Percent) operation).getValue();
+                result += "";
             } else {
-                result += ((MainOperation) operation).getValue();
+                result += selectMainOperationSymbol((MainOperation)operation);
             }
         }
         return result;
     }
 
-    private static String selectSymbolByKindOfExtraOperation(ExtraOperation extraOperation){
+    private static String selectMainOperationSymbol(MainOperation mainOperation){
+
+        String symbol = "";
+        OperationKind kind = mainOperation.getKind();
+        if (ADD.equals(kind)){
+            symbol = ADD_SYMBOL;
+        } else if (DIVIDE.equals(kind)){
+            symbol = DIVIDE_SYMBOL;
+        } else if (MULTIPLY.equals(kind)){
+            symbol = MULTIPLY_SYMBOL;
+        } else if (SUBTRACT.equals(kind)){
+            symbol = SUBTRACT_SYMBOL;
+        }
+        return symbol;
+    }
+
+    private static String selectExtraOperationSymbol(ExtraOperation extraOperation){
 
         String symbol = "";
         OperationKind kind = extraOperation.getKind();
@@ -113,6 +132,8 @@ public abstract class CalculatorUtils {
             symbol = FRACTION_SYMBOL;
         } else if (SQR.equals(kind)){
             symbol = SQR_SYMBOL;
+        } else if (SQRT.equals(kind)){
+            symbol = SQRT_SYMBOL;
         }
         return symbol;
     }

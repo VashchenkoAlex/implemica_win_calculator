@@ -8,9 +8,8 @@ import java.math.BigDecimal;
 
 public class Add implements MainOperation {
 
-    private static final String VALUE = "  +  ";
     private static final OperationType TYPE = OperationType.MAIN_OPERATION;
-    private static final OperationKind kind = OperationKind.ADD;
+    private static final OperationKind KIND = OperationKind.ADD;
 
     @Override
     public BigDecimal calculate(BigDecimal number){
@@ -25,17 +24,12 @@ public class Add implements MainOperation {
     }
 
     @Override
-    public String getValue() {
-        return VALUE;
-    }
-
-    @Override
     public OperationType getType() {
         return TYPE;
     }
 
     @Override
     public OperationKind getKind() {
-        return kind;
+        return KIND;
     }
 }

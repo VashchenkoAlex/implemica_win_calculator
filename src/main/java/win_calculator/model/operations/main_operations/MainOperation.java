@@ -12,7 +12,5 @@ public interface MainOperation extends Operation {
 
     BigDecimal calculate(BigDecimal number) throws OperationException;
 
-    String getValue();
-
     OperationKind getKind();
 }

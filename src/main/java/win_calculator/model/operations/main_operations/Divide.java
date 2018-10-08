@@ -12,9 +12,8 @@ import static win_calculator.model.exceptions.ExceptionType.ZERO_DIVEDE_BY_ZERO;
 
 public class Divide implements MainOperation {
 
-    private static final String VALUE = "  \u00F7  ";
     private static final OperationType TYPE = OperationType.MAIN_OPERATION;
-    private static final OperationKind kind = OperationKind.DIVIDE;
+    private static final OperationKind KIND = OperationKind.DIVIDE;
     private static final int SCALE = 10030;
 
     @Override
@@ -45,14 +44,9 @@ public class Divide implements MainOperation {
     }
 
     @Override
-    public String getValue() {
-        return VALUE;
-    }
-
-    @Override
     public OperationKind getKind() {
 
-        return kind;
+        return KIND;
     }
 
     @Override

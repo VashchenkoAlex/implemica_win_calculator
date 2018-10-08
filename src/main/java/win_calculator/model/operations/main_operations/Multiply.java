@@ -7,9 +7,8 @@ import java.math.BigDecimal;
 
 public class Multiply implements MainOperation {
 
-    private static final String VALUE = "  \u00D7  ";
     private static final OperationType TYPE = OperationType.MAIN_OPERATION;
-    private static final OperationKind kind = OperationKind.MULTIPLY;
+    private static final OperationKind KIND = OperationKind.MULTIPLY;
 
     @Override
     public BigDecimal calculate(BigDecimal number){
@@ -24,13 +23,8 @@ public class Multiply implements MainOperation {
     }
 
     @Override
-    public String getValue() {
-        return VALUE;
-    }
-
-    @Override
     public OperationKind getKind() {
-        return kind;
+        return KIND;
     }
 
     @Override

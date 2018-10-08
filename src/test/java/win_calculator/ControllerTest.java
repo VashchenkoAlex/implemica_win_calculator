@@ -1,7 +1,7 @@
 package win_calculator;
 
 import org.junit.jupiter.api.Test;
-import win_calculator.controller.FXMLViewController;
+import win_calculator.controller.FxController;
 import win_calculator.controller.entities.Digit;
 import win_calculator.model.memory.ClearMemory;
 import win_calculator.model.operations.Operation;
@@ -15,7 +15,7 @@ import static win_calculator.TestUtils.createOperationsMap;
 
 class ControllerTest {
 
-    private static final FXMLViewController controller = new FXMLViewController();
+    private static final FxController controller = new FxController();
     private static final HashMap<String, Operation> operations = createOperationsMap();
     private static final HashMap<String,Digit> digits = createDigitsMap();
     private static final String IS_DIGIT_REGEX = "\\d+(,\\d+)?";
