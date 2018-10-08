@@ -1,11 +1,12 @@
 package win_calculator.controller.utils;
 
-import win_calculator.model.nodes.events.Event;
-import win_calculator.model.nodes.events.EventType;
-import win_calculator.model.nodes.events.Number;
-import win_calculator.model.nodes.events.extra_operations.ExtraOperation;
-import win_calculator.model.nodes.events.extra_operations.Percent;
-import win_calculator.model.nodes.events.main_operations.MainOperation;
+import win_calculator.model.operations.Operation;
+import win_calculator.model.operations.OperationKind;
+import win_calculator.model.operations.OperationType;
+import win_calculator.model.operations.Number;
+import win_calculator.model.operations.extra_operations.ExtraOperation;
+import win_calculator.model.operations.extra_operations.Percent;
+import win_calculator.model.operations.main_operations.MainOperation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -13,7 +14,9 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.LinkedList;
 
-import static win_calculator.model.nodes.events.EventType.*;
+import static win_calculator.model.operations.OperationKind.FRACTION;
+import static win_calculator.model.operations.OperationKind.SQR;
+import static win_calculator.model.operations.OperationType.*;
 
 public abstract class CalculatorUtils {
 
@@ -38,6 +41,9 @@ public abstract class CalculatorUtils {
     private static final String E = "E";
     private static final String SPACES_REGEX = "\\s\\s";
     private static final String ADD_EXTRA_OPERATION_REGEX = "^.+[\\s{2}][^\\s{2}]+$";
+    private static final String FRACTION_SYMBOL = "1/( ";
+    private static final String NEGATE_SYMBOL = "negate( ";
+    private static final String SQR_SYMBOL = "sqr( ";
 
     public static boolean isComaAbsent(String number) {
 
@@ -78,24 +84,37 @@ public abstract class CalculatorUtils {
         return result;
     }
 
-    public static String getHistoryString(LinkedList<Event> history) {
+    public static String getHistoryString(LinkedList<Operation> history) {
 
         String result = "";
-        for (Event event : history) {
-            EventType type = event.getType();
+        for (Operation operation : history) {
+            OperationType type = operation.getType();
             if (EXTRA_OPERATION.equals(type)) {
-                result = addExtraOperationToString(result, ((ExtraOperation) event).getValue());
+                String value = selectSymbolByKindOfExtraOperation((ExtraOperation) operation);
+                result = addExtraOperationToString(result, value);
             } else if (NUMBER.equals(type)) {
-                result += convertToString(((Number) event).getBigDecimalValue(), HISTORY_PATTERN);
+                result += convertToString(((Number) operation).getBigDecimalValue(), HISTORY_PATTERN);
             } else if (NEGATE.equals(type)) {
-                result = addExtraOperationToString(result, ((ExtraOperation) event).getValue());
+                result = addExtraOperationToString(result, NEGATE_SYMBOL);
             } else if (PERCENT.equals(type)) {
-                result += ((Percent) event).getValue();
+                result += ((Percent) operation).getValue();
             } else {
-                result += ((MainOperation) event).getValue();
+                result += ((MainOperation) operation).getValue();
             }
         }
         return result;
+    }
+
+    private static String selectSymbolByKindOfExtraOperation(ExtraOperation extraOperation){
+
+        String symbol = "";
+        OperationKind kind = extraOperation.getKind();
+        if (FRACTION.equals(kind)){
+            symbol = FRACTION_SYMBOL;
+        } else if (SQR.equals(kind)){
+            symbol = SQR_SYMBOL;
+        }
+        return symbol;
     }
 
     public static String convertToString(BigDecimal incomeNumber, String pattern) {

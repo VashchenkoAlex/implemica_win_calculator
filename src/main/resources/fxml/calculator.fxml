@@ -255,7 +255,7 @@
                 </AnchorPane>
             </root>
             <stylesheets>
-                <URL value="@/styles/styles.css"/>
+                <URL value = "@/styles/styles.css"/>
             </stylesheets>
         </Scene>
     </scene>

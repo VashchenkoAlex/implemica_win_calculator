@@ -2,19 +2,22 @@ package win_calculator;
 
 import org.junit.jupiter.api.Test;
 import win_calculator.controller.FXMLViewController;
+import win_calculator.controller.entities.Digit;
 import win_calculator.model.memory.ClearMemory;
-import win_calculator.model.nodes.events.Event;
-import win_calculator.model.nodes.events.clear.Clear;
+import win_calculator.model.operations.Operation;
+import win_calculator.model.operations.clear.Clear;
 
 import java.util.HashMap;
 
 import static org.junit.gen5.api.Assertions.assertEquals;
-import static win_calculator.TestUtils.createMap;
+import static win_calculator.TestUtils.createDigitsMap;
+import static win_calculator.TestUtils.createOperationsMap;
 
 class ControllerTest {
 
     private static final FXMLViewController controller = new FXMLViewController();
-    private static final HashMap<String, Event> events = createMap();
+    private static final HashMap<String, Operation> operations = createOperationsMap();
+    private static final HashMap<String,Digit> digits = createDigitsMap();
     private static final String IS_DIGIT_REGEX = "\\d+(,\\d+)?";
     private static final String COMA = ",";
 
@@ -479,7 +482,6 @@ class ControllerTest {
 
         test("3 sqr sqrt - 3 =","0","");
         test("3 sqr sqrt - 10 % = sqr sqr 1/x + sqr * sqr - sqr / sqr % sqr =","5,759700640885393e+29","");
-        test("0,9999999999999999 sqr - 0,9999999999999999 * ± sqrt * sqr -","-9,999999999999996e-73","sqr( 0,9999999999999999 )  -  0,9999999999999999  ×  √( negate( -9,999999999999999e-17 ) )  ×  sqr( -9,999999999999999e-25 )  -  ");
         test("25 * 25 = = = = = sqr sqr sqr =","3,155443620884047e+68","");
         test("25 * 25 = = = = = sqr sqr sqr = sqr sqr = sqr =","1,535689537429126e+552","");
         test("25 * 25 * sqr sqr sqr * sqr sqr = sqr","4,257959840008151e+251","sqr( 6,525304467998525e+125 )");
@@ -1103,6 +1105,18 @@ class ControllerTest {
         test("12 + 34 = ⟵ ⟵ ⟵ + 5678 ⟵ ⟵ =","102","");
         test("1234 CE 3456 ⟵ ⟵ ⟵ sqr","9","sqr( 3 )");
         test("1234 + % ⟵ ⟵ ⟵ sqrt","123,4","1234  +  √( 15227,56 )");
+
+        test("9876543 ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ sqrt ⟵","3","√( 9 )");
+        test("98 ⟵ sqrt + 23 ⟵ sqr = ⟵ ⟵","7","");
+        test("98 ⟵ sqrt + 23 ⟵ sqr = 12345 ⟵ ⟵","123","");
+        test("257654 ⟵ ⟵ ⟵ ⟵ ⟵ sqr ⟵","4","sqr( 2 )");
+        test("257654 ⟵ ⟵ ⟵ ⟵ 1/x ⟵","0,04","1/( 25 )");
+        test("257654 ⟵ ⟵ ⟵ ⟵ ± ⟵","-2","");
+        test("257654 ⟵ ⟵ ⟵ ⟵ - ⟵","25","25  -  ");
+        test("257654 ⟵ ⟵ ⟵ ⟵ * ⟵","25","25  ×  ");
+        test("257654 ⟵ ⟵ ⟵ ⟵ / ⟵","25","25  ÷  ");
+        test("257654 ⟵ ⟵ ⟵ ⟵ + ⟵ - 5 +","20","25  -  5  +  ");
+        test("25 + 20 % ⟵ ⟵ ⟵ ⟵ ⟵ -","30","25  +  5  -  ");
     }
 
     @Test
@@ -1212,8 +1226,8 @@ class ControllerTest {
         String[] response = prepareTest(expression);
         assertEquals(display, response[0]);
         assertEquals(history, response[1]);
-        controller.handleEvent(new Clear());
-        controller.handleEvent(new ClearMemory());
+        controller.handleOperation(new Clear());
+        controller.handleOperation(new ClearMemory());
     }
 
     private String[] prepareTest(String expression){
@@ -1223,10 +1237,10 @@ class ControllerTest {
         for (String str : parsedEventStrings) {
             if (str.matches(IS_DIGIT_REGEX) || COMA.equals(str)) {
                 for (char ch : str.toCharArray()) {
-                    response = controller.handleEvent(events.get(ch + ""));
+                    response = controller.handleDigit(digits.get(ch + ""));
                 }
             } else {
-                response = controller.handleEvent(events.get(str));
+                response = controller.handleOperation(operations.get(str));
             }
         }
         return response;

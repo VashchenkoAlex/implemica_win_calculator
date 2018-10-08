@@ -1,36 +1,31 @@
 package win_calculator.controller;
 
-import win_calculator.model.nodes.events.Event;
-import win_calculator.controller.digits.Digit;
-import win_calculator.controller.digits.ZeroDigit;
-import win_calculator.model.nodes.events.EventType;
+import win_calculator.controller.entities.Digit;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;
 
+import static win_calculator.controller.enums.DigitType.ZERO;
 import static win_calculator.controller.utils.CalculatorUtils.addCapacity;
 import static win_calculator.controller.utils.CalculatorUtils.convertToString;
 import static win_calculator.controller.utils.CalculatorUtils.replaceDotToComa;
-import static win_calculator.model.nodes.events.EventType.*;
 
 public class NumberBuilder {
 
     private static final int MAX_DIGITS = 16;
     private static final String COMA = ".";
-    private static final String ZERO = "0";
+    private static final String ZERO_STR = "0";
+    private static final String MINUS_STR = "-";
     private static final String DISPLAY_PATTERN = "#############,###.################";
     private boolean positive = true;
     private BigDecimal number;
     private LinkedList<Digit> digitsChain = new LinkedList<>();
     private LinkedList<Digit> previousChain;
 
-    String toDo(Event event) {
+    String addDigit(Digit event) {
 
-        EventType eventType = event.getType();
-        if (DIGIT.equals(eventType) && isNotMaxDigits()) {
-            add((Digit) event);
-        } else if (BACKSPACE.equals(eventType)) {
-            backSpace();
+        if (isNotMaxDigits()) {
+            add(event);
         }
         return convertChainToString();
     }
@@ -39,10 +34,10 @@ public class NumberBuilder {
 
         if (COMA.equals(digit.getValue())) {
             addComa(digit);
-        } else if (ZERO.equals(digit.getValue())) {
+        } else if (ZERO_STR.equals(digit.getValue())) {
             addZero(digit);
         } else {
-            addDigit(digit);
+            addDigitToChain(digit);
         }
         number = new BigDecimal(getValue());
     }
@@ -70,7 +65,7 @@ public class NumberBuilder {
         resetPositive();
     }
 
-    private void backSpace() {
+    String doBackSpace() {
 
         if (digitsChain.isEmpty() && isPreviousChainNotEmpty()) {
             digitsChain = previousChain;
@@ -82,7 +77,7 @@ public class NumberBuilder {
             BigDecimal value = new BigDecimal(getValue());
             number = setSign(value);
         }
-
+        return convertChainToString();
     }
 
     private BigDecimal setSign(BigDecimal value){
@@ -94,9 +89,9 @@ public class NumberBuilder {
         return result;
     }
 
-    private void addDigit(Digit digit) {
+    private void addDigitToChain(Digit digit) {
 
-        if (ZERO.equals(getValue())) {
+        if (ZERO_STR.equals(getValue())) {
             digitsChain.removeLast();
             digitsChain.add(digit);
         } else {
@@ -106,7 +101,7 @@ public class NumberBuilder {
 
     private void addComa(Digit coma) {
         if (digitsChain.isEmpty()) {
-            digitsChain.add(new ZeroDigit());
+            digitsChain.add(new Digit(ZERO));
             digitsChain.add(coma);
         } else {
             if (numberWithoutComa()) {
@@ -117,7 +112,7 @@ public class NumberBuilder {
 
     private void addZero(Digit zero) {
 
-        if (!ZERO.equals(getValue())) {
+        if (!ZERO_STR.equals(getValue())) {
             digitsChain.add(zero);
         }
     }
@@ -139,7 +134,7 @@ public class NumberBuilder {
             digitsChain.removeLast();
         } else {
             digitsChain.removeLast();
-            digitsChain.add(new ZeroDigit());
+            digitsChain.add(new Digit(ZERO));
         }
     }
 
@@ -165,7 +160,7 @@ public class NumberBuilder {
     private boolean isNotMaxDigits() {
 
         int digitsCount = digitsChain.size();
-        if (!digitsChain.isEmpty() && ZERO.equals(digitsChain.get(0).getValue())) {
+        if (!digitsChain.isEmpty() && ZERO_STR.equals(digitsChain.get(0).getValue())) {
             --digitsCount;
         }
         for (Digit d : digitsChain) {
@@ -236,7 +231,7 @@ public class NumberBuilder {
 
         StringBuilder resultBuilder = new StringBuilder();
         if (!positive){
-            resultBuilder = new StringBuilder("-");
+            resultBuilder = new StringBuilder(MINUS_STR);
         }
         LinkedList<Digit> chain = digitsChain;
         if (digitsChain.isEmpty()){
