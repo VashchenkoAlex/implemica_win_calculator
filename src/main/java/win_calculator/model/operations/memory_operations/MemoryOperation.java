@@ -1,4 +1,4 @@
-package win_calculator.model.memory;
+package win_calculator.model.operations.memory_operations;
 
 import win_calculator.model.operations.Operation;
 import win_calculator.model.operations.OperationType;

@@ -1,30 +1,56 @@
 package win_calculator;
 
-import javafx.scene.input.KeyCode;
+/**
+ * Entity Button that contains required fields for tests
+ */
+class ButtonForTest {
 
-import java.awt.event.KeyEvent;
-
-public class ButtonForTest {
-
+    /**
+     * String id of button using in test's expression
+     */
     private String id;
-    private /*KeyCode*/int keyCode;
+    /**
+     * Keyboard keycode for awt.Robot using in tests
+     */
+    private int keyCode;
+    /**
+     * Field stores info does robot have to press shift before button
+     */
     private boolean shiftPressed;
 
-    ButtonForTest(String id, /*KeyCode*/int keyCode, boolean shiftPressed) {
+    /**
+     * Initialize {@link ButtonForTest}
+     * @param id - key id;
+     * @param keyCode - keyboard keycode;
+     * @param shiftPressed - is shift pressed before button;
+     */
+    ButtonForTest(String id, int keyCode, boolean shiftPressed) {
         this.id = id;
         this.keyCode = keyCode;
         this.shiftPressed = shiftPressed;
     }
 
-    public String getId() {
+    /**
+     * Getter for id
+     * @return id
+     */
+    String getId() {
         return id;
     }
 
-    public /*KeyCode*/int getKeyCode() {
+    /**
+     * Getter for keycode
+     * @return keycode
+     */
+    int getKeyCode() {
         return keyCode;
     }
 
-    public boolean isShiftPressed() {
+    /**
+     * Getter for shiftPressed
+     * @return true if shift has to be pressed before button
+     */
+    boolean isShiftPressed() {
         return shiftPressed;
     }
 }

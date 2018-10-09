@@ -1,5 +1,8 @@
 package win_calculator.controller.enums;
 
+/**
+ * Enum class with possibles digit types and values for them
+ */
 public enum DigitType {
 
     COMA("."),

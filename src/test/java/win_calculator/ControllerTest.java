@@ -1,21 +1,27 @@
 package win_calculator;
 
 import org.junit.jupiter.api.Test;
-import win_calculator.controller.FxController;
+import win_calculator.controller.CalcController;
 import win_calculator.controller.entities.Digit;
-import win_calculator.model.memory.ClearMemory;
+import win_calculator.model.operations.memory_operations.ClearMemory;
 import win_calculator.model.operations.Operation;
 import win_calculator.model.operations.clear.Clear;
 
 import java.util.HashMap;
 
 import static org.junit.gen5.api.Assertions.assertEquals;
-import static win_calculator.TestUtils.createDigitsMap;
-import static win_calculator.TestUtils.createOperationsMap;
+import static win_calculator.InitializerTestMaps.createDigitsMap;
+import static win_calculator.InitializerTestMaps.createOperationsMap;
 
+/**
+ * Test class for calculator controller.
+ * Uses {@link CalcController}.handleDigit({@link Digit})
+ * and {@link CalcController}.handleOperation({@link Operation}) methods for tests.
+ *
+ */
 class ControllerTest {
 
-    private static final FxController controller = new FxController();
+    private static final CalcController controller = new CalcController();
     private static final HashMap<String, Operation> operations = createOperationsMap();
     private static final HashMap<String,Digit> digits = createDigitsMap();
     private static final String IS_DIGIT_REGEX = "\\d+(,\\d+)?";
@@ -493,7 +499,6 @@ class ControllerTest {
 
         test("4 sqrt + = =", "6", "");
         test("25 sqrt + = =", "15", "");
-
         test("0 sqrt sqrt sqrt = =", "0", "");
         test("1 sqrt sqrt sqrt = =", "1", "");
         test("16 sqrt sqrt sqrt = =", "1,414213562373095", "");
@@ -511,15 +516,12 @@ class ControllerTest {
 
         test("5 sqrt sqr - 4 sqrt -", "3", "sqr( √( 5 ) )  -  √( 4 )  -  ");
         test("5 sqrt sqr sqrt sqr - 4 sqrt -", "3", "sqr( √( sqr( √( 5 ) ) ) )  -  √( 4 )  -  ");
-
         test("5 sqrt sqr - 3 sqrt sqr -", "2", "sqr( √( 5 ) )  -  sqr( √( 3 ) )  -  ");
         test("5 sqrt sqr - 3 sqrt sqr = =", "-1", "");
-
         test("5 sqrt sqr sqrt sqr - 3 sqrt sqr sqrt sqr -", "2", "sqr( √( sqr( √( 5 ) ) ) )  -  sqr( √( sqr( √( 3 ) ) ) )  -  ");
         test("5 sqrt sqr sqrt sqr - 3 sqrt sqr sqrt sqr = =", "-1", "");
         test("5 sqrt sqr sqrt sqr + 3 sqrt sqr sqrt sqr +", "8", "sqr( √( sqr( √( 5 ) ) ) )  +  sqr( √( sqr( √( 3 ) ) ) )  +  ");
         test("5 sqrt sqr sqrt sqr + 3 sqrt sqr sqrt sqr = =", "11", "");
-
         test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr", "1,e-8192", "sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) ) )");
 
         test("1 ± sqrt","Invalid input","√( -1 )");
@@ -529,7 +531,6 @@ class ControllerTest {
 
         test("0,1 sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt","0,9999999999999999","√( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( 0,1 ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) )");
         test("0,1 sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt sqrt","1","√( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( √( 0,1 ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) )");
-
 
         test("128 sqrt sqrt - 10 % = sqrt sqrt 1/x +","0,7581213888342921","1/( √( √( 3,027227094913372 ) ) )  +  ");
         test("128 sqrt sqrt - 10 % = sqrt sqrt 1/x + sqrt * sqrt - sqrt / sqrt % - sqrt ±","-11,19352517702115","1/( √( √( 3,027227094913372 ) ) )  +  √( 0,7581213888342921 )  ×  √( 1,628823053490041 )  -  √( 2,078791159415937 )  ÷  0,0050839201106993  -  negate( √( 125,2950058886063 ) )");
@@ -614,12 +615,9 @@ class ControllerTest {
         test("123 + 456 = + 789 - 1/x -","1 367,999269005848","579  +  789  -  1/( 1368 )  -  ");
         test("123 * 456 = / 789 * 1/x /","1","56088  ÷  789  ×  1/( 71,08745247148289 )  ÷  ");
         test("123 * 456 = / 789 * 123 1/x /","0,5779467680608365","56088  ÷  789  ×  1/( 123 )  ÷  ");
-
         test("3 1/x * 9 = 1/x * 9 = 1/x * 9 *","3","1/( 3 )  ×  9  ×  ");
-
         test("3 1/x + % 1/x","900","1/( 3 )  +  1/( 0,0011111111111111 )");
         test("3 1/x + % 1/x =","900,3333333333333","");
-
         test("0 1/x","Cannot divide by zero","1/( 0 )");
         test("3 - 3 + 1/x","Cannot divide by zero","3  -  3  +  1/( 0 )");
     }
@@ -637,7 +635,6 @@ class ControllerTest {
         test("5 ± ± ± - 6 - ± ± ±", "11", "-5  -  6  -  negate( negate( negate( -11 ) ) )");
 
         test("9 ± ± sqrt -", "3", "√( 9 )  -  ");
-
         test("20 ±", "-20", "");
         test("20 + ±", "-20", "20  +  negate( 20 )");
         test("20 + 20 = ±", "-40", "negate( 40 )");
@@ -654,8 +651,6 @@ class ControllerTest {
         test("16 ± ± ± = =", "-16", "");
         test("256 ± ± ± = =", "-256", "");
         test("1 + 20 % - 3 sqr * 4 sqrt / 5 1/x + 67 ⟵ - 7,8 ±", "-7,8", "1  +  0,2  -  sqr( 3 )  ×  √( 4 )  ÷  1/( 5 )  +  6  -  ");
-
-
         test(", ±","-0,","");
         test("20 + 40 % ± =","12","");
         test("20 + 40 % ± = ±","-12","negate( 12 )");
@@ -680,7 +675,6 @@ class ControllerTest {
 
         test("20 + 0 %", "0", "20  +  0");
         test("20 + 20 % = %", "5,76", "5,76");
-
         test("20 + 10 % = =", "24", "");
         test("20 + 10 %", "2", "20  +  2");
         test("20 - 10 % = =", "16", "");
@@ -689,7 +683,6 @@ class ControllerTest {
         test("20 * 10 %", "2", "20  ×  2");
         test("20 / 10 % = =", "5", "");
         test("20 / 10 %", "2", "20  ÷  2");
-
         test("20 + 20 % = %", "5,76", "5,76");
         test("20 + 20 % = % =", "9,76", "");
         test("200 + 0 = %", "400", "400");
@@ -698,13 +691,11 @@ class ControllerTest {
         test("200 + 0 = % % =", "800", "");
         test("200 + 10 = % %", "926,1", "926,1");
         test("200 + 10 = % % =", "936,1", "");
-
         test("20 - 20 % = %", "2,56", "2,56");
         test("200 - 0 = %", "400", "400");
         test("200 - 10 = %", "361", "361");
         test("200 - 0 = % %", "800", "800");
         test("200 - 10 = % %", "685,9", "685,9");
-
         test("20 + % = =", "28", "");
         test("20 + %", "4", "20  +  4");
         test("20 - % = =", "12", "");
@@ -713,13 +704,11 @@ class ControllerTest {
         test("20 * %", "4", "20  ×  4");
         test("20 / % = =", "1,25", "");
         test("20 / %", "4", "20  ÷  4");
-
         test("20 + 10 % + 15 % =", "25,3", "");
         test("20 + 10 % + 15 % = =", "28,6", "");
         test("20 - 10 % - 15 % = =", "12,6", "");
         test("20 * 10 % * 15 % = =", "1 440", "");
         test("20 / 10 % / 15 % = =", "4,444444444444444", "");
-
         test("20 + 10 % + = =", "66", "");
         test("20 - 10 % - = =", "-18", "");
         test("20 * 10 % * = =", "64 000", "");
@@ -728,12 +717,10 @@ class ControllerTest {
         test("3 % + 4 - 5 * 6 ± / 7 %", "0,42", "0  +  4  -  5  ×  -6  ÷  0,42");
         test("3 % + 4 - 5 * 6 ± / 7 % =", "14,28571428571429", "");
         test("10 % + 9 % - 8 + 7 * 6 % =", "0,06", "");
-
         test("20 ± + %", "4", "-20  +  4");
         test("20 ± + % =", "-16", "");
         test("20 + 50 % = =", "40", "");
         test("20 + 50 % = = =", "50", "");
-
         test("20 - %", "4", "20  -  4");
         test("20 - % = = =", "8", "");
         test("20 - 50 % = = =", "-10", "");
@@ -741,13 +728,11 @@ class ControllerTest {
         test("20 ± - % =", "-24", "");
         test("20 ± - + * - %", "4", "-20  -  4");
         test("20 ± - 50 % = = =", "10", "");
-
         test("20 / % =", "5", "");
         test("20 / % = = =", "0,3125", "");
         test("20 / 50 % =", "2", "");
         test("20 / 50 % = =", "0,2", "");
         test("20 / 1234567 % =", "8,100005913004316e-5", "");
-
         test("20 ± % % =", "0", "");
         test("20 ± + 10 ± % % =", "-20,4", "");
         test("20 ± % ± % =", "0", "");
@@ -755,23 +740,19 @@ class ControllerTest {
         test("20 ± ± ± % ± % ± =", "0", "");
         test("1234567899876543 ± ± ± % ± % ± =", "0", "");
         test("1234567899876543 ± ± ± % ± % ± = = =", "0", "");
-
         test("320 - 20 % ", "64", "320  -  64");
         test("320 - 20 % =", "256", "");
         test("320 * 20 % =", "20 480", "");
         test("320 * + / - % =", "-704", "");
         test("320 + - % =", "-704", "");
         test("320 ± - % = =", "-2 368", "");
-
         test("12345 / 2 %", "246,9", "12345  ÷  246,9");
         test("12345 / 2 % =", "50", "");
         test("2 / 12345 %", "246,9", "2  ÷  246,9");
         test("2 / 12345 % =", "0,0081004455245038", "");
-
         test("25 + sqrt %", "1,25", "25  +  1,25");
         test("25 + sqrt ± %", "-1,25", "25  +  -1,25");
         test("25 sqr + sqrt ± % % %", "-6 103,515625", "sqr( 25 )  +  -6103,515625");
-
         test("37 + 48 = % sqrt","8,5","√( 72,25 )");
         test("37 + 48 = % sqrt %","7,225","7,225");
         test("128 sqrt sqrt - 10 %","0,3363585661014858","√( √( 128 ) )  -  0,3363585661014858");
@@ -788,49 +769,37 @@ class ControllerTest {
         test("1000000000000000 / 1111111111111111 =", "0,9000000000000001", "");
         test("1,999999999999999 * 0,1 = ", "0,1999999999999999", "");
         test("1,999999999999999 * 0,1 = =", "0,02", "");
-
         test("1 / 3 /", "0,3333333333333333", "1  ÷  3  ÷  ");
         test("3 1/x", "0,3333333333333333", "1/( 3 )");
         test("1 / 6 /", "0,1666666666666667", "1  ÷  6  ÷  ");
         test("1 / 3 * 3 +", "1", "1  ÷  3  ×  3  +  ");
         test("1 / 3 * 0,0000000000000001 * 0,00000000001 * 10000000000000000 * 10000000000000 * 3 *","10","1  ÷  3  ×  0,0000000000000001  ×  0,00000000001  ×  1000000000000000  ×  10000000000000  ×  3  ×  ");
-
         test("2 sqrt", "1,414213562373095", "√( 2 )");
         test("3 sqrt", "1,732050807568877", "√( 3 )");
         test("10 / 9 /", "1,111111111111111", "10  ÷  9  ÷  ");
         test("10 / 3 * ", "3,333333333333333", "10  ÷  3  ×  ");
         test("20 sqrt", "4,472135954999579", "√( 20 )");
         test("30 sqrt", "5,477225575051661", "√( 30 )");
-
         test("100 / 9 /", "11,11111111111111", "100  ÷  9  ÷  ");
         test("100 / 3 * ", "33,33333333333333", "100  ÷  3  ×  ");
         test("200 sqrt", "14,14213562373095", "√( 200 )");
         test("30 sqrt", "5,477225575051661", "√( 30 )");
-
         test("1000000000000000 / 9 /", "111 111 111 111 111,1", "1000000000000000  ÷  9  ÷  ");
         test("100000000000000 / 9 /", "11 111 111 111 111,11", "100000000000000  ÷  9  ÷  ");
-
         test("1000000000000000 ± / 9 =", "-111 111 111 111 111,1", "");
         test("100000000000000 ± / 9 =", "-11 111 111 111 111,11", "");
-
         test("1000000000000000 ± / 9 /", "-111 111 111 111 111,1", "-1000000000000000  ÷  9  ÷  ");
         test("100000000000000 ± / 9 /", "-11 111 111 111 111,11", "-100000000000000  ÷  9  ÷  ");
-
         test("9999999999 * 9999999999 * 99 / 9999999999999999 =", "989 999,9998020001", "");
-
         test("1000000000000000 + 0,1 + 0,1 + 0,1 + 0,1 + ","1 000 000 000 000 000","1000000000000000  +  0,1  +  0,1  +  0,1  +  0,1  +  ");
         test("1000000000000000 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 +","1 000 000 000 000 001","1000000000000000  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  ");
         test("1000000000000000 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 +","1 000 000 000 000 001","1000000000000000  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  ");
         test("1000000000000000 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 + 0,1 +","1 000 000 000 000 002","1000000000000000  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  0,1  +  ");
-
         test("1,000000000000001 * 0,01 = ","0,01","");
         test("1,000000000000005 * 0,01 = ","0,0100000000000001","");
         test("9,999999999999999 * 0,01 = ","0,1","");
-
         test("9999999999999999 * 10 + 10 -","1,e+17","9999999999999999  ×  10  +  10  -  ");
         test("9999999999999999 * 10 + 1 = = = = =","1,e+17","");
-
-
         test("0,0123456789123459 * 0,1 =", "0,0012345678912346", "");
         test("0,0123456789123499 * 0,1 =", "0,001234567891235", "");
         test("0,1234567891234567 * 0,1 =", "0,0123456789123457", "");
@@ -863,11 +832,9 @@ class ControllerTest {
         test("22 / 1000000000000000 / 10 = =", "2,2e-16", "");
         test("22 / 1000000000000000 / 10 = = =", "2,2e-17", "");
         test("22 / 1000000000000000 = =", "2,2e-29", "");
-
         test("333 / 1000000000000000 = =", "3,33e-28", "");
         test("333 / 1000000000000000 = =", "3,33e-28", "");
         test("1 / 1000000000000000 " + addEquals(100), "1,e-1500", "");
-
         test("0,0000000000000023 * 0,1 =", "2,3e-16", "");
         test("0,0000000000000234 * 0,1 =", "2,34e-15", "");
         test("0,0000000000002345 * 0,1 =", "2,345e-14", "");
@@ -883,7 +850,6 @@ class ControllerTest {
         test("0,0012345678912341 * 0,1 =", "1,2345678912341e-4", "");
         test("1,234567891234567 * 0,1 =", "0,1234567891234567", "");
         test("0,0001111111111111 * 0,1 =", "1,111111111111e-5", "");
-
         test("0,0000000000000023 * 0,1 = ±", "-2,3e-16", "negate( 2,3e-16 )");
         test("0,0000000000000234 * 0,1 = ±", "-2,34e-15", "negate( 2,34e-15 )");
         test("0,0000000000002345 * 0,1 = ±", "-2,345e-14", "negate( 2,345e-14 )");
@@ -903,7 +869,6 @@ class ControllerTest {
         test("0,1111111111111111 * 0,1 = = = =", "1,111111111111111e-5", "");
         test("0,1111111111111111 * 0,1 = = = = =", "1,111111111111111e-6", "");
         test("0,1111111111111111 * 0,1 = = = = = =", "1,111111111111111e-7", "");
-
         test("5 / 10000 / 3 =", "1,666666666666667e-4", "");
         test("5 / 3 = = = = / 100 =", "6,17283950617284e-4", "");
 
@@ -942,7 +907,6 @@ class ControllerTest {
         test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 0,00000000000001 sqr sqr sqr sqr sqr sqr sqr * 0,000000000000001 *","1,e-9999","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) ) )  ×  sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,00000000000001 ) ) ) ) ) ) )  ×  0,000000000000001  ×  ");
         //get 1,e-9999 and multiply by 0,9999999999999999
         test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 0,00000000000001 sqr sqr sqr sqr sqr sqr sqr * 0,000000000000001 * 0,9999999999999999 =","Overflow","");
-
         //get -1,e-9999
         test("0,0000000000000001 sqr sqr sqr sqr sqr sqr sqr sqr sqr * 0,00000000000001 sqr sqr sqr sqr sqr sqr sqr * 0,000000000000001 ± *","-1,e-9999","sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,0000000000000001 ) ) ) ) ) ) ) ) )  ×  sqr( sqr( sqr( sqr( sqr( sqr( sqr( 0,00000000000001 ) ) ) ) ) ) )  ×  -0,000000000000001  ×  ");
         //get -1,e-9999 and multiply by 0,9999999999999999
@@ -996,8 +960,6 @@ class ControllerTest {
         test("1000000000000000 * = * =", "1,e+60", "");
         test("256 sqr sqr sqr = =", "1,844674407370955e+19", "");
         test("9999999999999999 + " + addEquals(20), "2,1e+17", "");
-
-
         test("1234567890987654 * 4567890987654321 =","5,639371542889907e+30","");
         test("1000000000000000 / 0,1 =","1,e+16","");
         test("1000000000000000 / 0,1 = - 1 +","9 999 999 999 999 999","1,e+16  -  1  +  ");
@@ -1015,7 +977,6 @@ class ControllerTest {
         test("4 1/x C","0","");
         test("4 % C","0","");
         test("4 ± C","0","");
-
         test("4 + C + 1 =","1","");
         test("4 + 5 C + 1 +","1","0  +  1  +  ");
         test("4 - C - 1 =","-1","");
@@ -1024,17 +985,14 @@ class ControllerTest {
         test("4 * 5 C * 1 *","0","0  ×  1  ×  ");
         test("4 / C / 1 =","0","");
         test("4 / 5 C / 1 /","0","0  ÷  1  ÷  ");
-
         test("5 + 3 = C + 2 +", "2", "0  +  2  +  ");
         test("5 - 3 = C - 2 -", "-2", "0  -  2  -  ");
         test("5 * 3 = C * 2 *", "0", "0  ×  2  ×  ");
         test("5 / 3 = C / 2 /", "0", "0  ÷  2  ÷  ");
-
         test("5 + 3 = sqr C + 2 +", "2", "0  +  2  +  ");
         test("5 - 3 = sqrt C - 2 -", "-2", "0  -  2  -  ");
         test("5 * 3 = 1/x C * 2 *", "0", "0  ×  2  ×  ");
         test("5 / 3 = + % C / 2 /", "0", "0  ÷  2  ÷  ");
-
         test("5 MS + 3 = C - MR -", "-5", "0  -  5  -  ");
     }
 
@@ -1043,22 +1001,17 @@ class ControllerTest {
 
         test("1 CE 2 - 4 +", "-2", "2  -  4  +  ");
         test("12 CE 34 - 12 +", "22", "34  -  12  +  ");
-
         test("16 sqr CE 16 - 12 +", "4", "16  -  12  +  ");
         test("16 sqrt CE 16 - 12 +", "4", "16  -  12  +  ");
         test("10 1/x CE 16 - 12 +", "4", "16  -  12  +  ");
         test("10 + 30 % CE", "0", "10  +  ");
-
         test("5 - 2333 CE", "0", "5  -  ");
         test("9 ± ± sqrt - CE", "0", "√( 9 )  -  ");
         test("9 ± ± sqrt - 2 = CE", "0", "");
         test("5 ± ± ± - 6 - ± ± ± CE", "0", "-5  -  6  -  ");
         test("5 ± ± ± - 6 - ± ± ± CE 25 -", "-36", "-5  -  6  -  25  -  ");
-
         test("10 + 30 % CE 16 -", "26", "10  +  16  -  ");
         test("10 + 30 % CE 16 - 12 +", "14", "10  +  16  -  12  +  ");
-
-
         test("10 + 30 = CE 16 - 12 +", "4", "16  -  12  +  ");
         test("1 + 20 % - 3 sqr * 4 sqrt / 5 1/x + 67 ⟵ - 7,8 ± * 8 CE 9 *","-577,8","1  +  0,2  -  sqr( 3 )  ×  √( 4 )  ÷  1/( 5 )  +  6  -  -7,8  ×  9  ×  ");
         test("1234 CE 3456 ⟵ ⟵ ⟵ + % -","3,09","3  +  0,09  -  ");
@@ -1078,13 +1031,11 @@ class ControllerTest {
         test("25 ± ⟵", "-2", "");
         test("1234 ⟵ ⟵ ⟵", "1", "");
         test("1234 ± ⟵ ⟵ ⟵", "-1", "");
-
         test("987 ⟵ ⟵ sqrt 2 -", "2", "2  -  ");
         test("987 ⟵ ⟵ sqrt ± -", "-3", "negate( √( 9 ) )  -  ");
         test("987 ⟵ ⟵ sqrt + 2 -", "5", "√( 9 )  +  2  -  ");
         test("987 ± ⟵ ⟵ + 10 % -", "-9,9", "-9  +  -0,9  -  ");
         test("1234 ± ⟵ ⟵ / 2 -", "-6", "-12  ÷  2  -  ");
-
         test("1234567890 ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵", "0", "");
         test("1234567890,01234567 ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵", "0", "");
         test("1234567890,01234567 ⟵ ⟵ ⟵ ⟵ /", "1 234 567 890,01", "1234567890,01  ÷  ");
@@ -1096,8 +1047,6 @@ class ControllerTest {
         test("9 ± ± sqrt - ⟵ +", "3", "√( 9 )  +  ");
         test("9 ± ± 1/x - ⟵ +", "0,1111111111111111", "1/( 9 )  +  ");
         test("25 - 200 ⟵ % +", "20", "25  -  5  +  ");
-
-
         test("12 ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵", "0", "");
         test("0 ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ 1", "1", "");
         test("0 ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ 1 + 2 -", "3", "1  +  2  -  ");
@@ -1105,7 +1054,6 @@ class ControllerTest {
         test("12 + 34 = ⟵ ⟵ ⟵ + 5678 ⟵ ⟵ =","102","");
         test("1234 CE 3456 ⟵ ⟵ ⟵ sqr","9","sqr( 3 )");
         test("1234 + % ⟵ ⟵ ⟵ sqrt","123,4","1234  +  √( 15227,56 )");
-
         test("9876543 ⟵ ⟵ ⟵ ⟵ ⟵ ⟵ sqrt ⟵","3","√( 9 )");
         test("98 ⟵ sqrt + 23 ⟵ sqr = ⟵ ⟵","7","");
         test("98 ⟵ sqrt + 23 ⟵ sqr = 12345 ⟵ ⟵","123","");
@@ -1159,7 +1107,6 @@ class ControllerTest {
         test("123456789 + 1 M+ + 2 M+ = 34 + 5 = M+ MR", "42", "");
         test("123456789 + 1 M+ + 2 M+ = 34 + 5 = M+ 1", "1", "");
         test("123456789 + 987654321 = M+ + 321 / - + * MR = =", "1,371742504663922e+27", "");
-
         test("12 + 3 = M- MR", "-15", "");
         test("12 + 3 = M- MR 21", "21", "");
         test("12 + 3 = M- 123456789 + 123456789 = M- MR", "-246 913 593", "");
@@ -1170,11 +1117,9 @@ class ControllerTest {
         test("987654321 + 123456789 = M- + 123 - + / * MR = =", "1,371742260219478e+27", "");
         test("9999999999999999 M- MR", "-9 999 999 999 999 999", "");
         test("9999999999999999 M- M- MR", "-2,e+16", "");
-
         test("12 + 1 = M- MR 34 + =", "68", "");
         test("1234567890 + 10 = M- MR * 23 + ", "-28 395 061 700", "-1234567900  ×  23  +  ");
         test("1234567890 - 10 = M- MR * 23 + =", "-56 790 122 480", "");
-
         test("1000000000000000 * = M+ MR", "1,e+30", "");
         test("1000000000000000 * = M+ M+ MR", "2,e+30", "");
         test("1000000000 * = M+ MR M+ MR", "2,e+18", "");
@@ -1221,16 +1166,27 @@ class ControllerTest {
         test("7320 / 3 * 1 + 3 sqrt MS C MR * 2" , "2","1,732050807568877  ×  ");
     }
 
+    /**
+     * Method assert response from processTest(String) with expected data
+     * @param expression - String with expression for test
+     * @param display - expected string at display label after test
+     * @param history - expected string at history label after test
+     */
     private void test(String expression, String display, String history){
 
-        String[] response = prepareTest(expression);
+        String[] response = processTest(expression);
         assertEquals(display, response[0]);
         assertEquals(history, response[1]);
         controller.handleOperation(new Clear());
         controller.handleOperation(new ClearMemory());
     }
 
-    private String[] prepareTest(String expression){
+    /**
+     * Method parses expression string and process test on controller methods
+     * @param expression - string expression for test
+     * @return String[] response from controller after test
+     */
+    private String[] processTest(String expression){
 
         String[] parsedEventStrings = expression.split(" ");
         String[] response = null;
@@ -1246,6 +1202,11 @@ class ControllerTest {
         return response;
     }
 
+    /**
+     * Method builds string with equals by count
+     * @param count - amount of equals
+     * @return String with equals and spaces by count
+     */
     private String addEquals(int count) {
 
         StringBuilder result = new StringBuilder("=");

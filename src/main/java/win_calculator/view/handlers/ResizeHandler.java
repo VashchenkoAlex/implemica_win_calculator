@@ -1,4 +1,4 @@
-package win_calculator.controller.handlers;
+package win_calculator.view.handlers;
 
 import javafx.event.EventHandler;
 import javafx.event.EventType;

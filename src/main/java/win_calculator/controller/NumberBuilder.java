@@ -6,42 +6,109 @@ import java.math.BigDecimal;
 import java.util.LinkedList;
 
 import static win_calculator.controller.enums.DigitType.ZERO;
-import static win_calculator.controller.utils.CalculatorUtils.addCapacity;
-import static win_calculator.controller.utils.CalculatorUtils.convertToString;
-import static win_calculator.controller.utils.CalculatorUtils.replaceDotToComa;
+import static win_calculator.controller.utils.ControllerUtils.addCapacity;
+import static win_calculator.controller.utils.ControllerUtils.convertDisplayNumberToString;
+import static win_calculator.controller.utils.ControllerUtils.replaceDotToComa;
 
+/**
+ * Class builds number from digits and return BigDecimal or String value
+ */
 public class NumberBuilder {
 
+    /**
+     * Constant of max entered digits
+     */
     private static final int MAX_DIGITS = 16;
+    /**
+     * Constant of coma representation at String
+     */
     private static final String COMA = ".";
+    /**
+     * Constant of zero representation at String
+     */
     private static final String ZERO_STR = "0";
+    /**
+     * Constant of minus representation at String
+     */
     private static final String MINUS_STR = "-";
+    /**
+     * Constant of String pattern for converting BigDecimal number to String for
+     * display label
+     */
     private static final String DISPLAY_PATTERN = "#############,###.################";
-    private boolean positive = true;
-    private BigDecimal number;
+
+
+    /**
+     * LinkedList of current entered digits chain
+     */
     private LinkedList<Digit> digitsChain = new LinkedList<>();
+
+    /**
+     * LinkedList of previous digits chain
+     */
     private LinkedList<Digit> previousChain;
 
-    String addDigit(Digit event) {
+    /**
+     * Flag of number sign
+     */
+    private boolean positive = true;
+    /**
+     * BigDecimal representation of current number
+     */
+    private BigDecimal number;
+
+
+    /**
+     * Method resets number, current digit's chain,
+     * previous digit's chain and sign
+     */
+    void clean() {
+
+        number = null;
+        digitsChain = new LinkedList<>();
+        previousChain = null;
+        resetPositive();
+    }
+
+    /**
+     * Method sets up BigDecimal representation of number
+     * @param number - BigDecimal value for number
+     */
+    public void setNumber(BigDecimal number){
+
+        this.number = number;
+    }
+
+    /**
+     * Getter for BigDecimal representation of number
+     * @return BigDecimal number
+     */
+    public BigDecimal getNumber(){
+
+        if (number == null){
+            prepareNumber();
+        }
+        return number;
+    }
+
+    /**
+     * Method add {@link Digit} to the current digit's chain
+     * @param digit - current {@link Digit}
+     * @return String of current digit's chain
+     */
+    String addDigit(Digit digit) {
 
         if (isNotMaxDigits()) {
-            add(event);
+            add(digit);
         }
         return convertChainToString();
     }
 
-    private void add(Digit digit) {
-
-        if (COMA.equals(digit.getValue())) {
-            addComa(digit);
-        } else if (ZERO_STR.equals(digit.getValue())) {
-            addZero(digit);
-        } else {
-            addDigitToChain(digit);
-        }
-        number = new BigDecimal(getValue());
-    }
-
+    /**
+     * Method finalizes current number
+     * Cleans digit's chain and BigDecimal representation of number
+     * @return finalized BigDecimal number
+     */
     BigDecimal finish() {
 
         prepareNumber();
@@ -57,14 +124,10 @@ public class NumberBuilder {
         return result;
     }
 
-    public void clear() {
-
-        number = null;
-        digitsChain = new LinkedList<>();
-        previousChain = null;
-        resetPositive();
-    }
-
+    /**
+     * Method process backspace operation with current number
+     * @return String value of current digit's chain
+     */
     String doBackSpace() {
 
         if (digitsChain.isEmpty() && isPreviousChainNotEmpty()) {
@@ -80,6 +143,55 @@ public class NumberBuilder {
         return convertChainToString();
     }
 
+    /**
+     * Method change sign of current number
+     * @param wasMemoryOperation - flag was it memory_operations operation,
+     *                           helps select where get number
+     * @return String value of current number
+     */
+    String negate(boolean wasMemoryOperation) {
+
+        changeIsPositive();
+        String result;
+        if (!wasMemoryOperation){
+            prepareNumber();
+            result = convertChainToString();
+        }else {
+            result = convertDisplayNumberToString(number.negate(),DISPLAY_PATTERN);
+        }
+        return result;
+    }
+
+    /**
+     * Method check and return are chains or number not empty
+     * @return true if {@link NumberBuilder} contains number
+     */
+    boolean containsNumber() {
+
+        return isChainNotEmpty() || isPreviousChainNotEmpty() || (number != null);
+    }
+
+    /**
+     * Method adds {@link Digit} from parameter to the number
+     * @param digit - current {@link Digit}
+     */
+    private void add(Digit digit) {
+
+        if (COMA.equals(digit.getValue())) {
+            addComa(digit);
+        } else if (ZERO_STR.equals(digit.getValue())) {
+            addZero(digit);
+        } else {
+            addDigitToChain(digit);
+        }
+        number = new BigDecimal(getValue());
+    }
+
+    /**
+     * Method sets up sign depends on flag positive
+     * @param value - BigDecimal value for setting sign
+     * @return changed BigDecimal value
+     */
     private BigDecimal setSign(BigDecimal value){
 
         BigDecimal result = value;
@@ -89,6 +201,10 @@ public class NumberBuilder {
         return result;
     }
 
+    /**
+     * Method adds {@link Digit} to the current digit's chain
+     * @param digit - current {@link Digit}
+     */
     private void addDigitToChain(Digit digit) {
 
         if (ZERO_STR.equals(getValue())) {
@@ -99,6 +215,10 @@ public class NumberBuilder {
         }
     }
 
+    /**
+     * Method adds coma to the current digit's chain with zero if it's necessary
+     * @param coma - {@link Digit} coma
+     */
     private void addComa(Digit coma) {
         if (digitsChain.isEmpty()) {
             digitsChain.add(new Digit(ZERO));
@@ -110,6 +230,10 @@ public class NumberBuilder {
         }
     }
 
+    /**
+     * Method adds zero to the digit's chain if it's possible
+     * @param zero - {@link Digit} zero
+     */
     private void addZero(Digit zero) {
 
         if (!ZERO_STR.equals(getValue())) {
@@ -117,6 +241,10 @@ public class NumberBuilder {
         }
     }
 
+    /**
+     * Verifies is digit's chain contains coma
+     * @return true if chain without coma
+     */
     private boolean numberWithoutComa() {
 
         boolean result = true;
@@ -128,6 +256,10 @@ public class NumberBuilder {
         return result;
     }
 
+    /**
+     * Method reject last digit from the digit's chain
+     * and adds zero if it's necessary
+     */
     private void cutLastDigit() {
 
         if (digitsChain.size() > 1) {
@@ -138,6 +270,10 @@ public class NumberBuilder {
         }
     }
 
+    /**
+     * Method converts current digit's chain to String
+     * @return String represents of current digit's chain
+     */
     private String getValue() {
 
         StringBuilder result = new StringBuilder();
@@ -147,16 +283,28 @@ public class NumberBuilder {
         return result.toString();
     }
 
+    /**
+     * Verifies is current digit's chain empty
+     * @return true if current digit's chain not empty
+     */
     private boolean isChainNotEmpty() {
 
         return !digitsChain.isEmpty();
     }
 
+    /**
+     * Verifies is previous digit's chain empty
+     * @return true if previous digit's chain not empty
+     */
     private boolean isPreviousChainNotEmpty() {
 
         return previousChain != null && !previousChain.isEmpty();
     }
 
+    /**
+     * Method verifies length of current digit's chain
+     * @return true if current digit's chain is not full
+     */
     private boolean isNotMaxDigits() {
 
         int digitsCount = digitsChain.size();
@@ -171,33 +319,24 @@ public class NumberBuilder {
         return digitsCount < MAX_DIGITS;
     }
 
+    /**
+     * Method change sign flag
+     */
     private void changeIsPositive() {
         positive = !positive;
     }
 
-    String negate(boolean wasMemoryAction) {
-
-        changeIsPositive();
-        String result;
-        if (!wasMemoryAction){
-            prepareNumber();
-            result = convertChainToString();
-        }else {
-            result = convertToString(number.negate(),DISPLAY_PATTERN);
-        }
-        return result;
-    }
-
+    /**
+     * Method reset sign flag
+     */
     private void resetPositive() {
 
         positive = true;
     }
 
-    boolean containsNumber() {
-
-        return isChainNotEmpty() || isPreviousChainNotEmpty() || (number != null);
-    }
-
+    /**
+     * Method verifies flags and sets up BigDecimal number
+     */
     private void prepareNumber() {
 
         if (digitsChain.isEmpty() && isPreviousChainNotEmpty()) {
@@ -214,19 +353,10 @@ public class NumberBuilder {
         }
     }
 
-    public void setNumber(BigDecimal number){
-
-        this.number = number;
-    }
-
-    public BigDecimal getNumber(){
-
-        if (number == null){
-            prepareNumber();
-        }
-        return number;
-    }
-
+    /**
+     * Method converts current digit's chain to String
+     * @return String value of current digit's chain
+     */
     private String convertChainToString(){
 
         StringBuilder resultBuilder = new StringBuilder();

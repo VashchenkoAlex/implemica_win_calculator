@@ -1,4 +1,4 @@
-package win_calculator.model.memory;
+package win_calculator.model.operations.memory_operations;
 
 public enum MemoryType {
     ADD_TO_MEMORY,

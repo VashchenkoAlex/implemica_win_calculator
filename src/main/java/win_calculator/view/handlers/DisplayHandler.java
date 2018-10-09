@@ -1,4 +1,4 @@
-package win_calculator.controller.handlers;
+package win_calculator.view.handlers;
 
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
@@ -6,8 +6,8 @@ import javafx.scene.text.Text;
 import win_calculator.controller.entities.Digit;
 import win_calculator.model.operations.OperationType;
 
-import static win_calculator.controller.utils.CalculatorUtils.addCapacity;
-import static win_calculator.controller.utils.CalculatorUtils.isComaAbsent;
+import static win_calculator.controller.utils.ControllerUtils.addCapacity;
+import static win_calculator.controller.utils.ControllerUtils.isComaAbsent;
 import static win_calculator.model.operations.OperationType.BACKSPACE;
 import static win_calculator.model.operations.OperationType.DIGIT;
 

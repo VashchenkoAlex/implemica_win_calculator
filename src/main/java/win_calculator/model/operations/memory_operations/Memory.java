@@ -1,4 +1,4 @@
-package win_calculator.model.memory;
+package win_calculator.model.operations.memory_operations;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;

@@ -27,7 +27,7 @@
                 <version>8.7.0</version>
                 <configuration>
 
-                    <mainClass>win_calculator.MainApp</mainClass>
+                    <mainClass>win_calculator.WinCalculator</mainClass>
 
                     <!-- only required if signing the jar file -->
                     <keyStoreAlias>example-user</keyStoreAlias>

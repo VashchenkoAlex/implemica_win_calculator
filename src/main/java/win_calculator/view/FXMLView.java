@@ -19,22 +19,24 @@ import javafx.scene.layout.RowConstraints;
 import javafx.stage.Window;
 import javafx.util.Callback;
 import javafx.util.Duration;
-import win_calculator.controller.FxController;
+import win_calculator.controller.CalcController;
 import win_calculator.controller.entities.Digit;
 import win_calculator.model.operations.extra_operations.*;
 import win_calculator.model.operations.main_operations.Add;
 import win_calculator.model.operations.main_operations.Divide;
 import win_calculator.model.operations.main_operations.Multiply;
 import win_calculator.model.operations.main_operations.Subtract;
-import win_calculator.controller.handlers.*;
-import win_calculator.model.memory.*;
 import win_calculator.model.operations.Operation;
 import win_calculator.model.operations.clear.BaskSpace;
 import win_calculator.model.operations.clear.ClearEntered;
 import win_calculator.model.operations.enter.Equal;
 import win_calculator.model.operations.clear.Clear;
 import win_calculator.model.operations.OperationType;
-import win_calculator.controller.enums.MenuListOption;
+import win_calculator.view.enums.MenuListOption;
+import win_calculator.model.operations.memory_operations.*;
+import win_calculator.view.handlers.CaptionHandler;
+import win_calculator.view.handlers.DisplayHandler;
+import win_calculator.view.handlers.HistoryFieldHandler;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -42,9 +44,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static win_calculator.controller.enums.DigitType.*;
-import static win_calculator.controller.utils.CalculatorUtils.*;
+import static win_calculator.controller.utils.ControllerUtils.*;
 import static win_calculator.model.operations.OperationType.*;
-import static win_calculator.controller.enums.MenuListOption.*;
+import static win_calculator.view.enums.MenuListOption.*;
 
 public class FXMLView implements Initializable {
 
@@ -123,7 +125,7 @@ public class FXMLView implements Initializable {
     @FXML
     private GridPane mainButtonsGrid;
 
-    private FxController fxController = new FxController();
+    private CalcController calcController = new CalcController();
     private HistoryFieldHandler historyFieldHandler = new HistoryFieldHandler();
     private CaptionHandler captionHandler = new CaptionHandler();
     private DisplayHandler displayHandler = new DisplayHandler();
@@ -320,7 +322,7 @@ public class FXMLView implements Initializable {
 
         ObservableList<Node> menuNodes = dropDownContainer.getChildren();
         menuNodes.add(prepareBackground());
-        String[] response = fxController.handleOperation(new RecallMemory());
+        String[] response = calcController.handleOperation(new RecallMemory());
         menuNodes.add(prepareDropDownLabel(response[0] , "memoryPane"));
     }
 
@@ -349,15 +351,15 @@ public class FXMLView implements Initializable {
 
     private void makeDigit(Digit digit){
 
-        OperationType previousOperationType = fxController.getLastOperationType();
-        String[] response = fxController.handleDigit(digit);
+        OperationType previousOperationType = calcController.getLastOperationType();
+        String[] response = calcController.handleDigit(digit);
         displayHandler.sendDigitToDisplay(digit,response[0], previousOperationType);
         handleDataFromResponse(response);
     }
 
     private void makeEvent(Operation operation) {
 
-        String[] response = fxController.handleOperation(operation);
+        String[] response = calcController.handleOperation(operation);
         displayHandler.setDisplayedText(response[0]);
         handleDataFromResponse(response);
     }
@@ -365,7 +367,7 @@ public class FXMLView implements Initializable {
     private void handleDataFromResponse(String[] response){
 
         setDisableOperationButtons(false);
-        OperationType lastOperationType = fxController.getLastOperationType();
+        OperationType lastOperationType = calcController.getLastOperationType();
         if (isNotNumber(response[0])) {
             setDisableOperationButtons(true);
             historyFieldHandler.setHistoryText(response[1]);

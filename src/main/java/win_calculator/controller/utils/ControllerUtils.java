@@ -16,29 +16,48 @@ import java.util.LinkedList;
 import static win_calculator.model.operations.OperationKind.*;
 import static win_calculator.model.operations.OperationType.*;
 
-public abstract class CalculatorUtils {
+/**
+ * Abstract class with utils for converting data to String
+ * Changing strings for different needs
+ */
+public abstract class ControllerUtils {
 
+    /**
+     * Constants with String representation of symbols
+     */
     private static final String COMA = ",";
     private static final String DOT = ".";
+    private static final String ZERO_STR = "0";
+    private static final String SPACE = " ";
+    private static final String PLUS = "+";
+    private static final String MINUS = "-";
+    private static final String E = "E";
+
+    /**
+     * Constants with regexes
+     */
+    private static final String SPACES_REGEX = "\\s\\s";
     private static final String IS_TEXT_REGEX = "^[^0-9]+";
     private static final String MINUS_REGEX = "^-.[0-9,]*";
-    private static final String MINUS = "-";
-    private static final String HISTORY_PATTERN = "################.################";
-    private static final String SIMPLE_E_SEPARATOR = "e";
-    private static final String FOURTEEN_DECIMAL_PART = "#.##############";
-    private static final String INTEGER_AND_DECIMAL_PART = "0.0000000000000000";
-    private static final int MAX_ROUND = 16;
-    private static final int MAX_DECIMAL = 17;
     private static final String ARE_ZEROS_FIRST_REGEX = "^0.0[0-9]+";
     private static final String IS_ZERO_FIRST_REGEX = "^0.+";
-    private static final String E_PART_OF_FORMAT = "#E0";
-    private static final int SCALE = 16;
-    private static final String PLUS = "+";
-    private static final String BRACKET = " )";
-    private static final String SPACE = "  ";
-    private static final String E = "E";
-    private static final String SPACES_REGEX = "\\s\\s";
     private static final String ADD_EXTRA_OPERATION_REGEX = "^.+[\\s{2}][^\\s{2}]+$";
+    private static final String NUMBER_REGEX_FOR_STR_FORMAT = "%,d";
+
+    /**
+     * Constants for DecimalFormat
+     */
+    private static final String SIMPLE_E_SEPARATOR = "e";
+    private static final String E_PART_OF_FORMAT = "#E0";
+    private static final String HISTORY_PATTERN = "################.################";
+    private static final String FOURTEEN_DECIMAL_PART = "#.##############";
+    private static final String INTEGER_AND_DECIMAL_PART = "0.0000000000000000";
+
+    /**
+     * Constants of operation String values at history
+     */
+    private static final String OPERATION_SEPARATOR = "  ";
+    private static final String BRACKET = " )";
     private static final String FRACTION_SYMBOL = "1/( ";
     private static final String NEGATE_SYMBOL = "negate( ";
     private static final String SQR_SYMBOL = "sqr( ";
@@ -48,22 +67,48 @@ public abstract class CalculatorUtils {
     private static final String MULTIPLY_SYMBOL = "  \u00D7  ";
     private static final String SUBTRACT_SYMBOL = "  -  ";
 
+    /**
+     * Number length constants
+     */
+    private static final int MIN_EXPONENT = 3;
+    private static final int MAX_NUMBER_LENGTH = 16;
+    private static final int MAX_DECIMAL_PART = 17;
+
+    /**
+     * Verifies is String value of number contains coma
+     * @param number - String value of number for check
+     * @return true if given number doesn't contain coma
+     */
     public static boolean isComaAbsent(String number) {
 
         return !number.contains(COMA);
     }
 
+    /**
+     * Method replace dot to coma at String value of number
+     * @param number - String value of number
+     * @return changed value
+     */
+    public static String replaceDotToComa(String number) {
 
-    public static String replaceDotToComa(String string) {
-
-        return string.replace(DOT, COMA);
+        return number.replace(DOT, COMA);
     }
 
+    /**
+     * Verifies is current string not number
+     * @param string - given String
+     * @return true if given String is not number
+     */
     public static boolean isNotNumber(String string) {
 
         return string.matches(IS_TEXT_REGEX);
     }
 
+    /**
+     * Adds capacity to the given String value of number
+     * @param string - the given String value of number
+     * @return String value of number with capacity
+     */
     public static String addCapacity(String string) {
 
         String[] parts = {string, ""};
@@ -77,7 +122,8 @@ public abstract class CalculatorUtils {
             coma = COMA;
             parts = parts[0].split(COMA);
         }
-        parts[0] = String.format("%,d", Long.parseLong(parts[0].replaceAll(" ", "")));
+        long number = Long.parseLong(parts[0].replaceAll(SPACE, ""));
+        parts[0] = String.format(NUMBER_REGEX_FOR_STR_FORMAT,number);
         String result;
         if (parts.length > 1) {
             result = minus + parts[0] + coma + parts[1];
@@ -87,7 +133,12 @@ public abstract class CalculatorUtils {
         return result;
     }
 
-    public static String getHistoryString(LinkedList<Operation> history) {
+    /**
+     *Converts given history of operations at LinkedList to the String
+     * @param history - given history of operations at LinkedList
+     * @return String of converted history
+     */
+    public static String convertHistoryToString(LinkedList<Operation> history) {
 
         String result = "";
         for (Operation operation : history) {
@@ -96,7 +147,7 @@ public abstract class CalculatorUtils {
                 String value = selectExtraOperationSymbol((ExtraOperation) operation);
                 result = addExtraOperationToString(result, value);
             } else if (NUMBER.equals(type)) {
-                result += convertToString(((Number) operation).getBigDecimalValue(), HISTORY_PATTERN);
+                result += convertDisplayNumberToString(((Number) operation).getBigDecimalValue(), HISTORY_PATTERN);
             } else if (NEGATE.equals(type)) {
                 result = addExtraOperationToString(result, NEGATE_SYMBOL);
             } else if (PERCENT.equals(type)) {
@@ -108,6 +159,33 @@ public abstract class CalculatorUtils {
         return result;
     }
 
+    /**
+     * Converts given BigDecimal number to String by {@link DecimalFormat}
+     * @param givenNumber - given BigDecimal number for converting
+     * @param pattern - String pattern for {@link DecimalFormat}
+     * @return String of given number
+     */
+    public static String convertDisplayNumberToString(BigDecimal givenNumber, String pattern) {
+
+        String result;
+        if (givenNumber != null) {
+            BigDecimal number = givenNumber;
+            int scale = selectScale(number);
+            number = setNewScale(number, scale);
+            number = number.stripTrailingZeros();
+            String thePattern = preparePattern(number, pattern);
+            result = initFormatter(thePattern, selectSeparator(number)).format(number);
+        } else {
+            result = ZERO_STR;
+        }
+        return result;
+    }
+
+    /**
+     * Selects symbol for given {@link MainOperation}
+     * @param mainOperation - given {@link MainOperation}
+     * @return symbol for given {@link MainOperation}
+     */
     private static String selectMainOperationSymbol(MainOperation mainOperation){
 
         String symbol = "";
@@ -124,6 +202,11 @@ public abstract class CalculatorUtils {
         return symbol;
     }
 
+    /**
+     * Selects symbol for given {@link ExtraOperation}
+     * @param extraOperation - given {@link ExtraOperation}
+     * @return symbol for given {@link ExtraOperation}
+     */
     private static String selectExtraOperationSymbol(ExtraOperation extraOperation){
 
         String symbol = "";
@@ -138,22 +221,12 @@ public abstract class CalculatorUtils {
         return symbol;
     }
 
-    public static String convertToString(BigDecimal incomeNumber, String pattern) {
-
-        String result;
-        if (incomeNumber != null) {
-            BigDecimal number = incomeNumber;
-            int scale = selectScale(number);
-            number = setNewScale(number, scale);
-            number = number.stripTrailingZeros();
-            String thePattern = selectPattern(number, pattern);
-            result = initFormatter(thePattern, selectSeparator(number)).format(number);
-        } else {
-            result = "0";
-        }
-        return result;
-    }
-
+    /**
+     * Initializes {@link DecimalFormat}
+     * @param pattern - given pattern for {@link DecimalFormat}
+     * @param separator - given separator for {@link DecimalFormat}
+     * @return initialized instance of {@link DecimalFormat}
+     */
     private static DecimalFormat initFormatter(String pattern, String separator) {
 
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
@@ -163,10 +236,15 @@ public abstract class CalculatorUtils {
         return formatter;
     }
 
+    /**
+     * Selects separator for {@link DecimalFormat} depends on given number
+     * @param number - given number
+     * @return separator for {@link DecimalFormat}
+     */
     private static String selectSeparator(BigDecimal number) {
 
         String separator = SIMPLE_E_SEPARATOR;
-        if (getUnscaledLength(number) < 2) {
+        if (getUnscaledLength(number) == 1) {
             separator = COMA + separator;
         }
         if (number.toString().contains(PLUS)) {
@@ -175,38 +253,50 @@ public abstract class CalculatorUtils {
         return separator;
     }
 
-    private static String selectPattern(BigDecimal number, String pattern) {
+    /**
+     * Prepares String pattern for {@link DecimalFormat} by given number
+     * and given String pattern
+     * @param number - given BigDecimal number
+     * @param pattern - given pattern
+     * @return prepared String pattern
+     */
+    private static String preparePattern(BigDecimal number, String pattern) {
 
         String currentPattern = pattern;
         String numberStr = number.toString();
         if (containsE(number) && !numberStr.matches(IS_ZERO_FIRST_REGEX)) {
             String[] parts = numberStr.split(E);
             int expCount = Math.abs(Integer.parseInt(parts[1]));
-            if (number.toPlainString().contains(".")){
-                number = setNewScale(number, SCALE + expCount);
+            if (number.toPlainString().contains(DOT)){
+                number = setNewScale(number, MAX_NUMBER_LENGTH + expCount);
                 number = number.stripTrailingZeros();
             }
             int unscaledLnth = getUnscaledLength(number);
             if (parts[1].contains(MINUS)) {
-                if (expCount > MAX_DECIMAL - unscaledLnth) {
-                    currentPattern = preparePattern(unscaledLnth) + E_PART_OF_FORMAT;
+                if (expCount > MAX_DECIMAL_PART - unscaledLnth) {
+                    currentPattern = truncatePattern(unscaledLnth) + E_PART_OF_FORMAT;
                 }
             } else if (parts[1].contains(PLUS)) {
-                if (getWholeLength(number) > MAX_ROUND) {
-                    currentPattern = preparePattern(unscaledLnth) + E_PART_OF_FORMAT;
+                if (getWholeLength(number) > MAX_NUMBER_LENGTH) {
+                    currentPattern = truncatePattern(unscaledLnth) + E_PART_OF_FORMAT;
                 }
             }
         } else if (numberStr.matches(IS_ZERO_FIRST_REGEX)) {
             if (numberStr.matches(ARE_ZEROS_FIRST_REGEX) && isCorrectExponent(number)) {
-                currentPattern = preparePattern(getUnscaledLength(number)) + E_PART_OF_FORMAT;
+                currentPattern = truncatePattern(getUnscaledLength(number)) + E_PART_OF_FORMAT;
             }
         }
         return currentPattern;
     }
 
+    /**
+     * Selects correct scale by given number
+     * @param number - given BigDecimal number
+     * @return correct Integer scale for given number
+     */
     private static int selectScale(BigDecimal number) {
 
-        int scale = SCALE;
+        int scale = MAX_NUMBER_LENGTH;
         String result = number.abs().toString();
         if (containsE(number) && !result.matches(IS_ZERO_FIRST_REGEX)) {
             --scale;
@@ -222,12 +312,23 @@ public abstract class CalculatorUtils {
         return scale;
     }
 
+    /**
+     *Truncates basic pattern for {@link DecimalFormat} depends on
+     * given int count
+     * @param count - given int count for truncate
+     * @return truncated String pattern
+     */
+    private static String truncatePattern(int count) {
 
-    private static String preparePattern(int count) {
-
-        return INTEGER_AND_DECIMAL_PART.substring(0, INTEGER_AND_DECIMAL_PART.length() - MAX_DECIMAL + count);
+        int index = INTEGER_AND_DECIMAL_PART.length() - MAX_DECIMAL_PART + count;
+        return INTEGER_AND_DECIMAL_PART.substring(0,index);
     }
 
+    /**
+     * Verifies is given BigDecimal number has correct exponent
+     * @param number - given BigDecimal number
+     * @return true if given BigDecimal number has correct exponent
+     */
     private static boolean isCorrectExponent(BigDecimal number) {
 
         DecimalFormat formatter = new DecimalFormat(FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT);
@@ -235,11 +336,16 @@ public abstract class CalculatorUtils {
         boolean result = false;
         if (parts.length > 1) {
             int exponent = Math.abs(Integer.parseInt(parts[1]));
-            result = exponent > 3 && parts[0].length() + exponent > MAX_ROUND;
+            result = exponent > MIN_EXPONENT && parts[0].length() + exponent > MAX_NUMBER_LENGTH;
         }
         return result;
     }
 
+    /**
+     * Gets an exponent for given BigDecimal number by {@link DecimalFormat}
+     * @param number - given BigDecimal number
+     * @return int exponent value for given BigDecimal number
+     */
     private static int getExponent(BigDecimal number) {
 
         DecimalFormat formatter = new DecimalFormat(FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT);
@@ -247,35 +353,61 @@ public abstract class CalculatorUtils {
         return Math.abs(Integer.parseInt(parts[1]));
     }
 
+    /**
+     * Gets unscaled length for given BigDecimal number
+     * @param number - given BigDecimal number
+     * @return int value of unscaled length for given BigDecimal number
+     */
     private static int getUnscaledLength(BigDecimal number) {
 
         return number.abs().unscaledValue().toString().length();
     }
 
+    /**
+     * Gets whole length for given BigDecimal number
+     * @param number - given BigDecimal number
+     * @return int value of whole length for given BigDecimal number
+     */
     private static int getWholeLength(BigDecimal number) {
 
         return number.abs().toBigInteger().toString().length();
     }
 
+    /**
+     * Sets scaling for given BigDecimal number
+     * @param number - given BigDecimal number
+     * @param scale - given scale
+     * @return BigDecimal value of scaled given number
+     */
     private static BigDecimal setNewScale(BigDecimal number, int scale) {
 
         return number.setScale(scale, RoundingMode.HALF_UP);
     }
 
+    /**
+     * Verifies is given BigDecimal number contains exponent
+     * @param number - given BigDecimal number
+     * @return true if given BigDecimal number contains exponent
+     */
     private static boolean containsE(BigDecimal number) {
 
         return number.toString().contains(E);
     }
 
-
+    /**
+     * Adds given symbol of extra operation to the given String of history
+     * @param currentStr - given String of history
+     * @param symbol - given symbol of extra operation
+     * @return given String with symbol
+     */
     private static String addExtraOperationToString(String currentStr, String symbol) {
 
         StringBuilder resultStr = new StringBuilder();
-        if (currentStr.contains(SPACE)) {
+        if (currentStr.contains(OPERATION_SEPARATOR)) {
             if (currentStr.matches(ADD_EXTRA_OPERATION_REGEX)) {
                 String[] parts = currentStr.split(SPACES_REGEX);
                 for (int i = 0; i < parts.length - 1; i++) {
-                    resultStr.append(parts[i]).append(SPACE);
+                    resultStr.append(parts[i]).append(OPERATION_SEPARATOR);
                 }
                 resultStr.append(symbol).append(parts[parts.length - 1]);
             } else {

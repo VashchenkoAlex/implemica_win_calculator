@@ -1,13 +1,13 @@
-package win_calculator.model.memory;
+package win_calculator.model.operations.memory_operations;
 
 import win_calculator.model.operations.OperationType;
 
-import static win_calculator.model.memory.MemoryType.STORE;
+import static win_calculator.model.operations.memory_operations.MemoryType.ADD_TO_MEMORY;
 
-public class StoreMemory implements MemoryOperation {
+public class AddToMemory implements MemoryOperation {
 
     private static final OperationType TYPE = OperationType.MEMORY;
-    private static final MemoryType MEMORY_TYPE = STORE;
+    private static final MemoryType MEMORY_TYPE = ADD_TO_MEMORY;
 
     @Override
     public MemoryType getMemoryType() {

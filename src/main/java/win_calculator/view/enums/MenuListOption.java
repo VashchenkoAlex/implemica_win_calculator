@@ -1,5 +1,8 @@
-package win_calculator.controller.enums;
+package win_calculator.view.enums;
 
+/**
+ * Enum class with possibles options for Menu's list and values for them
+ */
 public enum MenuListOption {
 
     CALCULATOR("Calculator","NOT_OPTION"),

@@ -1,8 +1,8 @@
-package win_calculator.model.memory;
+package win_calculator.model.operations.memory_operations;
 
 import win_calculator.model.operations.OperationType;
 
-import static win_calculator.model.memory.MemoryType.SUBTRACT_FROM_MEMORY;
+import static win_calculator.model.operations.memory_operations.MemoryType.SUBTRACT_FROM_MEMORY;
 
 public class SubtractMemory implements MemoryOperation {
 
