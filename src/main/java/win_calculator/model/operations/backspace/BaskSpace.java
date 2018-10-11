@@ -1,14 +1,15 @@
-package win_calculator.model.operations.clear;
+package win_calculator.model.operations.backspace;
 
 import win_calculator.model.operations.Operation;
 import win_calculator.model.operations.OperationType;
 
+/**
+ * Entity class for backspace operation at {@link win_calculator.model.CalcModel}
+ */
 public class BaskSpace implements Operation {
-
-    private static final OperationType TYPE = OperationType.BACKSPACE;
 
     @Override
     public OperationType getType() {
-        return TYPE;
+        return OperationType.BACKSPACE;
     }
 }

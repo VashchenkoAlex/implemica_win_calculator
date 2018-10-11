@@ -22,83 +22,109 @@ import static win_calculator.model.utils.ModelUtils.roundNumber;
  */
 public class CalcModel {
 
-    /**
-     * The instance of {@link OperationProcessor}
-     */
-    private OperationProcessor operationProcessor = new OperationProcessor();
+   /**
+    * The instance of {@link OperationProcessor}
+    */
+   private OperationProcessor operationProcessor = new OperationProcessor();
 
-    /**
-     * Stores BigDecimal result number for return
-     */
-    private BigDecimal responseNumber;
-    /**
-     * Stores BigDecimal value of inputted number
-     */
-    private BigDecimal inputtedNumber;
-    /**
-     * Receives BigDecimal number and store it
-     * @param number - given BigDecimal number
-     */
-    public void calculate(BigDecimal number) {
+   /**
+    * Stores BigDecimal result number for return
+    */
+   private BigDecimal responseNumber;
+   /**
+    * Stores BigDecimal value of inputted number
+    */
+   private BigDecimal inputtedNumber;
 
-        inputtedNumber = number;
-    }
+   /**
+    * Receives BigDecimal number and store it
+    *
+    * @param number - given BigDecimal number
+    */
+   public void calculate(BigDecimal number) {
 
-    /**
-     * Receives current operation
-     * Decides which method has to be called for calculations by
-     * current operation's type
-     * Verifies result on overflow
-     * Rounds result if it's necessary
-     * @param operation - current operation
-     * @return BigDecimal value of calculation's result
-     * @throws OperationException if number is overflow or
-     * {@link OperationProcessor} throws {@link OperationException}
-     */
-    public BigDecimal calculate(Operation operation) throws OperationException {
+      inputtedNumber = number;
+   }
 
-        OperationType type = operation.getType();
-        if (MAIN_OPERATION.equals(type)) {
-            responseNumber = operationProcessor.processMainOperation(operation, inputtedNumber, responseNumber);
-        } else if (EQUAL.equals(type)) {
-            responseNumber = operationProcessor.processEnter(inputtedNumber, responseNumber);
-        } else if (EXTRA_OPERATION.equals(type)) {
-            responseNumber = operationProcessor.processExtraOperation(operation, inputtedNumber, responseNumber);
-        } else if (NEGATE.equals(type)) {
-            responseNumber = operationProcessor.processNegate(operation, inputtedNumber, responseNumber);
-        } else if (PERCENT.equals(type)) {
-            responseNumber = operationProcessor.processPercent(operation, inputtedNumber);
-        } else if (CLEAR.equals(type)) {
-            responseNumber = operationProcessor.processClear();
-        } else if (CLEAR_ENTERED.equals(type)) {
-            operationProcessor.processClearEntered();
-            responseNumber = null;
-        } else if (MEMORY.equals(type)) {
-            BigDecimal result = operationProcessor.processMemory((MemoryOperation) operation, inputtedNumber);
-            if (result != null) {
-                responseNumber = result;
-            }
-        }
-        inputtedNumber = null;
-        checkOnOverflow(responseNumber);
-        return roundNumber(responseNumber);
-    }
+   /**
+    * Receives current operation
+    * Decides which method has to be called for calculations by
+    * current operation's type
+    * Verifies result on overflow
+    * Rounds result if it's necessary
+    *
+    * @param operation - current operation
+    * @return BigDecimal value of calculation's result
+    * @throws OperationException if number is overflow or
+    *                            {@link OperationProcessor} throws {@link OperationException}
+    */
+   public BigDecimal calculate(Operation operation) throws OperationException {
 
-    /**
-     * Getter for history list
-     * @return LinkedList<Operation> of current history
-     */
-    public LinkedList<Operation> getHistory() {
+      OperationType type = operation.getType();
+      if (isBinaryOperation(type)){
+         responseNumber = operationProcessor.processBinaryOperation(operation, inputtedNumber, responseNumber);
+      } else if (EQUAL.equals(type)) {
+         responseNumber = operationProcessor.processEnter(inputtedNumber, responseNumber);
+      } else if (isExtraOperation(type)) {
+         responseNumber = operationProcessor.processExtraOperation(operation, inputtedNumber, responseNumber);
+      } else if (NEGATE.equals(type)) {
+         responseNumber = operationProcessor.processNegate(operation, inputtedNumber, responseNumber);
+      } else if (PERCENT.equals(type)) {
+         responseNumber = operationProcessor.processPercent(operation, inputtedNumber);
+      } else if (CLEAR.equals(type)) {
+         responseNumber = operationProcessor.processClear();
+      } else if (CLEAR_ENTERED.equals(type)) {
+         operationProcessor.processClearEntered();
+         responseNumber = null;
+      } else if (MEMORY.equals(type)) {
+         BigDecimal result = operationProcessor.processMemory((MemoryOperation) operation, inputtedNumber);
+         if (result != null) {
+            responseNumber = result;
+         }
+      }
+      checkOnOverflow(responseNumber);
+      return roundNumber(responseNumber);
+   }
 
-        return operationProcessor.getHistory();
-    }
+   /**
+    * Getter for history list
+    *
+    * @return LinkedList<Operation> of current history
+    */
+   public LinkedList<Operation> getHistory() {
 
-    /**
-     * Sends request to the {@link OperationProcessor} to clean
-     * last number and extra operations on it at history
-     */
-    public void clearLastExtra() {
+      return operationProcessor.getHistory();
+   }
 
-        operationProcessor.rejectLastNumberWithExtraOperations();
-    }
+   /**
+    * Sends request to the {@link OperationProcessor} to clean
+    * last number and extra operations on it at history
+    */
+   public void clearLastExtra() {
+
+      operationProcessor.rejectLastNumberWithExtraOperations();
+   }
+
+   /**
+    * Verifies is given {@link OperationType} binary operation
+    * (add, divide, subtract, multiply)
+    * @param type - given operation type
+    * @return boolean result
+    */
+   private boolean isBinaryOperation(OperationType type){
+
+      return type == ADD || type == SUBTRACT || type == DIVIDE || type == MULTIPLY;
+   }
+
+   /**
+    * Verifies is given {@link OperationType} extra operation
+    * (negate, sqrt, sqr, fraction)
+    * @param type - given operation type
+    * @return boolean result
+    */
+   private boolean isExtraOperation(OperationType type){
+
+      return SQR == type || SQRT == type || FRACTION == type;
+   }
+
 }

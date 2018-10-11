@@ -1,4 +1,4 @@
-package win_calculator.view.handlers;
+package win_calculator.view.listeners;
 
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -7,20 +7,26 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-public class ResizeHandler {
+/**
+ * Listener of mouse events on FXApp
+ * Changes window size and mouse cursor depends on mouse positions and mouse events
+ *
+ * was taken from https://stackoverflow.com/a/24017605 and was modified
+ */
+public class ResizeListener {
 
     public static void addResizeListener(Stage stage) {
-        ResizeListener resizeListener = new ResizeListener(stage);
+        Resizer resizer = new Resizer(stage);
         Scene scene = stage.getScene();
-        scene.addEventHandler(MouseEvent.MOUSE_MOVED, resizeListener);
-        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, resizeListener);
-        scene.addEventHandler(MouseEvent.MOUSE_DRAGGED, resizeListener);
-        scene.addEventHandler(MouseEvent.MOUSE_EXITED, resizeListener);
-        scene.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, resizeListener);
+        scene.addEventHandler(MouseEvent.MOUSE_MOVED, resizer);
+        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, resizer);
+        scene.addEventHandler(MouseEvent.MOUSE_DRAGGED, resizer);
+        scene.addEventHandler(MouseEvent.MOUSE_EXITED, resizer);
+        scene.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, resizer);
 
     }
 
-    private static class ResizeListener implements EventHandler<MouseEvent> {
+    private static class Resizer implements EventHandler<MouseEvent> {
         private Stage stage;
         private Scene scene;
         private Cursor cursorEvent = Cursor.DEFAULT;
@@ -30,7 +36,7 @@ public class ResizeHandler {
         private double mouseX;
         private double mouseY;
 
-        ResizeListener(Stage stage) {
+        Resizer(Stage stage) {
             this.stage = stage;
             scene = stage.getScene();
         }

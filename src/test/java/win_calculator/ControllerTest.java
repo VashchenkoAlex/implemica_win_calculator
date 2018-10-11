@@ -2,20 +2,21 @@ package win_calculator;
 
 import org.junit.jupiter.api.Test;
 import win_calculator.controller.CalcController;
-import win_calculator.controller.entities.Digit;
-import win_calculator.model.operations.memory_operations.ClearMemory;
+import win_calculator.controller.entities.NumberSymbol;
 import win_calculator.model.operations.Operation;
 import win_calculator.model.operations.clear.Clear;
+import win_calculator.model.operations.memory_operations.MemoryOperation;
 
 import java.util.HashMap;
 
 import static org.junit.gen5.api.Assertions.assertEquals;
 import static win_calculator.InitializerTestMaps.createDigitsMap;
 import static win_calculator.InitializerTestMaps.createOperationsMap;
+import static win_calculator.model.operations.memory_operations.MemoryOperationType.CLEAR_MEMORY;
 
 /**
  * Test class for calculator controller.
- * Uses {@link CalcController}.handleDigit({@link Digit})
+ * Uses {@link CalcController}.handleDigit({@link NumberSymbol})
  * and {@link CalcController}.handleOperation({@link Operation}) methods for tests.
  *
  */
@@ -23,7 +24,7 @@ class ControllerTest {
 
     private static final CalcController controller = new CalcController();
     private static final HashMap<String, Operation> operations = createOperationsMap();
-    private static final HashMap<String,Digit> digits = createDigitsMap();
+    private static final HashMap<String,NumberSymbol> digits = createDigitsMap();
     private static final String IS_DIGIT_REGEX = "\\d+(,\\d+)?";
     private static final String COMA = ",";
 
@@ -488,6 +489,7 @@ class ControllerTest {
 
         test("3 sqr sqrt - 3 =","0","");
         test("3 sqr sqrt - 10 % = sqr sqr 1/x + sqr * sqr - sqr / sqr % sqr =","5,759700640885393e+29","");
+        test("5 * 6 = = = = = sqr sqr sqr =","3,1330065325415e+37","");
         test("25 * 25 = = = = = sqr sqr sqr =","3,155443620884047e+68","");
         test("25 * 25 = = = = = sqr sqr sqr = sqr sqr = sqr =","1,535689537429126e+552","");
         test("25 * 25 * sqr sqr sqr * sqr sqr = sqr","4,257959840008151e+251","sqr( 6,525304467998525e+125 )");
@@ -1178,7 +1180,7 @@ class ControllerTest {
         assertEquals(display, response[0]);
         assertEquals(history, response[1]);
         controller.handleOperation(new Clear());
-        controller.handleOperation(new ClearMemory());
+        controller.handleOperation(new MemoryOperation(CLEAR_MEMORY));
     }
 
     /**

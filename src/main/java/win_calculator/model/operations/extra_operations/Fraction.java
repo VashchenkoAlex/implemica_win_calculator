@@ -1,7 +1,6 @@
 package win_calculator.model.operations.extra_operations;
 
 import win_calculator.model.exceptions.OperationException;
-import win_calculator.model.operations.OperationKind;
 import win_calculator.model.operations.OperationType;
 
 import java.math.BigDecimal;
@@ -9,31 +8,38 @@ import java.math.RoundingMode;
 
 import static win_calculator.model.exceptions.ExceptionType.DIVIDE_BY_ZERO;
 
+/**
+ * Entity class for fraction operation at {@link win_calculator.model.CalcModel}
+ */
 public class Fraction implements ExtraOperation {
 
-    private static final OperationType TYPE = OperationType.EXTRA_OPERATION;
-    private static final OperationKind kind = OperationKind.FRACTION;
-    private static final int SCALE = 10000;
+   /**
+    * Constant of max scaling for the method
+    */
+   private static final int SCALE = 10000;
 
-    @Override
-    public BigDecimal calculate(BigDecimal number) throws OperationException {
+   /**
+    * Overridden method from {@link ExtraOperation}
+    * Calculate BigDecimal.ONE divide on given BigDecimal number
+    *
+    * @param number - given BigDecimal number
+    * @return BigDecimal result of calculation
+    * throws {@link OperationException} when given BigDecimal number equals zero
+    */
+   @Override
+   public BigDecimal calculate(BigDecimal number) throws OperationException {
 
-        try{
-            return BigDecimal.ONE.divide(number, SCALE,RoundingMode.HALF_UP);
-        }catch (ArithmeticException e){
-            throw new OperationException(DIVIDE_BY_ZERO);
-        }
-    }
+      try {
+         return BigDecimal.ONE.divide(number, SCALE, RoundingMode.HALF_UP);
+      } catch (ArithmeticException e) {
+         throw new OperationException(DIVIDE_BY_ZERO);
+      }
+   }
 
-    @Override
-    public OperationType getType() {
+   @Override
+   public OperationType getType() {
 
-        return TYPE;
-    }
+      return OperationType.FRACTION;
+   }
 
-    @Override
-    public OperationKind getKind(){
-
-        return kind;
-    }
 }

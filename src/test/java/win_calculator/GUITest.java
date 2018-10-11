@@ -15,7 +15,7 @@ import org.loadui.testfx.GuiTest;
 import org.testfx.api.FxToolkit;
 import org.testfx.matcher.control.LabeledMatchers;
 import org.testfx.util.WaitForAsyncUtils;
-import win_calculator.view.handlers.CaptionHandler;
+import win_calculator.view.containers.WindowContainer;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
@@ -485,7 +485,7 @@ class GUITest {
     void testExitMethodByMouse() {
 
         final boolean[] closed = new boolean[1];
-        CaptionHandler.instance = new CaptionHandler() {
+        WindowContainer.instance = new WindowContainer() {
             @Override
             public void close() {
                 closed[0] = true;
