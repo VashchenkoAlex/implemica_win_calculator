@@ -6,23 +6,23 @@ package win_calculator.controller.entities;
 public class NumberSymbol {
 
     /**
-     * Stores string value of current digit
+     * Stores string symbol of current digit
      */
-    private String value;
+    private Symbol symbol;
 
     /**
      * Constructs digit with given string
-     * @param value - value of current digit
+     * @param symbol - symbol of current digit
      */
-    public NumberSymbol(String value){
-        this.value = value;
+    public NumberSymbol(Symbol symbol){
+        this.symbol = symbol;
     }
 
     /**
-     * Getter for value of current symbol
-     * @return String value of symbol
+     * Getter for string of current symbol
+     * @return {@link Symbol}
      */
-    public String getValue(){
-        return value;
+    public String getSymbol(){
+        return symbol.getString();
     }
 }

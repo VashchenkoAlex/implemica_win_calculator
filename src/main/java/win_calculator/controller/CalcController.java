@@ -18,6 +18,8 @@ import static win_calculator.model.exceptions.ExceptionType.*;
 import static win_calculator.model.operations.memory_operations.MemoryOperationType.STORE;
 import static win_calculator.model.operations.OperationType.*;
 import static win_calculator.model.operations.OperationType.EQUAL;
+import static win_calculator.model.utils.ModelUtils.isBinaryOperation;
+import static win_calculator.model.utils.ModelUtils.isExtraOperation;
 
 /**
  * Controller class of WinCalculator application
@@ -209,7 +211,7 @@ public class CalcController {
     */
    private void handleNegate() {
 
-      displayText = numberBuilder.negate(MEMORY.equals(lastOperationType));
+      displayText = numberBuilder.negate(MEMORY == lastOperationType);
    }
 
    /**
@@ -227,10 +229,11 @@ public class CalcController {
       BigDecimal currentNum = numberBuilder.finish();
       model.calculate(currentNum);
       BigDecimal result = model.calculate(operation);
-      if (MEMORY.equals(operation.getType())) {
+      OperationType type = operation.getType();
+      if (MEMORY == type) {
          MemoryOperationType memoryOperationType = ((MemoryOperation) operation).getMemoryOperationType();
 
-         if (!STORE.equals(memoryOperationType)) {
+         if (STORE != memoryOperationType) {
             numberBuilder.clean();
             numberBuilder.setNumber(result);
          } else if (currentNum != null) {
@@ -238,13 +241,13 @@ public class CalcController {
             result = currentNum;
          }
 
-      } else if (!NEGATE.equals(operation.getType()) && !MEMORY.equals(operation.getType())) {
+      } else if (NEGATE != type) {
          numberBuilder.clean();
+         if (EQUAL == type) {
+            historyText = "";
+         }
       }
 
-      if (EQUAL.equals(operation.getType())) {
-         historyText = "";
-      }
       return result;
    }
 
@@ -268,6 +271,7 @@ public class CalcController {
       } else {
          message = "";
       }
+
       return message;
    }
 
@@ -293,7 +297,6 @@ public class CalcController {
     * @param type - type of {@link Operation}
     */
    private void setLastOperationType(OperationType type) {
-
       lastOperationType = type;
    }
 
@@ -305,30 +308,10 @@ public class CalcController {
     */
    private boolean isOperationTypeResettingOverflow(OperationType type) {
 
-      return BACKSPACE == type || CLEAR == type
+      return BACKSPACE == type
+              || CLEAR == type
               || CLEAR_ENTERED == type
               || (EQUAL == lastOperationType && EQUAL == type);
    }
 
-   /**
-    * Verifies is given {@link OperationType} binary operation
-    * (add, divide, subtract, multiply)
-    * @param type - given operation type
-    * @return boolean result
-    */
-   private boolean isBinaryOperation(OperationType type){
-
-      return type == ADD || type == SUBTRACT || type == DIVIDE || type == MULTIPLY;
-   }
-
-   /**
-    * Verifies is given {@link OperationType} extra operation
-    * (sqrt, sqr, fraction)
-    * @param type - given operation type
-    * @return boolean result
-    */
-   private boolean isExtraOperation(OperationType type){
-
-      return type == SQR || type == SQRT || type == FRACTION;
-   }
 }

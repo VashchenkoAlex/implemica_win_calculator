@@ -60,10 +60,6 @@ public abstract class ControllerUtils {
     */
    private static final String MINUS_REGEX = "^-.[0-9,]*";
    /**
-    * Constant: match first two digits are zeros regular expression
-    */
-   private static final String ARE_ZEROS_FIRST_REGEX = "^0.0[0-9]+";
-   /**
     * Constant: match first digit is zero regular expression
     */
    private static final String IS_ZERO_FIRST_REGEX = "^0.+";
@@ -145,7 +141,7 @@ public abstract class ControllerUtils {
    /**
     * Constant: max number length
     */
-   private static final int MAX_NUMBER_LENGTH = 16;
+   private static final int MAX_VISIBLE_NUMBER_LENGTH = 16;
    /**
     * Constant: max decimal part length
     */
@@ -209,14 +205,14 @@ public abstract class ControllerUtils {
       long number = Long.parseLong(parts[0].replaceAll(SPACE, ""));
       parts[0] = String.format(NUMBER_REGEX_FOR_STR_FORMAT, number);
 
-      String result;
+      String stringWithCapacity;
       if (parts.length > 1) {
-         result = minus + parts[0] + coma + parts[1];
+         stringWithCapacity = minus + parts[0] + coma + parts[1];
       } else {
-         result = minus + parts[0] + coma;
+         stringWithCapacity = minus + parts[0] + coma;
       }
 
-      return result;
+      return stringWithCapacity;
    }
 
    /**
@@ -227,22 +223,23 @@ public abstract class ControllerUtils {
     */
    public static String convertHistoryToString(LinkedList<Operation> history) {
 
-      String result = "";
+      String historyString = "";
       for (Operation operation : history) {
 
          OperationType type = operation.getType();
+         String symbol = selectOperationSymbol(type);
          if (isExtraOperation(type)) {
-            String symbol = operationSymbol(type);
-            result = addExtraOperationToString(result, symbol);
+            historyString = addExtraOperationToString(historyString, symbol);
          } else if (NUMBER == type) {
-            result += convertNumberToString(((Number) operation).getValue(), HISTORY_PATTERN);
+            historyString += convertNumberToString(((Number) operation).getValue(), HISTORY_PATTERN);
          } else if (PERCENT == type) {
-            result += "";
+            historyString += "";
          } else {
-            result += operationSymbol(type);
+            historyString += symbol;
          }
+
       }
-      return result;
+      return historyString;
    }
 
    /**
@@ -254,18 +251,22 @@ public abstract class ControllerUtils {
     */
    public static String convertNumberToString(BigDecimal givenNumber, String pattern) {
 
-      String result;
+      String stringRepresentation;
       if (givenNumber != null) {
          BigDecimal number = givenNumber;
          int scale = selectScale(number);
+
          number = setNewScale(number, scale);
          number = number.stripTrailingZeros();
+
          String thePattern = preparePattern(number, pattern);
-         result = initFormatter(thePattern, selectSeparator(number)).format(number);
+         DecimalFormat formatter = initFormatter(thePattern, selectSeparator(number));
+         stringRepresentation = formatter.format(number);
       } else {
-         result = ZERO_STR;
+         stringRepresentation = ZERO_STR;
       }
-      return result;
+
+      return stringRepresentation;
    }
 
    /**
@@ -274,7 +275,7 @@ public abstract class ControllerUtils {
     * @param type - given {@link OperationType}
     * @return symbol by given {@link OperationType}
     */
-   private static String operationSymbol(OperationType type) {
+   private static String selectOperationSymbol(OperationType type) {
 
       String symbol;
       if (FRACTION == type) {
@@ -312,6 +313,7 @@ public abstract class ControllerUtils {
       symbols.setExponentSeparator(separator);
       DecimalFormat formatter = new DecimalFormat(pattern);
       formatter.setDecimalFormatSymbols(symbols);
+
       return formatter;
    }
 
@@ -348,49 +350,61 @@ public abstract class ControllerUtils {
    private static String preparePattern(BigDecimal number, String pattern) {
 
       String currentPattern = pattern;
-      String numberStr = number.toString();
-      if (containsE(number) && !numberStr.matches(IS_ZERO_FIRST_REGEX)) {
+      number = optimizeDecimalNumber(number);
 
-         String[] parts = numberStr.split(E);
-         int expCount = Math.abs(Integer.parseInt(parts[1]));
-         if (number.toPlainString().contains(DOT)) {
-            number = setNewScale(number, MAX_NUMBER_LENGTH + expCount);
-            number = number.stripTrailingZeros();
-         }
-
-         int unscaledLnth = getUnscaledLength(number);
-         if ((isExpNegative(parts[1]) && (expCount > MAX_DECIMAL_PART - unscaledLnth))
-                 || (isExpPositive(parts[1]) && getWholeLength(number) > MAX_NUMBER_LENGTH )) {
-
-            currentPattern = truncatePattern(unscaledLnth) + E_PART_OF_FORMAT;
-         }
-
-      } else if (numberStr.matches(IS_ZERO_FIRST_REGEX)) {
-
-         if (numberStr.matches(ARE_ZEROS_FIRST_REGEX) && isCorrectExponent(number)) {
-            currentPattern = truncatePattern(getUnscaledLength(number)) + E_PART_OF_FORMAT;
-         }
-
+      if (exponentChangesPattern(number)) {
+         currentPattern = truncatePattern(getUnscaledLength(number)) + E_PART_OF_FORMAT;
       }
+
       return currentPattern;
    }
 
    /**
-    * Verifies is given string contains minus
-    * @param exp - given string
-    * @return true if contains
+    * Verifies is exponent of given BigDecimal number changes format pattern
+    * @param number - given BigDecimal number
+    * @return boolean verification result
     */
-   private static boolean isExpNegative(String exp){
-      return exp.contains(MINUS);
+   private static boolean exponentChangesPattern(BigDecimal number) {
+
+      String numberString = number.toString();
+      boolean isChanging;
+      if (isZeroFirst(numberString)){
+         isChanging = correctExponent(number);
+      } else {
+         isChanging = validExponent(number);
+      }
+
+      return isChanging;
+   }
+
+   private static boolean isZeroFirst(String numberString) {
+      return numberString.matches(IS_ZERO_FIRST_REGEX);
    }
 
    /**
-    * Verifies is given string contains plus
-    * @param exp - given string
-    * @return true if contains
+    * Sets new scaling and strips trailing zeros for given BigDecimal number
+    * @param number - given BigDecimal number
+    * @return BigDecimal result of optimization
     */
-   private static boolean isExpPositive(String exp){
-      return exp.contains(PLUS);
+   private static BigDecimal optimizeDecimalNumber(BigDecimal number) {
+
+      BigDecimal optimizedNumber = number;
+      if (isDecimal(number)) {
+         int newScale = MAX_VISIBLE_NUMBER_LENGTH + getExponent(optimizedNumber);
+         optimizedNumber = setNewScale(number, newScale);
+         optimizedNumber = optimizedNumber.stripTrailingZeros();
+      }
+
+      return optimizedNumber;
+   }
+
+   /**
+    * Verifies is given number decimal
+    * @param number given BigDecimal number
+    * @return boolean verification result
+    */
+   private static boolean isDecimal(BigDecimal number) {
+      return number.toPlainString().contains(DOT);
    }
 
    /**
@@ -403,23 +417,32 @@ public abstract class ControllerUtils {
 
       int scale;
       String result = number.abs().toString();
-      if (containsE(number) && !result.matches(IS_ZERO_FIRST_REGEX)) {
-         scale = MAX_NUMBER_LENGTH - 1;
+      if (containsE(number) && !isZeroFirst(result)) {
+         scale = MAX_VISIBLE_NUMBER_LENGTH - 1;
          String[] parts = result.split(E);
-         scale += Math.abs(Integer.parseInt(parts[1]));
+         scale += getAbsInt(parts[1]);
 
-      } else if (result.matches(IS_ZERO_FIRST_REGEX)) {
+      } else if (isZeroFirst(result)) {
 
-         if (result.matches(ARE_ZEROS_FIRST_REGEX) && isCorrectExponent(number)) {
-            scale = MAX_NUMBER_LENGTH + getExponent(number) - 1;
+         if (correctExponent(number)) {
+            scale = MAX_VISIBLE_NUMBER_LENGTH + getExponent(number) - 1;
          } else {
-            scale = MAX_NUMBER_LENGTH;
+            scale = MAX_VISIBLE_NUMBER_LENGTH;
          }
 
       } else {
-         scale = MAX_NUMBER_LENGTH - getWholeLength(number);
+         scale = MAX_VISIBLE_NUMBER_LENGTH - getWholeLength(number);
       }
       return scale;
+   }
+
+   /**
+    * Converts given string to the absolute integer value
+    * @param str - given string
+    * @return converted integer result
+    */
+   private static int getAbsInt(String str) {
+      return Math.abs(Integer.parseInt(str));
    }
 
    /**
@@ -436,27 +459,50 @@ public abstract class ControllerUtils {
    }
 
    /**
-    * Verifies is given BigDecimal number has correct exponent
+    * Verifies is given BigDecimal number has exponent in range between
+    * 4 and 9999
     *
     * @param number - given BigDecimal number
     * @return true if given BigDecimal number has correct exponent
     */
-   private static boolean isCorrectExponent(BigDecimal number) {
+   private static boolean correctExponent(BigDecimal number) {
 
       DecimalFormat formatter = new DecimalFormat(FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT);
       String[] parts = formatter.format(number).split(E);
-      boolean result;
+
+      boolean exponentInRange;
       if (parts.length > 1) {
-         int exponent = Math.abs(Integer.parseInt(parts[1]));
+         int exponent = getAbsInt(parts[1]);
          boolean isLessMinExponent = exponent > MIN_EXPONENT;
-         boolean isLengthLargerMaxLength = parts[0].length() + exponent > MAX_NUMBER_LENGTH;
-         result = isLessMinExponent && isLengthLargerMaxLength;
-
+         boolean isNumberLengthLargerMaxVisibleLength = parts[0].length() + exponent > MAX_VISIBLE_NUMBER_LENGTH;
+         exponentInRange = isLessMinExponent && isNumberLengthLargerMaxVisibleLength;
       } else {
-         result = false;
-
+         exponentInRange = false;
       }
-      return result;
+
+      return exponentInRange;
+   }
+
+   /**
+    * Verifies is given BigDecimal number has valid exponent
+    * @param number - given BigDecimal number
+    * @return boolean verification result
+    */
+   private static boolean validExponent(BigDecimal number) {
+
+      String[] parts = number.toString().split(E);
+      boolean isValid;
+      if (parts.length > 1) {
+         int expCount = Integer.parseInt(parts[1]);
+         int unscaledLength = getUnscaledLength(number);
+         boolean validNegativeExponent = expCount < 0 && (Math.abs(expCount) > MAX_DECIMAL_PART - unscaledLength);
+         boolean validPositiveExponent = expCount > 0 && getWholeLength(number) > MAX_VISIBLE_NUMBER_LENGTH;
+         isValid = validNegativeExponent || validPositiveExponent;
+      } else {
+         isValid = false;
+      }
+
+      return isValid;
    }
 
    /**
@@ -469,7 +515,7 @@ public abstract class ControllerUtils {
 
       DecimalFormat formatter = new DecimalFormat(FOURTEEN_DECIMAL_PART + E_PART_OF_FORMAT);
       String[] parts = formatter.format(number).split(E);
-      return Math.abs(Integer.parseInt(parts[1]));
+      return getAbsInt(parts[1]);
    }
 
    /**
@@ -513,7 +559,6 @@ public abstract class ControllerUtils {
     * @return true if given BigDecimal number contains exponent
     */
    private static boolean containsE(BigDecimal number) {
-
       return number.toString().contains(E);
    }
 
@@ -526,24 +571,39 @@ public abstract class ControllerUtils {
     */
    private static String addExtraOperationToString(String currentStr, String symbol) {
 
-      StringBuilder resultStr = new StringBuilder();
+      String resultStr;
       if (currentStr.contains(OPERATION_SEPARATOR)) {
 
          if (currentStr.matches(CONTAINS_EXTRA_OPERATION_REGEX)) {
-            String[] parts = currentStr.split(SPACES_REGEX);
-            for (int i = 0; i < parts.length - 1; i++) {
-               resultStr.append(parts[i]).append(OPERATION_SEPARATOR);
-            }
-            resultStr.append(symbol).append(parts[parts.length - 1]);
+            resultStr = redistributeOperations(currentStr,symbol);
          } else {
-            resultStr = new StringBuilder(currentStr + symbol);
+            resultStr = currentStr + symbol;
          }
 
       } else if (!"".equals(currentStr)) {
-         resultStr = new StringBuilder(symbol + currentStr);
-
+         resultStr = symbol + currentStr;
+      } else {
+         resultStr = "";
       }
+
       return resultStr + BRACKET;
+   }
+
+   /**
+    * Redistributes operations with separators at given string with given symbol
+    * @param string - given string
+    * @param symbol - given symbol
+    * @return - redistributed string
+    */
+   private static String redistributeOperations(String string, String symbol){
+
+      String[] parts = string.split(SPACES_REGEX);
+      StringBuilder redistributedString = new StringBuilder();
+      for (int i = 0; i < parts.length - 1; i++) {
+         redistributedString.append(parts[i]).append(OPERATION_SEPARATOR);
+      }
+
+      return  redistributedString + symbol + parts[parts.length - 1];
    }
 
    /**

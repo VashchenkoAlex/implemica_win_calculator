@@ -17,24 +17,13 @@ import win_calculator.model.operations.memory_operations.*;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
+import static win_calculator.controller.entities.Symbol.*;
 import static win_calculator.model.operations.memory_operations.MemoryOperationType.*;
 
 /**
  * Abstract class initializes test maps
  */
 abstract class InitializerTestMaps {
-
-   private static final String ONE_STR = "1";
-   private static final String TWO_STR = "2";
-   private static final String THREE_STR = "3";
-   private static final String FOUR_STR = "4";
-   private static final String FIVE_STR = "5";
-   private static final String SIX_STR = "6";
-   private static final String SEVEN_STR = "7";
-   private static final String EIGHT_STR = "8";
-   private static final String NINE_STR = "9";
-   private static final String ZERO_STR = "0";
-   private static final String COMA_STR = ".";
 
    /**
     * Method initializes map of buttons for tests by keyboard
@@ -117,17 +106,17 @@ abstract class InitializerTestMaps {
    static HashMap<String, NumberSymbol> createDigitsMap() {
 
       HashMap<String, NumberSymbol> map = new HashMap<>();
-      map.put("0", new NumberSymbol(ZERO_STR));
-      map.put("1", new NumberSymbol(ONE_STR));
-      map.put("2", new NumberSymbol(TWO_STR));
-      map.put("3", new NumberSymbol(THREE_STR));
-      map.put("4", new NumberSymbol(FOUR_STR));
-      map.put("5", new NumberSymbol(FIVE_STR));
-      map.put("6", new NumberSymbol(SIX_STR));
-      map.put("7", new NumberSymbol(SEVEN_STR));
-      map.put("8", new NumberSymbol(EIGHT_STR));
-      map.put("9", new NumberSymbol(NINE_STR));
-      map.put(",", new NumberSymbol(COMA_STR));
+      map.put("0", new NumberSymbol(ZERO));
+      map.put("1", new NumberSymbol(ONE));
+      map.put("2", new NumberSymbol(TWO));
+      map.put("3", new NumberSymbol(THREE));
+      map.put("4", new NumberSymbol(FOUR));
+      map.put("5", new NumberSymbol(FIVE));
+      map.put("6", new NumberSymbol(SIX));
+      map.put("7", new NumberSymbol(SEVEN));
+      map.put("8", new NumberSymbol(EIGHT));
+      map.put("9", new NumberSymbol(NINE));
+      map.put(",", new NumberSymbol(SEPARATOR));
       return map;
    }
 

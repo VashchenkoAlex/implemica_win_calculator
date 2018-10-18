@@ -44,6 +44,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static win_calculator.controller.entities.Symbol.*;
 import static win_calculator.controller.utils.ControllerUtils.*;
 import static win_calculator.model.operations.OperationType.*;
 import static win_calculator.model.operations.memory_operations.MemoryOperationType.*;
@@ -92,61 +93,6 @@ public class FXMLView implements Initializable {
     * Constant: class id for not clickable option at dropped menu list at FXApp
     */
    private static final String NOT_OPTION_ITEM_ID = "notOption";
-   /**
-    * Constant: digit one, marker for {@link NumberSymbol}
-    * is using after click on digit one button at FXApp
-    */
-   private static final String ONE_STR = "1";
-   /**
-    * Constant: digit two, marker for {@link NumberSymbol}
-    * is using after click on digit two button at FXApp
-    */
-   private static final String TWO_STR = "2";
-   /**
-    * Constant: digit tree, marker for {@link NumberSymbol}
-    * is using after click on digit tree button at FXApp
-    */
-   private static final String THREE_STR = "3";
-   /**
-    * Constant: digit four, marker for {@link NumberSymbol}
-    * is using after click on digit four button at FXApp
-    */
-   private static final String FOUR_STR = "4";
-   /**
-    * Constant: digit five, marker for {@link NumberSymbol}
-    * is using after click on digit five button at FXApp
-    */
-   private static final String FIVE_STR = "5";
-   /**
-    * Constant: digit six, marker for {@link NumberSymbol}
-    * is using after click on digit six button at FXApp
-    */
-   private static final String SIX_STR = "6";
-   /**
-    * Constant: digit seven, marker for {@link NumberSymbol}
-    * is using after click on digit seven button at FXApp
-    */
-   private static final String SEVEN_STR = "7";
-   /**
-    * Constant: digit eight, marker for {@link NumberSymbol}
-    * is using after click on digit eight button at FXApp
-    */
-   private static final String EIGHT_STR = "8";
-   /**
-    * Constant: digit nine, marker for {@link NumberSymbol}
-    * is using after click on digit nine button at FXApp
-    */
-   private static final String NINE_STR = "9";
-   /**
-    * Constant: digit zero, marker for {@link NumberSymbol}
-    * is using after click on digit zero button at FXApp
-    */
-   private static final String ZERO_STR = "0";
-   /**
-    * Constant: number separator symbol, marker for {@link NumberSymbol}
-    * is using after click on coma button at FXApp
-    */
-   private static final String SEPARATOR_STR = ".";
 
    /**
     * Constant: symbol on About button at dropdown list
@@ -447,7 +393,7 @@ public class FXMLView implements Initializable {
    @FXML
    private void oneBtnClick() {
 
-      handleDigit(new NumberSymbol(ONE_STR));
+      handleDigit(new NumberSymbol(ONE));
    }
 
    /**
@@ -456,7 +402,7 @@ public class FXMLView implements Initializable {
    @FXML
    private void twoBtnClick() {
 
-      handleDigit(new NumberSymbol(TWO_STR));
+      handleDigit(new NumberSymbol(TWO));
    }
 
    /**
@@ -465,7 +411,7 @@ public class FXMLView implements Initializable {
    @FXML
    private void threeBtnClick() {
 
-      handleDigit(new NumberSymbol(THREE_STR));
+      handleDigit(new NumberSymbol(THREE));
    }
 
    /**
@@ -474,7 +420,7 @@ public class FXMLView implements Initializable {
    @FXML
    private void fourBtnClick() {
 
-      handleDigit(new NumberSymbol(FOUR_STR));
+      handleDigit(new NumberSymbol(FOUR));
    }
 
    /**
@@ -483,7 +429,7 @@ public class FXMLView implements Initializable {
    @FXML
    private void fiveBtnClick() {
 
-      handleDigit(new NumberSymbol(FIVE_STR));
+      handleDigit(new NumberSymbol(FIVE));
    }
 
    /**
@@ -492,7 +438,7 @@ public class FXMLView implements Initializable {
    @FXML
    private void sixBtnClick() {
 
-      handleDigit(new NumberSymbol(SIX_STR));
+      handleDigit(new NumberSymbol(SIX));
    }
 
    /**
@@ -501,7 +447,7 @@ public class FXMLView implements Initializable {
    @FXML
    private void sevenBtnClick() {
 
-      handleDigit(new NumberSymbol(SEVEN_STR));
+      handleDigit(new NumberSymbol(SEVEN));
    }
 
    /**
@@ -510,7 +456,7 @@ public class FXMLView implements Initializable {
    @FXML
    private void eightBtnClick() {
 
-      handleDigit(new NumberSymbol(EIGHT_STR));
+      handleDigit(new NumberSymbol(EIGHT));
    }
 
    /**
@@ -519,7 +465,7 @@ public class FXMLView implements Initializable {
    @FXML
    private void nineBtnClick() {
 
-      handleDigit(new NumberSymbol(NINE_STR));
+      handleDigit(new NumberSymbol(NINE));
    }
 
    /**
@@ -528,7 +474,7 @@ public class FXMLView implements Initializable {
    @FXML
    private void zeroBtnClick() {
 
-      handleDigit(new NumberSymbol(ZERO_STR));
+      handleDigit(new NumberSymbol(ZERO));
    }
 
    /**
@@ -537,7 +483,7 @@ public class FXMLView implements Initializable {
    @FXML
    private void comaBtnClick() {
 
-      handleDigit(new NumberSymbol(SEPARATOR_STR));
+      handleDigit(new NumberSymbol(SEPARATOR));
       displayContainer.addComa();
    }
 
@@ -810,14 +756,18 @@ public class FXMLView implements Initializable {
               SPEED, TIME, POWER, DATA, PRESSURE, ANGLE);
       ObservableList<MenuListOption> listOpt = FXCollections.observableList(listOptions);
       ListView<MenuListOption> menuList = new ListView<>(listOpt);
+
       menuList.setId(DROPPED_LIST_ID);
       menuList.setCellFactory(new Callback<ListView<MenuListOption>, ListCell<MenuListOption>>() {
+
          @Override
          public ListCell<MenuListOption> call(ListView<MenuListOption> param) {
             return new ListCell<MenuListOption>() {
                @Override
                protected void updateItem(MenuListOption item, boolean empty) {
+
                   super.updateItem(item, empty);
+
                   if (empty) {
                      setText("");
                      setGraphic(null);
@@ -830,9 +780,11 @@ public class FXMLView implements Initializable {
                         setId(OPTION_ITEM_ID);
                      }
                   }
+
                }
             };
          }
+
       });
       menuList.setPrefHeight(rootPane.getScene().getHeight() - MENU_LIST_HEIGHT_DIFFERENCE);
       AnchorPane.setTopAnchor(menuList, MENU_LIST_TOP_ANCHOR);

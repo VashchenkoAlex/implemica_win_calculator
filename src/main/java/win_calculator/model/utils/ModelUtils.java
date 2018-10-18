@@ -1,10 +1,12 @@
 package win_calculator.model.utils;
 
 import win_calculator.model.exceptions.OperationException;
+import win_calculator.model.operations.OperationType;
 
 import java.math.BigDecimal;
 
 import static win_calculator.model.exceptions.ExceptionType.OVERFLOW;
+import static win_calculator.model.operations.OperationType.*;
 
 /**
  * Abstract class with utils for checking and rounding BigDecimal numbers
@@ -68,31 +70,41 @@ public abstract class ModelUtils {
     */
    public static BigDecimal roundNumber(BigDecimal number) {
 
-      BigDecimal result = number;
-      if (result != null) {
-         String string = number.toString();
-         String[] parts = {""};
-         if (string.contains(EXPONENT)) {
-            result = roundNumberWithExponent(number);
-         } else if (string.contains(DOT)) {
-            parts = string.split(SPLIT_BY_DOT_REGEX);
-            int decimalLength = 0;
-            if (parts.length > 1) {
-               decimalLength = parts[1].length();
-            }
-            if (decimalLength > MAX_EXPONENT && decimalPartNotZero(parts[1]) && hasToBeRounded(string)) {
-               result = result.add(ROUND_VALUE);
-            }
-         } else {
-            parts[0] = string;
-            int wholeLength = parts[0].length();
-            if (wholeLength > MAX_EXPONENT && numberIsLarge(parts[0])) {
-               result = roundWholeNumber(result);
+      BigDecimal roundedNumber = number;
+      if (roundedNumber != null) {
 
-            }
+         String string = number.toString();
+         if (string.contains(EXPONENT)) {
+            roundedNumber = roundNumberWithExponent(number);
+         } else if (string.contains(DOT)) {
+            roundedNumber = roundDecimalNumber(roundedNumber);
+         } else if (numberIsLarge(string)) {
+            roundedNumber = roundWholeNumber(roundedNumber);
          }
+
       }
-      return result;
+
+      return roundedNumber;
+   }
+
+   private static BigDecimal roundDecimalNumber(BigDecimal number) {
+
+      BigDecimal roundedNumber = number;
+      String string = roundedNumber.toString();
+      String[] parts = string.split(SPLIT_BY_DOT_REGEX);
+
+      int decimalLength;
+      if (parts.length > 1) {
+         decimalLength = parts[1].length();
+      }else {
+         decimalLength = 0;
+      }
+
+      if (decimalLength > MAX_EXPONENT && decimalPartNotZero(parts[1]) && hasToBeRounded(string)) {
+         roundedNumber = roundedNumber.add(ROUND_VALUE);
+      }
+
+      return roundedNumber;
    }
 
    /**
@@ -120,11 +132,29 @@ public abstract class ModelUtils {
       boolean result = false;
       if (numberForCheck != null) {
          numberForCheck = numberForCheck.abs();
-         if (numberForCheck.compareTo(MAX_ABS_VALUE) > 0 || (numberForCheck.compareTo(MIN_ABS_VALUE) < 0 && numberForCheck.compareTo(BigDecimal.ZERO) > 0)) {
+
+         if (isOverflowNumber(numberForCheck)) {
             result = true;
          }
+         
       }
+
       return result;
+   }
+
+   /**
+    * Verifies is given BigDecimal number overflow
+    * @param number - given BigDecimal number
+    * @return boolean verification result
+    */
+   private static boolean isOverflowNumber(BigDecimal number) {
+      
+      boolean isBiggerMax = number.compareTo(MAX_ABS_VALUE) > 0;
+
+      boolean isSmallerMin = number.compareTo(MIN_ABS_VALUE) < 0 && 
+              number.compareTo(BigDecimal.ZERO) > 0;
+
+      return isBiggerMax || isSmallerMin;
    }
 
    /**
@@ -139,7 +169,8 @@ public abstract class ModelUtils {
       if (string.contains(MINUS)) {
          --length;
       }
-      return length > MAX_NUMBER_LENGTH;
+      
+      return length > MAX_NUMBER_LENGTH && string.length() > MAX_EXPONENT;
    }
 
    /**
@@ -156,12 +187,16 @@ public abstract class ModelUtils {
          string = string.substring(1);
          minus = MINUS;
       }
+      
       String[] parts = {string.substring(0, MAX_NUMBER_LENGTH), string.substring(MAX_NUMBER_LENGTH)};
+      
       long shownNumber = Long.parseLong(parts[0]);
       int lastDigit = Integer.parseInt(parts[1].charAt(0) + "");
+      
       if (lastDigit > ROUND_MODULE) {
          parts[0] = shownNumber + 1 + "";
       }
+      
       return new BigDecimal(minus + parts[0] + parts[1]);
    }
 
@@ -173,11 +208,15 @@ public abstract class ModelUtils {
     */
    private static boolean decimalPartNotZero(String decimalPart) {
 
-      boolean result = false;
+      boolean isNotZero;
+      
       if (decimalPart != null) {
-         result = new BigDecimal(decimalPart).compareTo(BigDecimal.ZERO) > 0;
+         isNotZero = new BigDecimal(decimalPart).compareTo(BigDecimal.ZERO) > 0;
+      } else {
+         isNotZero = false;
       }
-      return result;
+      
+      return isNotZero;
    }
 
    /**
@@ -188,8 +227,10 @@ public abstract class ModelUtils {
     */
    private static boolean hasToBeRounded(String string) {
 
-      int length = string.length();
-      return Integer.parseInt(string.charAt(length - 1) + "") > ROUND_MODULE;
+      int length = string.length() - 1;
+      int exponent = Integer.parseInt(string.charAt(length) + "");
+      
+      return exponent > ROUND_MODULE;
    }
 
    /**
@@ -202,16 +243,42 @@ public abstract class ModelUtils {
 
       String numberStr = number.toString();
       String[] parts = numberStr.split(EXPONENT);
+      String realPart = parts[0];
       String minus = "";
-      if (parts[0].contains(MINUS)) {
+      
+      if (realPart.contains(MINUS)) {
          minus = MINUS;
-         parts[0] = parts[0].substring(1);
+         realPart = realPart.substring(1);
       }
-      if (parts[0].length() > MAX_NUMBER_LENGTH + 1) {
-         if (hasToBeRounded(parts[0])) {
-            parts[0] = Double.parseDouble(parts[0]) + DOUBLE_ROUND_VALUE + "";
-         }
+      
+      if (realPart.length() > MAX_NUMBER_LENGTH + 1 && hasToBeRounded(realPart)) {
+            realPart = Double.parseDouble(realPart) + DOUBLE_ROUND_VALUE + "";
       }
-      return new BigDecimal(minus + parts[0] + EXPONENT + parts[1]);
+      
+      return new BigDecimal(minus + realPart + EXPONENT + parts[1]);
+   }
+
+   /**
+    * Verifies is given {@link OperationType} binary operation
+    * (add, divide, subtract, multiply)
+    *
+    * @param type - given operation type
+    * @return boolean result
+    */
+   public static boolean isBinaryOperation(OperationType type) {
+
+      return type == ADD || type == SUBTRACT || type == DIVIDE || type == MULTIPLY;
+   }
+
+   /**
+    * Verifies is given {@link OperationType} extra operation
+    * (sqrt, sqr, fraction)
+    *
+    * @param type - given operation type
+    * @return boolean result
+    */
+   public static boolean isExtraOperation(OperationType type) {
+
+      return type == SQR || type == SQRT || type == FRACTION;
    }
 }

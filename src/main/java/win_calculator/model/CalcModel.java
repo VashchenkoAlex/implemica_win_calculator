@@ -9,8 +9,7 @@ import java.math.BigDecimal;
 import java.util.LinkedList;
 
 import static win_calculator.model.operations.OperationType.*;
-import static win_calculator.model.utils.ModelUtils.checkOnOverflow;
-import static win_calculator.model.utils.ModelUtils.roundNumber;
+import static win_calculator.model.utils.ModelUtils.*;
 
 /**
  * Model class of WinCalculator application
@@ -78,10 +77,13 @@ public class CalcModel {
          responseNumber = null;
       } else if (MEMORY.equals(type)) {
          BigDecimal result = operationProcessor.processMemory((MemoryOperation) operation, inputtedNumber);
+
          if (result != null) {
             responseNumber = result;
          }
+
       }
+
       checkOnOverflow(responseNumber);
       return roundNumber(responseNumber);
    }
@@ -105,26 +107,5 @@ public class CalcModel {
       operationProcessor.rejectLastNumberWithExtraOperations();
    }
 
-   /**
-    * Verifies is given {@link OperationType} binary operation
-    * (add, divide, subtract, multiply)
-    * @param type - given operation type
-    * @return boolean result
-    */
-   private boolean isBinaryOperation(OperationType type){
-
-      return type == ADD || type == SUBTRACT || type == DIVIDE || type == MULTIPLY;
-   }
-
-   /**
-    * Verifies is given {@link OperationType} extra operation
-    * (negate, sqrt, sqr, fraction)
-    * @param type - given operation type
-    * @return boolean result
-    */
-   private boolean isExtraOperation(OperationType type){
-
-      return SQR == type || SQRT == type || FRACTION == type;
-   }
 
 }

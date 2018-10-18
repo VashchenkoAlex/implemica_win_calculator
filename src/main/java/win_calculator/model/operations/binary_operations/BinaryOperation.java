@@ -12,5 +12,4 @@ public interface BinaryOperation extends Operation {
 
     BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber) throws OperationException;
 
-    BigDecimal calculate(BigDecimal number) throws OperationException;
 }

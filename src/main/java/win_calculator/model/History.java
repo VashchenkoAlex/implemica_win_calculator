@@ -7,6 +7,7 @@ import win_calculator.model.operations.OperationType;
 import java.util.LinkedList;
 
 import static win_calculator.model.operations.OperationType.*;
+import static win_calculator.model.utils.ModelUtils.isBinaryOperation;
 
 /**
  * History container class
@@ -162,43 +163,37 @@ public class History {
     */
    boolean isContainingGivenOperationType(OperationType expectedType) {
 
-      boolean result = false;
       OperationType type;
       if (!operations.isEmpty()) {
+
          for (int i = operations.size() - 1; i > 0; i--) {
             type = operations.get(i).getType();
+
             if (expectedType.equals(type)) {
-               result = true;
+               return true; //??
             }
+
             if (isBinaryOperation(type)) {
                break;
             }
+
          }
       }
-      return result;
+
+      return false; //??
    }
 
    /**
     * Verifies is history containing extra operations
     * (sqr, sqrt, fraction)
+    *
     * @return true if it's containing
     */
-   boolean isContainingExtraOperation(){
+   boolean isContainingExtraOperation() {
 
-      boolean isContaining = isContainingGivenOperationType(SQR);
-      isContaining = isContaining || isContainingGivenOperationType(SQRT);
-      isContaining = isContaining || isContainingGivenOperationType(FRACTION);
-      return isContaining;
+      return isContainingGivenOperationType(SQR) ||
+              isContainingGivenOperationType(SQRT) ||
+              isContainingGivenOperationType(FRACTION);
    }
 
-   /**
-    * Verifies is given {@link OperationType} binary operation
-    * (add, divide, subtract, multiply)
-    * @param type - given operation type
-    * @return boolean result
-    */
-   private boolean isBinaryOperation(OperationType type) {
-
-      return type == ADD || type == SUBTRACT || type == DIVIDE || type == MULTIPLY;
-   }
 }

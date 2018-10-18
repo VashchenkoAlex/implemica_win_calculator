@@ -5,6 +5,7 @@ import win_calculator.controller.entities.NumberSymbol;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 
+import static win_calculator.controller.entities.Symbol.ZERO;
 import static win_calculator.controller.utils.ControllerUtils.addCapacity;
 import static win_calculator.controller.utils.ControllerUtils.convertNumberToString;
 import static win_calculator.controller.utils.ControllerUtils.replaceDotToComa;
@@ -116,12 +117,14 @@ public class NumberBuilder {
       prepareNumber();
       previousChain = digitsChain;
       digitsChain = new LinkedList<>();
+
       BigDecimal result;
       if (number != null) {
          result = number;
       } else {
          result = null;
       }
+
       number = null;
       return result;
    }
@@ -133,17 +136,25 @@ public class NumberBuilder {
     */
    String doBackSpace() {
 
-      if (digitsChain.isEmpty() && isPreviousChainNotEmpty()) {
+      if (isChainEmpty() && isPreviousChainNotEmpty()) {
          digitsChain = previousChain;
-         cutLastDigit();
-         BigDecimal value = new BigDecimal(getValue());
-         number = setSign(value);
-      } else if (!digitsChain.isEmpty()) {
-         cutLastDigit();
-         BigDecimal value = new BigDecimal(getValue());
-         number = setSign(value);
       }
+
+      if (!isChainEmpty()){
+         cutLastDigit();
+         number = setSign(new BigDecimal(getValue()));
+      }
+
       return convertChainToString();
+   }
+
+   /**
+    * Verifies is current digit's chain empty
+    *
+    * @return true if current digit's chain empty
+    */
+   private boolean isChainEmpty() {
+      return digitsChain.isEmpty();
    }
 
    /**
@@ -173,7 +184,7 @@ public class NumberBuilder {
     */
    boolean containsNumber() {
 
-      return isChainNotEmpty() || isPreviousChainNotEmpty() || number != null;
+      return !isChainEmpty() || isPreviousChainNotEmpty() || number != null;
    }
 
    /**
@@ -183,9 +194,9 @@ public class NumberBuilder {
     */
    private void add(NumberSymbol numberSymbol) {
 
-      if (COMA.equals(numberSymbol.getValue())) {
+      if (COMA.equals(numberSymbol.getSymbol())) {
          addComa(numberSymbol);
-      } else if (ZERO_STR.equals(numberSymbol.getValue())) {
+      } else if (ZERO_STR.equals(numberSymbol.getSymbol())) {
          addZero(numberSymbol);
       } else {
          addDigitToChain(numberSymbol);
@@ -217,10 +228,9 @@ public class NumberBuilder {
 
       if (ZERO_STR.equals(getValue())) {
          digitsChain.removeLast();
-         digitsChain.add(numberSymbol);
-      } else {
-         digitsChain.add(numberSymbol);
       }
+
+      digitsChain.add(numberSymbol);
    }
 
    /**
@@ -230,10 +240,11 @@ public class NumberBuilder {
     */
    private void addComa(NumberSymbol coma) {
 
-      if (digitsChain.isEmpty()) {
-         digitsChain.add(new NumberSymbol(ZERO_STR));
-         digitsChain.add(coma);
-      } else if (numberWithoutComa()) {
+      if (isChainEmpty()) {
+         digitsChain.add(new NumberSymbol(ZERO));
+      }
+
+      if (numberWithoutComa()) {
          digitsChain.add(coma);
       }
    }
@@ -257,13 +268,12 @@ public class NumberBuilder {
     */
    private boolean numberWithoutComa() {
 
-      boolean result = true;
       for (NumberSymbol numberSymbol : digitsChain) {
-         if (COMA.equals(numberSymbol.getValue())) {
-            result = false;
+         if (COMA.equals(numberSymbol.getSymbol())) {
+            return false;
          }
       }
-      return result;
+      return true;
    }
 
    /**
@@ -272,11 +282,9 @@ public class NumberBuilder {
     */
    private void cutLastDigit() {
 
-      if (digitsChain.size() > 1) {
-         digitsChain.removeLast();
-      } else {
-         digitsChain.removeLast();
-         digitsChain.add(new NumberSymbol(ZERO_STR));
+      digitsChain.removeLast();
+      if (digitsChain.size() < 1) {
+         digitsChain.add(new NumberSymbol(ZERO));
       }
    }
 
@@ -289,19 +297,9 @@ public class NumberBuilder {
 
       StringBuilder result = new StringBuilder();
       for (NumberSymbol numberSymbol : digitsChain) {
-         result.append(numberSymbol.getValue());
+         result.append(numberSymbol.getSymbol());
       }
       return result.toString();
-   }
-
-   /**
-    * Verifies is current digit's chain empty
-    *
-    * @return true if current digit's chain not empty
-    */
-   private boolean isChainNotEmpty() {
-
-      return !digitsChain.isEmpty();
    }
 
    /**
@@ -322,14 +320,16 @@ public class NumberBuilder {
    private boolean isNotMaxDigits() {
 
       int digitsCount = digitsChain.size();
-      if (!digitsChain.isEmpty() && ZERO_STR.equals(digitsChain.get(0).getValue())) {
+      if (!isChainEmpty() && ZERO_STR.equals(digitsChain.get(0).getSymbol())) {
          --digitsCount;
       }
+
       for (NumberSymbol d : digitsChain) {
-         if (COMA.equals(d.getValue())) {
+         if (COMA.equals(d.getSymbol())) {
             --digitsCount;
          }
       }
+
       return digitsCount < MAX_DIGITS;
    }
 
@@ -353,14 +353,16 @@ public class NumberBuilder {
     */
    private void prepareNumber() {
 
-      if (digitsChain.isEmpty() && isPreviousChainNotEmpty()) {
+      if (isChainEmpty() && isPreviousChainNotEmpty()) {
          digitsChain = previousChain;
          number = setSign(new BigDecimal(getValue()));
-      } else if (isChainNotEmpty()) {
+      } else if (!isChainEmpty()) {
          BigDecimal value = setSign(number);
+
          if (positive && value.compareTo(BigDecimal.ZERO) < 0) {
             value = value.abs();
          }
+
          number = value;
       } else if (number != null) {
          number = setSign(number);
@@ -369,28 +371,54 @@ public class NumberBuilder {
 
    /**
     * Method converts current digit's chain to String
-    *
+    * for display label with capacity
     * @return String value of current digit's chain
     */
    private String convertChainToString() {
 
       StringBuilder resultBuilder = new StringBuilder();
       if (!positive) {
-         resultBuilder = new StringBuilder(MINUS_STR);
+         resultBuilder.append(MINUS_STR);
       }
-      LinkedList<NumberSymbol> chain = digitsChain;
-      if (digitsChain.isEmpty()) {
-         chain = previousChain;
-      }
-      if (chain != null && !chain.isEmpty()) {
-         for (NumberSymbol numberSymbol : chain) {
-            resultBuilder.append(numberSymbol.getValue());
-         }
-      }
+
+      LinkedList<NumberSymbol> chain = selectChainForConverting();
+      resultBuilder.append(addSymbolsFromChain(chain));
       String result = resultBuilder.toString();
       if (!"".equals(result)) {
          result = addCapacity(replaceDotToComa(result));
       }
+
       return result;
+   }
+
+   /**
+    * Gets symbols from digit's chain and build String
+    * @param chain - given chain with digits
+    * @return built string from chain
+    */
+   private String addSymbolsFromChain(LinkedList<NumberSymbol> chain) {
+
+      StringBuilder string = new StringBuilder();
+      if (chain != null && !chain.isEmpty()) {
+         for (NumberSymbol numberSymbol : chain) {
+            string.append(numberSymbol.getSymbol());
+         }
+      }
+
+      return string.toString();
+   }
+
+   /**
+    * Verifies digit chains are they empty and return not empty
+    * @return selected chain
+    */
+   private LinkedList<NumberSymbol> selectChainForConverting(){
+
+      LinkedList<NumberSymbol> chain = digitsChain;
+      if (isChainEmpty()) {
+         chain = previousChain;
+      }
+
+      return chain;
    }
 }

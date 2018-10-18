@@ -127,7 +127,7 @@ public class DisplayFieldContainer {
    public void sendDigitToDisplay(NumberSymbol numberSymbol, String number, boolean wasDigitBefore) {
 
       if (isNotMax()) {
-         if (ZERO.equals(numberSymbol.getValue()) && wasDigitBefore) {
+         if (ZERO.equals(numberSymbol.getSymbol()) && wasDigitBefore) {
             addZero();
          } else {
             setDisplayedText(number);
