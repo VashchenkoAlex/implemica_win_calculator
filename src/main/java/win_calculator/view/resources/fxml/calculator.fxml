@@ -19,244 +19,314 @@
         >
 
     <scene >
-        <Scene fx:id="mainScene" width="320.0" height="502.0">
-            <root>
-                <AnchorPane fx:id="rootPane" styleClass="main-panel"
-                            minWidth="320.0" minHeight="502.0">
-                    <children>
-                        <Label fx:id="captionLabel" text="Calculator" styleClass="captionText" AnchorPane.topAnchor="8.0" AnchorPane.leftAnchor="10.0"/>
-                        <Button fx:id="dragBtn" AnchorPane.leftAnchor="3.0" AnchorPane.topAnchor="5.0"/>
-                        <AnchorPane fx:id="caption" styleClass="captionButtons" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="0.0">
-                            <Button fx:id="closeBtn" styleClass="captionButton" text="" AnchorPane.rightAnchor="1.0" onAction="#closeBtn"/>
-                            <Button fx:id="fullScreenBtn" styleClass="captionButton" text="" AnchorPane.rightAnchor="45.0" onAction="#fullScreenBtnClick"/>
-                            <Button fx:id="hideBtn" styleClass="captionButton" text="" AnchorPane.rightAnchor="90.0" onAction="#hideBtn"/>
-                        </AnchorPane>
-                        <AnchorPane styleClass="flowPane" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="30.0">
-                            <children>
-                                <Button fx:id="menuBtn" text="" styleClass="menu" onAction="#dropMenu" AnchorPane.topAnchor="5.0" AnchorPane.leftAnchor="0.0"/>
-                                <Label fx:id="mainMessage" styleClass="mainMessage" text="Standard" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="0.0"/>
-                            </children>
-                        </AnchorPane>
-                        <Button fx:id="historyButton" styleClass="historyButton" text="" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="33.0" onAction="#historyBtn"/>
-                        <GridPane fx:id="mainTable" AnchorPane.topAnchor="84.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0">
-                            <children>
-                                <ScrollPane fx:id="historyScroll" maxWidth="Infinity" AnchorPane.rightAnchor="5.0">
-                                    <GridPane.margin>
-                                        <Insets right="20.0" bottom="12.0" left="20.0"/>
-                                    </GridPane.margin>
-                                    <Label fx:id="historyField" styleClass="historyText" GridPane.columnIndex="0"
-                                           GridPane.rowIndex="0" maxWidth="Infinity"/>
-                                </ScrollPane>
-                                <Label fx:id="display" text="0" styleClass="displayText" cache="true" cacheHint="SCALE" cacheShape="false"  scaleShape="false" GridPane.columnIndex="0" GridPane.rowIndex="1" maxWidth="Infinity">
-                                    <font>
-                                        <Font name="Segoe UI Semibold" size="47.0"/>
-                                    </font>
-                                    <GridPane.margin>
-                                        <Insets top="30.0" right="5.0"/>
-                                    </GridPane.margin>
-                                </Label>
-                                <GridPane fx:id="memoryButtonsGrid" styleClass="memoryButtonsGrid" minHeight="30.0" minWidth="320" GridPane.columnIndex="0" GridPane.rowIndex="3">
-                                    <children>
-                                        <Button fx:id="clearAllMemoryBtn" styleClass="memoryButton" text="MC" GridPane.columnIndex="0" GridPane.rowIndex="0" onAction="#clearMemoryBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="2.0" left="2.0" right="2.0" top="5.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="memoryRecallBtn" styleClass="memoryButton" text="MR" GridPane.columnIndex="1" GridPane.rowIndex="0" onAction="#memoryRecallBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="2.0" left="2.0" right="2.0" top="5.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="memoryAddBtn" styleClass="memoryButton" text="M+" GridPane.columnIndex="2" GridPane.rowIndex="0" onAction="#memoryAddBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="2.0" left="2.0" right="2.0" top="5.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="memorySubtractBtn" styleClass="memoryButton" text="M-" GridPane.columnIndex="3" GridPane.rowIndex="0" onAction="#memorySubtractBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="2.0" left="2.0" right="2.0" top="5.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="memoryStoreBtn" styleClass="memoryButton" text="MS" GridPane.columnIndex="4" GridPane.rowIndex="0" onAction="#memoryStoreBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="2.0" left="2.0" right="2.0" top="5.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="memoryShowBtn" styleClass="memoryButton" text="Mˇ" GridPane.columnIndex="5" GridPane.rowIndex="0" onAction="#memoryShowBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="2.0" left="2.0" right="2.0" top="5.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                    </children>
-                                    <columnConstraints>
-                                        <ColumnConstraints hgrow="ALWAYS" minWidth="50.0"/>
-                                        <ColumnConstraints hgrow="ALWAYS" minWidth="50.0"/>
-                                        <ColumnConstraints hgrow="ALWAYS" minWidth="50.0"/>
-                                        <ColumnConstraints hgrow="ALWAYS" minWidth="50.0"/>
-                                        <ColumnConstraints hgrow="ALWAYS" minWidth="50.0"/>
-                                        <ColumnConstraints hgrow="ALWAYS" minWidth="50.0"/>
-                                    </columnConstraints>
-                                    <rowConstraints>
-                                        <RowConstraints vgrow="ALWAYS" prefHeight="35.0"/>
-                                    </rowConstraints>
-                                </GridPane>
-                                <GridPane fx:id="mainButtonsGrid" styleClass="mainButtonsGrid" hgap="3.0" vgap="3.0"  GridPane.columnIndex="0" GridPane.rowIndex="4" AnchorPane.leftAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                                    <children>
-                                        <Button fx:id="percentBtn" styleClass="actionButton" text="" GridPane.columnIndex="0" GridPane.rowIndex="0" onAction="#percentBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="sqrtBtn" styleClass="actionButton" text="" GridPane.columnIndex="1" GridPane.rowIndex="0" onAction="#sqrtBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="sqrBtn" styleClass="actionButton" text="𝑥²" GridPane.columnIndex="2" GridPane.rowIndex="0" onAction="#sqrBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="fractionBtn" styleClass="actionButton" text="⅟𝑥" GridPane.columnIndex="3" GridPane.rowIndex="0" onAction="#fractionBtnOneClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="clearEnteredBtn" styleClass="actionButton" text="CE" GridPane.columnIndex="0" GridPane.rowIndex="1" onAction="#clearEnteredBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="clearBtn" styleClass="actionButton" text="C" GridPane.columnIndex="1" GridPane.rowIndex="1" onAction="#clearBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="backSpaceBtn" styleClass="actionButton" text="" GridPane.columnIndex="2" GridPane.rowIndex="1" onAction="#backspaceBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="divideBtn" styleClass="mainActionButton" text="" GridPane.columnIndex="3" GridPane.rowIndex="1" onAction="#divideBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="sevenBtn" styleClass="numberButton" text="7" GridPane.columnIndex="0" GridPane.rowIndex="2" onAction="#sevenBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="eightBtn" styleClass="numberButton" text="8" GridPane.columnIndex="1" GridPane.rowIndex="2" onAction="#eightBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="nineBtn" styleClass="numberButton" text="9" GridPane.columnIndex="2" GridPane.rowIndex="2" onAction="#nineBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="multiplyBtn" styleClass="mainActionButton" text="" GridPane.columnIndex="3" GridPane.rowIndex="2" onAction="#multiplyBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="fourBtn" styleClass="numberButton" text="4" GridPane.columnIndex="0" GridPane.rowIndex="3" onAction="#fourBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="fiveBtn" styleClass="numberButton" text="5" GridPane.columnIndex="1" GridPane.rowIndex="3" onAction="#fiveBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="sixBtn" styleClass="numberButton" text="6" GridPane.columnIndex="2" GridPane.rowIndex="3" onAction="#sixBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="subtractBtn" styleClass="mainActionButton" text="" GridPane.columnIndex="3" GridPane.rowIndex="3" onAction="#subtractBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="oneBtn" styleClass="numberButton" text="1" GridPane.columnIndex="0" GridPane.rowIndex="4" onAction="#oneBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="twoBtn" styleClass="numberButton" text="2" GridPane.columnIndex="1" GridPane.rowIndex="4" onAction="#twoBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="threeBtn" styleClass="numberButton" text="3" GridPane.columnIndex="2" GridPane.rowIndex="4" onAction="#threeBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="addBtn" styleClass="mainActionButton" text="" GridPane.columnIndex="3" GridPane.rowIndex="4" onAction="#addBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="negateBtn" styleClass="actionButton" text="" GridPane.columnIndex="0" GridPane.rowIndex="5" onAction="#negateBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="zeroBtn" styleClass="numberButton" text="0" GridPane.columnIndex="1" GridPane.rowIndex="5" onAction="#zeroBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="comaBtn" styleClass="actionButton" text="," GridPane.columnIndex="2" GridPane.rowIndex="5" onAction="#comaBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                        <Button fx:id="equalsBtn" styleClass="mainActionButton" text="" GridPane.columnIndex="3" GridPane.rowIndex="5" onAction="#equalsBtnClick" maxHeight="Infinity" maxWidth="Infinity">
-                                            <GridPane.margin>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </GridPane.margin>
-                                        </Button>
-                                    </children>
-                                    <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="40" />
-                                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="40"/>
-                                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="40"/>
-                                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="40"/>
-                                    </columnConstraints>
-                                    <rowConstraints>
-                                        <RowConstraints prefHeight="47.0"  vgrow="SOMETIMES"/>
-                                        <RowConstraints prefHeight="47.0" vgrow="SOMETIMES"/>
-                                        <RowConstraints prefHeight="47.0" vgrow="SOMETIMES"/>
-                                        <RowConstraints prefHeight="47.0" vgrow="SOMETIMES"/>
-                                        <RowConstraints prefHeight="47.0" vgrow="SOMETIMES"/>
-                                        <RowConstraints prefHeight="47.0" vgrow="SOMETIMES"/>
-                                    </rowConstraints>
-                                </GridPane >
-                            </children>
-                            <columnConstraints>
-                                <ColumnConstraints minWidth="220.0" hgrow="ALWAYS"/>
-                            </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints minHeight="20.0" vgrow="SOMETIMES"/>
-                                <RowConstraints vgrow="SOMETIMES"/>
-                                <RowConstraints vgrow="SOMETIMES"/>
-                                <RowConstraints vgrow="SOMETIMES"/>
-                                <RowConstraints vgrow="ALWAYS"/>
-                            </rowConstraints>
-                        </GridPane>
-                    </children>
-                    <AnchorPane fx:id="dropDownContainer" minWidth="1.0" minHeight="1.0"/>
-                </AnchorPane>
-            </root>
+        <Scene width="320.0" height="502.0">
             <stylesheets>
-                <URL value = "@/styles/styles.css"/>
+                <URL value="@/styles/styles.css"/>
             </stylesheets>
+            <AnchorPane fx:id="rootPane" styleClass="main-panel"
+                        minWidth="320.0" minHeight="502.0">
+                <children>
+                    <Label text="Calculator" AnchorPane.topAnchor="8.0"
+                           AnchorPane.leftAnchor="10.0"/>
+                    <Button fx:id="dragBtn" AnchorPane.leftAnchor="3.0" AnchorPane.topAnchor="5.0"/>
+                    <AnchorPane styleClass="captionButtons" AnchorPane.rightAnchor="1.0"
+                                AnchorPane.topAnchor="0.0">
+                        <Button fx:id="closeBtn" styleClass="captionButton" text="" AnchorPane.rightAnchor="1.0"
+                                onAction="#closeBtn"/>
+                        <Button fx:id="fullScreenBtn" styleClass="captionButton" text="" AnchorPane.rightAnchor="45.0"
+                                onAction="#fullScreenBtnClick"/>
+                        <Button fx:id="hideBtn" styleClass="captionButton" text="" AnchorPane.rightAnchor="90.0"
+                                onAction="#hideBtn"/>
+                    </AnchorPane>
+                    <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="30.0">
+                        <Button fx:id="menuBtn" text="" styleClass="menu" onAction="#dropMenu"
+                                AnchorPane.topAnchor="5.0" AnchorPane.leftAnchor="0.0"/>
+                        <Label fx:id="mainMessage" text="Standard"
+                               AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="0.0"/>
+                    </AnchorPane>
+                    <Button fx:id="historyButton" styleClass="historyButton" text="" AnchorPane.rightAnchor="0.0"
+                            AnchorPane.topAnchor="33.0" onAction="#historyBtn"/>
+                    <GridPane fx:id="mainTable" AnchorPane.topAnchor="84.0" AnchorPane.leftAnchor="0.0"
+                              AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0">
+                        <children>
+                            <ScrollPane fx:id="historyScroll" maxWidth="Infinity" AnchorPane.rightAnchor="5.0">
+                                <GridPane.margin>
+                                    <Insets right="20.0" bottom="12.0" left="20.0"/>
+                                </GridPane.margin>
+                                <Label fx:id="historyField" styleClass="historyText" GridPane.columnIndex="0"
+                                       GridPane.rowIndex="0" maxWidth="Infinity"/>
+                            </ScrollPane>
+                            <Label fx:id="display" text="0" styleClass="displayText" cache="true" cacheHint="SCALE"
+                                   cacheShape="false" scaleShape="false" GridPane.columnIndex="0" GridPane.rowIndex="1"
+                                   maxWidth="Infinity">
+                                <font>
+                                    <Font name="Segoe UI Semibold" size="47.0"/>
+                                </font>
+                                <GridPane.margin>
+                                    <Insets top="30.0" right="5.0"/>
+                                </GridPane.margin>
+                            </Label>
+                            <GridPane fx:id="memoryButtonsGrid" styleClass="memoryButtonsGrid" minHeight="30.0"
+                                      minWidth="320" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                                <children>
+                                    <Button fx:id="clearAllMemoryBtn" styleClass="memoryButton" text="MC"
+                                            GridPane.columnIndex="0" GridPane.rowIndex="0"
+                                            onAction="#clearMemoryBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="2.0" left="2.0" right="2.0" top="5.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="memoryRecallBtn" styleClass="memoryButton" text="MR"
+                                            GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                            onAction="#memoryRecallBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="2.0" left="2.0" right="2.0" top="5.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="memoryAddBtn" styleClass="memoryButton" text="M+"
+                                            GridPane.columnIndex="2" GridPane.rowIndex="0" onAction="#memoryAddBtnClick"
+                                            maxHeight="Infinity" maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="2.0" left="2.0" right="2.0" top="5.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="memorySubtractBtn" styleClass="memoryButton" text="M-"
+                                            GridPane.columnIndex="3" GridPane.rowIndex="0"
+                                            onAction="#memorySubtractBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="2.0" left="2.0" right="2.0" top="5.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="memoryStoreBtn" styleClass="memoryButton" text="MS"
+                                            GridPane.columnIndex="4" GridPane.rowIndex="0"
+                                            onAction="#memoryStoreBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="2.0" left="2.0" right="2.0" top="5.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="memoryShowBtn" styleClass="memoryButton" text="Mˇ"
+                                            GridPane.columnIndex="5" GridPane.rowIndex="0"
+                                            onAction="#memoryShowBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="2.0" left="2.0" right="2.0" top="5.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                </children>
+                                <columnConstraints>
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="50.0"/>
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="50.0"/>
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="50.0"/>
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="50.0"/>
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="50.0"/>
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="50.0"/>
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints vgrow="ALWAYS" prefHeight="35.0"/>
+                                </rowConstraints>
+                            </GridPane>
+                            <GridPane fx:id="mainButtonsGrid" styleClass="mainButtonsGrid" hgap="3.0" vgap="3.0"
+                                      GridPane.columnIndex="0" GridPane.rowIndex="4" AnchorPane.leftAnchor="0.0"
+                                      AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                <children>
+                                    <Button fx:id="percentBtn" styleClass="actionButton" text=""
+                                            GridPane.columnIndex="0" GridPane.rowIndex="0" onAction="#percentBtnClick"
+                                            maxHeight="Infinity" maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="sqrtBtn" styleClass="actionButton" text="" GridPane.columnIndex="1"
+                                            GridPane.rowIndex="0" onAction="#sqrtBtnClick" maxHeight="Infinity"
+                                            maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="sqrBtn" styleClass="actionButton" text="𝑥²" GridPane.columnIndex="2"
+                                            GridPane.rowIndex="0" onAction="#sqrBtnClick" maxHeight="Infinity"
+                                            maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="fractionBtn" styleClass="actionButton" text="⅟𝑥"
+                                            GridPane.columnIndex="3" GridPane.rowIndex="0"
+                                            onAction="#fractionBtnOneClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="clearEnteredBtn" styleClass="actionButton" text="CE"
+                                            GridPane.columnIndex="0" GridPane.rowIndex="1"
+                                            onAction="#clearEnteredBtnClick" maxHeight="Infinity" maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="clearBtn" styleClass="actionButton" text="C" GridPane.columnIndex="1"
+                                            GridPane.rowIndex="1" onAction="#clearBtnClick" maxHeight="Infinity"
+                                            maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="backSpaceBtn" styleClass="actionButton" text=""
+                                            GridPane.columnIndex="2" GridPane.rowIndex="1" onAction="#backspaceBtnClick"
+                                            maxHeight="Infinity" maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="divideBtn" styleClass="mainActionButton" text=""
+                                            GridPane.columnIndex="3" GridPane.rowIndex="1" onAction="#divideBtnClick"
+                                            maxHeight="Infinity" maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="sevenBtn" styleClass="numberButton" text="7" GridPane.columnIndex="0"
+                                            GridPane.rowIndex="2" onAction="#sevenBtnClick" maxHeight="Infinity"
+                                            maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="eightBtn" styleClass="numberButton" text="8" GridPane.columnIndex="1"
+                                            GridPane.rowIndex="2" onAction="#eightBtnClick" maxHeight="Infinity"
+                                            maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="nineBtn" styleClass="numberButton" text="9" GridPane.columnIndex="2"
+                                            GridPane.rowIndex="2" onAction="#nineBtnClick" maxHeight="Infinity"
+                                            maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="multiplyBtn" styleClass="mainActionButton" text=""
+                                            GridPane.columnIndex="3" GridPane.rowIndex="2" onAction="#multiplyBtnClick"
+                                            maxHeight="Infinity" maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="fourBtn" styleClass="numberButton" text="4" GridPane.columnIndex="0"
+                                            GridPane.rowIndex="3" onAction="#fourBtnClick" maxHeight="Infinity"
+                                            maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="fiveBtn" styleClass="numberButton" text="5" GridPane.columnIndex="1"
+                                            GridPane.rowIndex="3" onAction="#fiveBtnClick" maxHeight="Infinity"
+                                            maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="sixBtn" styleClass="numberButton" text="6" GridPane.columnIndex="2"
+                                            GridPane.rowIndex="3" onAction="#sixBtnClick" maxHeight="Infinity"
+                                            maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="subtractBtn" styleClass="mainActionButton" text=""
+                                            GridPane.columnIndex="3" GridPane.rowIndex="3" onAction="#subtractBtnClick"
+                                            maxHeight="Infinity" maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="oneBtn" styleClass="numberButton" text="1" GridPane.columnIndex="0"
+                                            GridPane.rowIndex="4" onAction="#oneBtnClick" maxHeight="Infinity"
+                                            maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="twoBtn" styleClass="numberButton" text="2" GridPane.columnIndex="1"
+                                            GridPane.rowIndex="4" onAction="#twoBtnClick" maxHeight="Infinity"
+                                            maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="threeBtn" styleClass="numberButton" text="3" GridPane.columnIndex="2"
+                                            GridPane.rowIndex="4" onAction="#threeBtnClick" maxHeight="Infinity"
+                                            maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="addBtn" styleClass="mainActionButton" text=""
+                                            GridPane.columnIndex="3" GridPane.rowIndex="4" onAction="#addBtnClick"
+                                            maxHeight="Infinity" maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="negateBtn" styleClass="actionButton" text=""
+                                            GridPane.columnIndex="0" GridPane.rowIndex="5" onAction="#negateBtnClick"
+                                            maxHeight="Infinity" maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="zeroBtn" styleClass="numberButton" text="0" GridPane.columnIndex="1"
+                                            GridPane.rowIndex="5" onAction="#zeroBtnClick" maxHeight="Infinity"
+                                            maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="comaBtn" styleClass="actionButton" text="," GridPane.columnIndex="2"
+                                            GridPane.rowIndex="5" onAction="#comaBtnClick" maxHeight="Infinity"
+                                            maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="equalsBtn" styleClass="mainActionButton" text=""
+                                            GridPane.columnIndex="3" GridPane.rowIndex="5" onAction="#equalsBtnClick"
+                                            maxHeight="Infinity" maxWidth="Infinity">
+                                        <GridPane.margin>
+                                            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                        </GridPane.margin>
+                                    </Button>
+                                </children>
+                                <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" prefWidth="40"/>
+                                    <ColumnConstraints hgrow="SOMETIMES" prefWidth="40"/>
+                                    <ColumnConstraints hgrow="SOMETIMES" prefWidth="40"/>
+                                    <ColumnConstraints hgrow="SOMETIMES" prefWidth="40"/>
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints prefHeight="47.0" vgrow="SOMETIMES"/>
+                                    <RowConstraints prefHeight="47.0" vgrow="SOMETIMES"/>
+                                    <RowConstraints prefHeight="47.0" vgrow="SOMETIMES"/>
+                                    <RowConstraints prefHeight="47.0" vgrow="SOMETIMES"/>
+                                    <RowConstraints prefHeight="47.0" vgrow="SOMETIMES"/>
+                                    <RowConstraints prefHeight="47.0" vgrow="SOMETIMES"/>
+                                </rowConstraints>
+                            </GridPane>
+                        </children>
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="220.0" hgrow="ALWAYS"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="20.0" vgrow="SOMETIMES"/>
+                            <RowConstraints vgrow="SOMETIMES"/>
+                            <RowConstraints vgrow="SOMETIMES"/>
+                            <RowConstraints vgrow="SOMETIMES"/>
+                            <RowConstraints vgrow="ALWAYS"/>
+                        </rowConstraints>
+                    </GridPane>
+                </children>
+                <AnchorPane fx:id="dropDownContainer" minWidth="1.0" minHeight="1.0"/>
+            </AnchorPane>
         </Scene>
     </scene>
 
