@@ -148,6 +148,10 @@ public class FXMLView implements Initializable {
     * Constant: cycle count for emergent label
     */
    private static final int CYCLE_COUNT = 65;
+   /**
+    * Constant: Increase size step for emergent menu
+    */
+   private static final int STEP = 4;
 
    /**
     * Instance of {@link CalcController}
@@ -700,14 +704,16 @@ public class FXMLView implements Initializable {
 
       setDisableOperationButtons(false);
       OperationType lastOperationType = calcController.getLastOperationType();
+
       if (isNotNumber(response[0])) {
          setDisableOperationButtons(true);
          historyContainer.setHistoryText(response[1]);
-      } else if (CLEAR.equals(lastOperationType) || EQUAL.equals(lastOperationType)) {
+      } else if (CLEAR == lastOperationType || EQUAL == lastOperationType) {
          historyContainer.clear();
       } else {
          historyContainer.setHistoryText(response[1]);
       }
+
    }
 
    /**
@@ -752,7 +758,8 @@ public class FXMLView implements Initializable {
    private ListView<MenuListOption> prepareMenuListView() {
 
       List<MenuListOption> listOptions = Arrays.asList(CALCULATOR, STANDARD, SCIENTIFIC, PROGRAMMER,
-              DATE_CALCULATION, CONVERTER, CURRENCY, VOLUME, LENGTH, WEIGHT_AND_MASS, TEMPERATURE, ENERGY, AREA,
+              DATE_CALCULATION, CONVERTER, CURRENCY, VOLUME, LENGTH,
+              WEIGHT_AND_MASS, TEMPERATURE, ENERGY, AREA,
               SPEED, TIME, POWER, DATA, PRESSURE, ANGLE);
       ObservableList<MenuListOption> listOpt = FXCollections.observableList(listOptions);
       ListView<MenuListOption> menuList = new ListView<>(listOpt);
@@ -786,6 +793,7 @@ public class FXMLView implements Initializable {
          }
 
       });
+
       menuList.setPrefHeight(rootPane.getScene().getHeight() - MENU_LIST_HEIGHT_DIFFERENCE);
       AnchorPane.setTopAnchor(menuList, MENU_LIST_TOP_ANCHOR);
       AnchorPane.setLeftAnchor(menuList, MENU_LIST_LEFT_ANCHOR);
@@ -806,17 +814,20 @@ public class FXMLView implements Initializable {
 
          @Override
          public void handle(ActionEvent event) {
+
             button.setMinWidth(i);
             button.setPrefWidth(i);
             menuListView.setMinWidth(i);
             menuListView.setPrefWidth(i);
-            i += 4;
+            i += STEP;
          }
       }));
+
       timeline.setOnFinished((actionEvent) -> {
          button.setPrefWidth(MENU_LIST_WIDTH);
          menuListView.setPrefWidth(MENU_LIST_WIDTH);
       });
+
       timeline.setCycleCount(CYCLE_COUNT);
       timeline.play();
    }
@@ -834,6 +845,7 @@ public class FXMLView implements Initializable {
       menuBtn.setOnAction((actionEvent) -> hideDropDown());
       AnchorPane.setTopAnchor(menuBtn, MENU_BTN_TOP_ANCHOR);
       AnchorPane.setLeftAnchor(menuBtn, MENU_BTN_LEFT_ANCHOR);
+
       return menuBtn;
    }
 
@@ -850,6 +862,7 @@ public class FXMLView implements Initializable {
       aboutBtn.setAlignment(Pos.CENTER_LEFT);
       AnchorPane.setBottomAnchor(aboutBtn, ABOUT_BTN_BOTTOM_ANCHOR);
       AnchorPane.setLeftAnchor(aboutBtn, MENU_LIST_LEFT_ANCHOR);
+
       return aboutBtn;
    }
 
@@ -862,10 +875,12 @@ public class FXMLView implements Initializable {
 
       double height = rootPane.getHeight();
       double width = rootPane.getWidth();
+
       Pane pane = new Pane();
       pane.setPrefSize(width, height);
       pane.setOpacity(BACKGROUND_OPACITY);
       pane.setOnMouseClicked((event) -> hideDropDown());
+
       return pane;
    }
 
@@ -915,9 +930,11 @@ public class FXMLView implements Initializable {
       double x = event.getScreenY();
       double y = event.getScreenX();
       boolean result = false;
+
       if (x < 1 || y < 1) {
          result = true;
       }
+
       return result;
    }
 
@@ -935,6 +952,7 @@ public class FXMLView implements Initializable {
       AnchorPane.setBottomAnchor(label, 0.0);
       AnchorPane.setLeftAnchor(label, MENU_LIST_LEFT_ANCHOR);
       label.setPrefSize(rootPane.getWidth() - 4, mainButtonsGrid.getHeight());
+
       return label;
    }
 

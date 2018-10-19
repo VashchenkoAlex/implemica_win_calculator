@@ -21,6 +21,14 @@ public class ButtonPressListener {
     * Constants: map with binds for key combinations
     */
    private static final HashMap<String, String> combos = createComboMap();
+   /**
+    * Constant: string representation of shift button
+    */
+   private static final String SHIFT_STR = "Shift";
+   /**
+    * Constant: message for undefined key exception
+    */
+   private static final String UNDEFINED_KEY_MSG = "key is undefined";
 
    /**
     * Flag: is Shift button pressed on the keyboard
@@ -92,20 +100,25 @@ public class ButtonPressListener {
       stage.getScene().setOnKeyPressed(event -> {
          try {
             String name = event.getCode().getName();
-            if ("Shift".equals(name)) {
+
+            if (SHIFT_STR.equals(name)) {
                shiftPressed = true;
             }
+
             Button button;
+
             if (shiftPressed) {
                button = find(combos.get(name));
                shiftPressed = false;
             } else {
                button = find(buttons.get(name));
             }
+
             button.fire();
          } catch (NullPointerException e) {
-            System.out.println("key is undefined");
+            System.out.println(UNDEFINED_KEY_MSG);
          }
+
       });
    }
 

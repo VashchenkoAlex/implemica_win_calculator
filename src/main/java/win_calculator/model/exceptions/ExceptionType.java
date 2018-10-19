@@ -6,19 +6,19 @@ package win_calculator.model.exceptions;
 public enum ExceptionType {
 
    /**
-    * Exception type for division by zero
+    * Marker for division by zero exception
     */
    DIVIDE_BY_ZERO,
    /**
-    * Exception type for square root operation with negative number
+    * Marker for square root operation with negative number exception
     */
    NEGATIVE_VALUE_FOR_SQRT,
    /**
-    * Exception type for number overflow
+    * Marker for number overflow exception
     */
    OVERFLOW,
    /**
-    * Exception type for division zero by zero
+    * Marker for division zero by zero exception
     */
    ZERO_DIVIDE_BY_ZERO
 }

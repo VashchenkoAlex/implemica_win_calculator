@@ -70,7 +70,6 @@ public class DisplayFieldContainer {
    private void addZero() {
 
       setDisplayedText(addCapacity(display.getText() + ZERO));
-
    }
 
    /**
@@ -79,6 +78,7 @@ public class DisplayFieldContainer {
    public void addComa() {
 
       String text = display.getText();
+
       if (!"".equals(text) && isComaAbsent(text)) {
          setDisplayedText(text + COMA);
       }
@@ -91,6 +91,7 @@ public class DisplayFieldContainer {
 
       display.setFont(new Font(display.getFont().getName(), DEFAULT_FONT_SIZE));
       display.layout();
+
       while (isOverrun()) {
          display.setFont(new Font(display.getFont().getName(), display.getFont().getSize() - 1));
          display.layout();
@@ -104,7 +105,9 @@ public class DisplayFieldContainer {
     */
    private boolean isOverrun() {
 
-      return !display.getText().equals(((Text) display.lookup(DISPLAY_TEXT_ID)).getText());
+      String shownText = ((Text) display.lookup(DISPLAY_TEXT_ID)).getText();
+
+      return !display.getText().equals(shownText);
    }
 
    /**
@@ -114,7 +117,11 @@ public class DisplayFieldContainer {
     */
    private boolean isNotMax() {
 
-      return display.getText().replace(FIRST_ZERO_STR, "").replaceAll(SPACE_OR_COMA_REGEX, "").length() < MAX_DIGITS;
+      String displayedText = display.getText();
+      displayedText = displayedText.replace(FIRST_ZERO_STR, "");
+      displayedText = displayedText.replaceAll(SPACE_OR_COMA_REGEX, "");
+
+      return displayedText.length() < MAX_DIGITS;
    }
 
    /**
@@ -127,13 +134,16 @@ public class DisplayFieldContainer {
    public void sendDigitToDisplay(NumberSymbol numberSymbol, String number, boolean wasDigitBefore) {
 
       if (isNotMax()) {
+
          if (ZERO.equals(numberSymbol.getSymbol()) && wasDigitBefore) {
             addZero();
          } else {
             setDisplayedText(number);
          }
+
       } else if (!wasDigitBefore) {
          setDisplayedText(number);
       }
+
    }
 }

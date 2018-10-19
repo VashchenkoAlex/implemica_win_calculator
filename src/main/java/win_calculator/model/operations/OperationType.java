@@ -6,63 +6,63 @@ package win_calculator.model.operations;
 public enum OperationType {
 
    /**
-    * Type for fraction operation
+    * Fraction operation marker
     */
    FRACTION,
    /**
-    * Type for square operation
+    * Square operation marker
     */
    SQR,
    /**
-    * Type for square root operation
+    * Square root operation marker
     */
    SQRT,
    /**
-    * Type for add operation
+    * Add operation marker
     */
    ADD,
    /**
-    * Type for divide operation
+    * Divide operation marker
     */
    DIVIDE,
    /**
-    * Type for multiply operation
+    * Multiply operation marker
     */
    MULTIPLY,
    /**
-    * Type for subtract operation
+    * Subtract operation marker
     */
    SUBTRACT,
    /**
-    * Type for negate operation
+    * Negate operation marker
     */
    NEGATE,
    /**
-    * Type for percent operation
+    * Percent operation marker
     */
    PERCENT,
    /**
-    * Type for equal operation
+    * Equal operation marker
     */
    EQUAL,
    /**
-    * Type for digit operation
+    * Digit operation marker
     */
    CLEAR,
    /**
-    * Type for clear entered operation
+    * Clear entered operation marker
     */
    CLEAR_ENTERED,
    /**
-    * Type for number operation
+    * Number operation marker
     */
    NUMBER,
    /**
-    * Type for memory operation
+    * Memory operation marker
     */
    MEMORY,
    /**
-    * Type for backspace operation
+    * Backspace operation marker
     */
    BACKSPACE,
 
