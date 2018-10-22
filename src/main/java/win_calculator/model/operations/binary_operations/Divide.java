@@ -35,6 +35,7 @@ public class Divide implements BinaryOperation {
       if (firstNumber.equals(BigDecimal.ZERO) && secondNumber.equals(BigDecimal.ZERO)) {
          throw new OperationException(ZERO_DIVIDE_BY_ZERO);
       }
+
       try {
          return firstNumber.divide(secondNumber, SCALE, RoundingMode.HALF_UP);
       } catch (ArithmeticException e) {
@@ -42,6 +43,11 @@ public class Divide implements BinaryOperation {
       }
    }
 
+   /**
+    * Getter for Divide operation type
+    *
+    * @return operation type of divide
+    */
    @Override
    public OperationType getType() {
       return OperationType.DIVIDE;

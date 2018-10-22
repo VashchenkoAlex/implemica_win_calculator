@@ -708,10 +708,13 @@ public class FXMLView implements Initializable {
       if (isNotNumber(response[0])) {
          setDisableOperationButtons(true);
          historyContainer.setHistoryText(response[1]);
+
       } else if (CLEAR == lastOperationType || EQUAL == lastOperationType) {
          historyContainer.clear();
+
       } else {
          historyContainer.setHistoryText(response[1]);
+
       }
 
    }
@@ -780,12 +783,14 @@ public class FXMLView implements Initializable {
                      setGraphic(null);
                   } else {
                      setText(item.getLabel());
+
                      if (!item.isOption()) {
                         setId(NOT_OPTION_ITEM_ID);
                         setDisable(true);
                      } else {
                         setId(OPTION_ITEM_ID);
                      }
+
                   }
 
                }
@@ -890,6 +895,7 @@ public class FXMLView implements Initializable {
    private void hideDropDown() {
 
       ObservableList<Node> nodes = dropDownContainer.getChildren();
+
       for (int i = nodes.size() - 1; i >= 0; i--) {
          nodes.remove(i);
       }
@@ -913,9 +919,11 @@ public class FXMLView implements Initializable {
       });
 
       dragBtn.setOnMouseReleased(event -> {
+
          if (checkOnOverScreen(event)) {
             windowContainer.fullScreen();
          }
+
       });
    }
 
@@ -957,3 +965,17 @@ public class FXMLView implements Initializable {
    }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

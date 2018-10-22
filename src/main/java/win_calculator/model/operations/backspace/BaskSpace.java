@@ -8,8 +8,12 @@ import win_calculator.model.operations.OperationType;
  */
 public class BaskSpace implements Operation {
 
-    @Override
-    public OperationType getType() {
-        return OperationType.BACKSPACE;
-    }
+   /**
+    * Getter for backspace operation type
+    * @return operation type of backspace
+    */
+   @Override
+   public OperationType getType() {
+      return OperationType.BACKSPACE;
+   }
 }

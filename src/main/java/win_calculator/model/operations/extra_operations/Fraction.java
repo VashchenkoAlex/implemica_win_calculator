@@ -14,7 +14,7 @@ import static win_calculator.model.exceptions.ExceptionType.DIVIDE_BY_ZERO;
 public class Fraction implements ExtraOperation {
 
    /**
-    * Constant of max scaling for the method
+    * Constant of max scaling for the calculator app
     */
    private static final int SCALE = 10000;
 
@@ -36,6 +36,11 @@ public class Fraction implements ExtraOperation {
       }
    }
 
+   /**
+    * Getter for fraction operation type
+    *
+    * @return operation type of fraction
+    */
    @Override
    public OperationType getType() {
 

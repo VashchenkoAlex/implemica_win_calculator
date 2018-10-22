@@ -8,6 +8,11 @@ import win_calculator.model.operations.OperationType;
  */
 public class Equal implements Operation {
 
+   /**
+    * Getter for equal operation type
+    *
+    * @return operation type of equal
+    */
    @Override
    public OperationType getType() {
       return OperationType.EQUAL;

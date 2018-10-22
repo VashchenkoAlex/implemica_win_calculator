@@ -8,8 +8,13 @@ import win_calculator.model.operations.OperationType;
  */
 public class Clear implements Operation {
 
-    @Override
-    public OperationType getType() {
-        return OperationType.CLEAR;
-    }
+   /**
+    * Getter for clear operation type
+    *
+    * @return operation type of clear
+    */
+   @Override
+   public OperationType getType() {
+      return OperationType.CLEAR;
+   }
 }

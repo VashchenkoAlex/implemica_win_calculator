@@ -1,14 +1,11 @@
 package win_calculator.controller;
 
 import win_calculator.controller.entities.NumberSymbol;
+import win_calculator.controller.entities.Symbol;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.LinkedList;
-
-import static win_calculator.controller.entities.Symbol.ZERO;
-import static win_calculator.controller.utils.ControllerUtils.addCapacity;
-import static win_calculator.controller.utils.ControllerUtils.convertNumberToString;
-import static win_calculator.controller.utils.ControllerUtils.replaceDotToComa;
 
 /**
  * Class builds number from digits and return BigDecimal or String value
@@ -16,17 +13,17 @@ import static win_calculator.controller.utils.ControllerUtils.replaceDotToComa;
 public class NumberBuilder {
 
    /**
-    * Constant of max entered digits
+    * Constant of max possible digits for enter
     */
    private static final int MAX_DIGITS = 16;
    /**
     * Constant of coma representation at String
     */
-   private static final String COMA = ".";
+   private static final String COMMA = ".";
    /**
     * Constant of zero representation at String
     */
-   private static final String ZERO_STR = "0";
+   private static final String ZERO = "0";
    /**
     * Constant of minus representation at String
     */
@@ -36,7 +33,6 @@ public class NumberBuilder {
     * display label
     */
    private static final String DISPLAY_PATTERN = "#############,###.################";
-
 
    /**
     * LinkedList of current entered digits chain
@@ -63,7 +59,6 @@ public class NumberBuilder {
     * previous digit's chain and sign
     */
    void clean() {
-
       number = null;
       digitsChain = new LinkedList<>();
       previousChain = null;
@@ -89,6 +84,7 @@ public class NumberBuilder {
       if (number == null) {
          prepareNumber();
       }
+
       return number;
    }
 
@@ -103,7 +99,8 @@ public class NumberBuilder {
       if (isNotMaxDigits()) {
          add(numberSymbol);
       }
-      return convertChainToString();
+
+      return convertNumberToString();
    }
 
    /**
@@ -113,19 +110,12 @@ public class NumberBuilder {
     * @return finalized BigDecimal number
     */
    BigDecimal finish() {
-
       prepareNumber();
       previousChain = digitsChain;
       digitsChain = new LinkedList<>();
-
-      BigDecimal result;
-      if (number != null) {
-         result = number;
-      } else {
-         result = null;
-      }
-
+      BigDecimal result = number;
       number = null;
+
       return result;
    }
 
@@ -140,12 +130,20 @@ public class NumberBuilder {
          digitsChain = previousChain;
       }
 
-      if (!isChainEmpty()){
+      if (!isChainEmpty()) {
          cutLastDigit();
-         number = setSign(new BigDecimal(getValue()));
+         number = setSign(getBigDecimalNumberFromChain());
       }
 
-      return convertChainToString();
+      return convertNumberToString();
+   }
+
+   /**
+    * Converts current digit's chain to the BigDecimal
+    * @return BigDecimal converting result
+    */
+   private BigDecimal getBigDecimalNumberFromChain() {
+      return new BigDecimal(buildStringFromChain(digitsChain));
    }
 
    /**
@@ -165,16 +163,13 @@ public class NumberBuilder {
     * @return String value of current number
     */
    String negate(boolean wasMemoryOperation) {
-
       changeIsPositive();
-      String result;
+
       if (!wasMemoryOperation) {
          prepareNumber();
-         result = convertChainToString();
-      } else {
-         result = convertNumberToString(number.negate(), DISPLAY_PATTERN);
       }
-      return result;
+
+      return convertNumberToString();
    }
 
    /**
@@ -193,15 +188,17 @@ public class NumberBuilder {
     * @param numberSymbol - current {@link NumberSymbol}
     */
    private void add(NumberSymbol numberSymbol) {
+      String symbol = numberSymbol.getSymbol();
 
-      if (COMA.equals(numberSymbol.getSymbol())) {
+      if (COMMA.equals(symbol)) {
          addComa(numberSymbol);
-      } else if (ZERO_STR.equals(numberSymbol.getSymbol())) {
+      } else if (ZERO.equals(symbol)) {
          addZero(numberSymbol);
       } else {
          addDigitToChain(numberSymbol);
       }
-      number = new BigDecimal(getValue());
+
+      number = getBigDecimalNumberFromChain();
    }
 
    /**
@@ -211,12 +208,15 @@ public class NumberBuilder {
     * @return changed BigDecimal value
     */
    private BigDecimal setSign(BigDecimal value) {
+      BigDecimal changedValue;
 
-      BigDecimal result = value;
-      if (!positive && result.compareTo(BigDecimal.ZERO) > 0) {
-         result = result.negate();
+      if (!positive && value.compareTo(BigDecimal.ZERO) > 0) {
+         changedValue = value.negate();
+      } else {
+         changedValue = value;
       }
-      return result;
+
+      return changedValue;
    }
 
    /**
@@ -226,7 +226,7 @@ public class NumberBuilder {
     */
    private void addDigitToChain(NumberSymbol numberSymbol) {
 
-      if (ZERO_STR.equals(getValue())) {
+      if (isChainJustZero()) {
          digitsChain.removeLast();
       }
 
@@ -241,10 +241,10 @@ public class NumberBuilder {
    private void addComa(NumberSymbol coma) {
 
       if (isChainEmpty()) {
-         digitsChain.add(new NumberSymbol(ZERO));
+         digitsChain.add(new NumberSymbol(Symbol.ZERO));
       }
 
-      if (numberWithoutComa()) {
+      if (!chainContainsComma(digitsChain)) {
          digitsChain.add(coma);
       }
    }
@@ -256,24 +256,17 @@ public class NumberBuilder {
     */
    private void addZero(NumberSymbol zero) {
 
-      if (!ZERO_STR.equals(getValue())) {
+      if (!isChainJustZero()) {
          digitsChain.add(zero);
       }
    }
 
    /**
-    * Verifies is digit's chain contains coma
-    *
-    * @return true if chain without coma
+    * Verifies is current digit's chain contains just zero
+    * @return boolean verification result
     */
-   private boolean numberWithoutComa() {
-
-      for (NumberSymbol numberSymbol : digitsChain) {
-         if (COMA.equals(numberSymbol.getSymbol())) {
-            return false;
-         }
-      }
-      return true;
+   private boolean isChainJustZero() {
+      return ZERO.equals(buildStringFromChain(digitsChain));
    }
 
    /**
@@ -283,23 +276,23 @@ public class NumberBuilder {
    private void cutLastDigit() {
 
       digitsChain.removeLast();
-      if (digitsChain.size() < 1) {
-         digitsChain.add(new NumberSymbol(ZERO));
+
+      if (digitsChain.size() < 1) { //...
+         digitsChain.add(new NumberSymbol(Symbol.ZERO));
       }
    }
 
    /**
-    * Method converts current digit's chain to String
+    * Method builds String from given digit's chain
     *
-    * @return String represents of current digit's chain
+    * @param digitsChain - given chain of digits
+    * @return String represents of given digit's chain
     */
-   private String getValue() {
+   private String buildStringFromChain(LinkedList<NumberSymbol> digitsChain) {
+      StringBuilder builder = new StringBuilder();
+      digitsChain.forEach(numberSymbol -> builder.append(numberSymbol.getSymbol()));
 
-      StringBuilder result = new StringBuilder();
-      for (NumberSymbol numberSymbol : digitsChain) {
-         result.append(numberSymbol.getSymbol());
-      }
-      return result.toString();
+      return builder.toString();
    }
 
    /**
@@ -320,14 +313,13 @@ public class NumberBuilder {
    private boolean isNotMaxDigits() {
 
       int digitsCount = digitsChain.size();
-      if (!isChainEmpty() && ZERO_STR.equals(digitsChain.get(0).getSymbol())) {
-         --digitsCount;
+
+      if (!isChainEmpty() && ZERO.equals(digitsChain.get(0).getSymbol())) {
+         digitsCount--;
       }
 
-      for (NumberSymbol d : digitsChain) {
-         if (COMA.equals(d.getSymbol())) {
-            --digitsCount;
-         }
+      if (chainContainsComma(digitsChain)){
+         digitsCount--;
       }
 
       return digitsCount < MAX_DIGITS;
@@ -344,7 +336,6 @@ public class NumberBuilder {
     * Method reset sign flag
     */
    private void resetPositive() {
-
       positive = true;
    }
 
@@ -355,7 +346,7 @@ public class NumberBuilder {
 
       if (isChainEmpty() && isPreviousChainNotEmpty()) {
          digitsChain = previousChain;
-         number = setSign(new BigDecimal(getValue()));
+         number = setSign(getBigDecimalNumberFromChain());
       } else if (!isChainEmpty()) {
          BigDecimal value = setSign(number);
 
@@ -370,50 +361,70 @@ public class NumberBuilder {
    }
 
    /**
-    * Method converts current digit's chain to String
-    * for display label with capacity
-    * @return String value of current digit's chain
+    * Method converts stored number to String
+    * and formats is for display label
+    *
+    * @return String value of stored number chain
     */
-   private String convertChainToString() {
-
-      StringBuilder resultBuilder = new StringBuilder();
-      if (!positive) {
-         resultBuilder.append(MINUS_STR);
-      }
-
+   private String convertNumberToString() {
       LinkedList<NumberSymbol> chain = selectChainForConverting();
-      resultBuilder.append(addSymbolsFromChain(chain));
-      String result = resultBuilder.toString();
-      if (!"".equals(result)) {
-         result = addCapacity(replaceDotToComa(result));
+      DecimalFormat format = new DecimalFormat(DISPLAY_PATTERN);
+      BigDecimal number;
+      if (chain!=null){
+
+         if (chainContainsComma(chain)) {
+            format.setDecimalSeparatorAlwaysShown(true);
+            int minFractionDigits = getMinFractionDigits(chain);
+            format.setMinimumFractionDigits(minFractionDigits);
+         }
+
+         number = new BigDecimal(buildStringFromChain(chain));
+      } else {
+         number = this.number;
       }
 
-      return result;
+      String convertedNumber = format.format(number);
+
+      if (!positive) {
+         convertedNumber = MINUS_STR + convertedNumber;
+      }
+
+      return convertedNumber;
    }
 
    /**
-    * Gets symbols from digit's chain and build String
-    * @param chain - given chain with digits
-    * @return built string from chain
+    * Verifies is given number symbol chain contains separator
+    *
+    * @param chain - given LinkedList<NumberSymbol> chain
+    * @return true if contains
     */
-   private String addSymbolsFromChain(LinkedList<NumberSymbol> chain) {
+   private boolean chainContainsComma(LinkedList<NumberSymbol> chain) {
+      return chain.stream().anyMatch(numberSymbol -> COMMA.equals(numberSymbol.getSymbol()));
+   }
 
-      StringBuilder string = new StringBuilder();
-      if (chain != null && !chain.isEmpty()) {
-         for (NumberSymbol numberSymbol : chain) {
-            string.append(numberSymbol.getSymbol());
+   /**
+    * Counts digits at fractional part of number at given digit's chain
+    * @param chain - given digit's chain
+    * @return int count of digits at fractional part
+    */
+   private int getMinFractionDigits(LinkedList<NumberSymbol> chain) {
+      int wholeCounter = 0;
+      for (NumberSymbol symbol : chain) {
+         wholeCounter++;
+
+         if (COMMA.equals(symbol.getSymbol())) {
+            break;
          }
       }
-
-      return string.toString();
+      return chain.size() - wholeCounter;
    }
 
    /**
     * Verifies digit chains are they empty and return not empty
+    *
     * @return selected chain
     */
-   private LinkedList<NumberSymbol> selectChainForConverting(){
-
+   private LinkedList<NumberSymbol> selectChainForConverting() {
       LinkedList<NumberSymbol> chain = digitsChain;
       if (isChainEmpty()) {
          chain = previousChain;

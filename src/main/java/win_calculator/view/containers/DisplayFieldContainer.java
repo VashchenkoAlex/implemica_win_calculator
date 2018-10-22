@@ -79,7 +79,7 @@ public class DisplayFieldContainer {
 
       String text = display.getText();
 
-      if (!"".equals(text) && isComaAbsent(text)) {
+      if (!"".equals(text) && isComaAbsent(text)) { //...
          setDisplayedText(text + COMA);
       }
    }
@@ -147,3 +147,26 @@ public class DisplayFieldContainer {
 
    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

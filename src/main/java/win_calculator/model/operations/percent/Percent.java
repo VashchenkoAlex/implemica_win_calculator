@@ -27,6 +27,11 @@ public class Percent implements Operation {
       return firstNumber.multiply(secondNumber.multiply(PERCENT));
    }
 
+   /**
+    * Getter for percent operation type
+    *
+    * @return operation type of percent
+    */
    @Override
    public OperationType getType() {
 

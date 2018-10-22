@@ -22,10 +22,20 @@ public class MemoryOperation implements Operation {
       this.memoryOperationType = memoryOperationType;
    }
 
+   /**
+    * Getter for current memory operation type
+    *
+    * @return operation type of current memory operation
+    */
    public MemoryOperationType getMemoryOperationType() {
       return memoryOperationType;
    }
 
+   /**
+    * Getter for Memory operation type
+    *
+    * @return operation type of memory
+    */
    public OperationType getType() {
       return OperationType.MEMORY;
    }

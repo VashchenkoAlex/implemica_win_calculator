@@ -22,6 +22,11 @@ public class Negate implements ExtraOperation {
       return number.negate();
    }
 
+   /**
+    * Getter for negate operation type
+    *
+    * @return operation type of negate
+    */
    @Override
    public OperationType getType() {
       return OperationType.NEGATE;

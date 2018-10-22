@@ -52,10 +52,18 @@ public enum Symbol {
 
    private String string;
 
+   /**
+    * Constructs Symbol enumeration with given String representation
+    * @param string - given String representation
+    */
    Symbol(String string) {
       this.string = string;
    }
 
+   /**
+    * Getter for String representation of current Symbol
+    * @return String representation
+    */
    public String getString() {
       return string;
    }

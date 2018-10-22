@@ -9,21 +9,26 @@ import java.math.BigDecimal;
  */
 public class Add implements BinaryOperation {
 
-    /**
-     * Overridden method from {@link BinaryOperation}
-     * Calculate add operation on given BigDecimal firstNumber with given BigDecimal secondNumber
-     * @param firstNumber - given first BigDecimal number
-     * @param secondNumber - given second BigDecimal number
-     * @return BigDecimal result of calculation
-     */
-    @Override
-    public BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber){
+   /**
+    * Overridden method from {@link BinaryOperation}
+    * Calculate add operation on given BigDecimal firstNumber with given BigDecimal secondNumber
+    *
+    * @param firstNumber  - given first BigDecimal number
+    * @param secondNumber - given second BigDecimal number
+    * @return BigDecimal result of calculation
+    */
+   @Override
+   public BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber) {
 
-        return firstNumber.add(secondNumber);
-    }
+      return firstNumber.add(secondNumber);
+   }
 
-    @Override
-    public OperationType getType() {
-        return OperationType.ADD;
-    }
+   /**
+    * Getter for Add operation type
+    * @return operation type of add
+    */
+   @Override
+   public OperationType getType() {
+      return OperationType.ADD;
+   }
 }

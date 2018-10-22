@@ -13,7 +13,7 @@ public class Memory {
    /**
     * List of saved BigDecimal numbers at memory
     */
-   private LinkedList<BigDecimal> storedNumbers;
+   private LinkedList<BigDecimal> storedNumbers; // оставить только 1 число
 
    /**
     * Constructs instance of {@link Memory} with empty list
@@ -81,3 +81,26 @@ public class Memory {
       storedNumbers = new LinkedList<>();
    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

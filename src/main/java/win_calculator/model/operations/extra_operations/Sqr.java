@@ -27,6 +27,11 @@ public class Sqr implements ExtraOperation {
       return number.pow(POW);
    }
 
+   /**
+    * Getter for sqr operation type
+    *
+    * @return operation type of sqr
+    */
    @Override
    public OperationType getType() {
 

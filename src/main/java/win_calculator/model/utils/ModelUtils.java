@@ -68,7 +68,7 @@ public abstract class ModelUtils {
     * @param number - given BigDecimal number
     * @return BigDecimal result of rounding
     */
-   public static BigDecimal roundNumber(BigDecimal number) {
+   public static BigDecimal roundNumber(BigDecimal number) { //...
 
       BigDecimal roundedNumber = number;
       if (roundedNumber != null) {
@@ -80,6 +80,7 @@ public abstract class ModelUtils {
             roundedNumber = roundDecimalNumber(roundedNumber);
          } else if (numberIsLarge(string)) {
             roundedNumber = roundWholeNumber(roundedNumber);
+
          }
 
       }
@@ -87,13 +88,13 @@ public abstract class ModelUtils {
       return roundedNumber;
    }
 
-   private static BigDecimal roundDecimalNumber(BigDecimal number) {
+   private static BigDecimal roundDecimalNumber(BigDecimal number) { //...
 
       BigDecimal roundedNumber = number;
       String string = roundedNumber.toString();
       String[] parts = string.split(SPLIT_BY_DOT_REGEX);
-
       int decimalLength;
+
       if (parts.length > 1) {
          decimalLength = parts[1].length();
       }else {
@@ -151,8 +152,7 @@ public abstract class ModelUtils {
       
       boolean isBiggerMax = number.compareTo(MAX_ABS_VALUE) > 0;
 
-      boolean isSmallerMin = number.compareTo(MIN_ABS_VALUE) < 0 && 
-              number.compareTo(BigDecimal.ZERO) > 0;
+      boolean isSmallerMin = number.compareTo(MIN_ABS_VALUE) < 0 && number.compareTo(BigDecimal.ZERO) > 0;
 
       return isBiggerMax || isSmallerMin;
    }
@@ -166,8 +166,9 @@ public abstract class ModelUtils {
    private static boolean numberIsLarge(String string) {
 
       int length = string.replaceAll(LAST_ZERO_REGEX, "").length();
+
       if (string.contains(MINUS)) {
-         --length;
+         length--;
       }
       
       return length > MAX_NUMBER_LENGTH && string.length() > MAX_EXPONENT;
@@ -179,10 +180,11 @@ public abstract class ModelUtils {
     * @param number - given whole BigDecimal number
     * @return BigDecimal result of rounding
     */
-   private static BigDecimal roundWholeNumber(BigDecimal number) {
+   private static BigDecimal roundWholeNumber(BigDecimal number) { //...
 
       String string = number.toBigInteger().toString();
       String minus = "";
+
       if (number.compareTo(BigDecimal.ZERO) < 0) {
          string = string.substring(1);
          minus = MINUS;
@@ -206,7 +208,7 @@ public abstract class ModelUtils {
     * @param decimalPart - given decimal part of number at String
     * @return true if decimal part not equals zero
     */
-   private static boolean decimalPartNotZero(String decimalPart) {
+   private static boolean decimalPartNotZero(String decimalPart) { //...
 
       boolean isNotZero;
       
@@ -225,7 +227,7 @@ public abstract class ModelUtils {
     * @param string - given number at string
     * @return boolean result
     */
-   private static boolean hasToBeRounded(String string) {
+   private static boolean hasToBeRounded(String string) { //...
 
       int length = string.length() - 1;
       int exponent = Integer.parseInt(string.charAt(length) + "");
@@ -239,7 +241,7 @@ public abstract class ModelUtils {
     * @param number - given BigDecimal number
     * @return BigDecimal result of rounding
     */
-   private static BigDecimal roundNumberWithExponent(BigDecimal number) {
+   private static BigDecimal roundNumberWithExponent(BigDecimal number) { //...
 
       String numberStr = number.toString();
       String[] parts = numberStr.split(EXPONENT);

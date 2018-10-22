@@ -8,8 +8,13 @@ import win_calculator.model.operations.OperationType;
  */
 public class ClearEntered implements Operation {
 
-    @Override
-    public OperationType getType() {
-        return OperationType.CLEAR_ENTERED;
-    }
+   /**
+    * Getter for clear entered operation type
+    *
+    * @return operation type of clear entered
+    */
+   @Override
+   public OperationType getType() {
+      return OperationType.CLEAR_ENTERED;
+   }
 }

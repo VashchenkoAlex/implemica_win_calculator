@@ -30,25 +30,36 @@ public class Sqrt implements ExtraOperation {
     */
    @Override
    public BigDecimal calculate(BigDecimal number) throws OperationException {
-      BigDecimal result;
+
+      BigDecimal calculationResult;
       if (number.compareTo(BigDecimal.ZERO) == 0 || number.compareTo(BigDecimal.ONE) == 0) {
-         result = number;
+         calculationResult = number;
+
       } else if (number.compareTo(BigDecimal.ZERO) < 0) {
          throw new OperationException(NEGATIVE_VALUE_FOR_SQRT);
+
       } else {
          BigInteger integerValue = number.movePointRight(SCALE << 1).toBigInteger();
          int bits = (integerValue.bitLength() + 1) >> 1;
          BigInteger firstVar = integerValue.shiftRight(bits);
          BigInteger secondVar;
+
          do {
             secondVar = firstVar;
             firstVar = firstVar.add(integerValue.divide(firstVar)).shiftRight(1);
          } while (firstVar.compareTo(secondVar) != 0);
-         result = new BigDecimal(firstVar, SCALE);
+
+         calculationResult = new BigDecimal(firstVar, SCALE);
       }
-      return result;
+
+      return calculationResult;
    }
 
+   /**
+    * Getter for sqrt operation type
+    *
+    * @return operation type of sqrt
+    */
    @Override
    public OperationType getType() {
 

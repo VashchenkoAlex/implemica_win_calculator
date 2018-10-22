@@ -25,10 +25,6 @@ public class ButtonPressListener {
     * Constant: string representation of shift button
     */
    private static final String SHIFT_STR = "Shift";
-   /**
-    * Constant: message for undefined key exception
-    */
-   private static final String UNDEFINED_KEY_MSG = "key is undefined";
 
    /**
     * Flag: is Shift button pressed on the keyboard
@@ -56,6 +52,7 @@ public class ButtonPressListener {
       map.put("Comma", "#comaBtn");
       map.put("Add", "#addBtn");
       map.put("Subtract", "#subtractBtn");
+      map.put("Minus", "#subtractBtn");
       map.put("Multiply", "#multiplyBtn");
       map.put("Divide", "#divideBtn");
       map.put("Slash", "#divideBtn");
@@ -91,21 +88,19 @@ public class ButtonPressListener {
    }
 
    /**
-    * \
     * Binds keyboard events with buttons on FXApp
     *
     * @param stage - window of current FXApp
     */
    public static void addButtonPressListener(Stage stage) {
       stage.getScene().setOnKeyPressed(event -> {
-         try {
-            String name = event.getCode().getName();
 
-            if (SHIFT_STR.equals(name)) {
-               shiftPressed = true;
-            }
+         String name = event.getCode().getName();
+         Button button;
 
-            Button button;
+         if (SHIFT_STR.equals(name)) {
+            shiftPressed = true;
+         } else {
 
             if (shiftPressed) {
                button = find(combos.get(name));
@@ -115,10 +110,7 @@ public class ButtonPressListener {
             }
 
             button.fire();
-         } catch (NullPointerException e) {
-            System.out.println(UNDEFINED_KEY_MSG);
          }
-
       });
    }
 

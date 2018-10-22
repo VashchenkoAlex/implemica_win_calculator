@@ -9,23 +9,29 @@ import java.math.BigDecimal;
  */
 public class Multiply implements BinaryOperation {
 
-    /**
-     * Overridden method from {@link BinaryOperation}
-     * Calculate multiply operation on given BigDecimal firstNumber with given BigDecimal secondNumber
-     * @param firstNumber - given first BigDecimal number
-     * @param secondNumber - given second BigDecimal number
-     * @return BigDecimal result of calculation
-     */
-    @Override
-    public BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber){
+   /**
+    * Overridden method from {@link BinaryOperation}
+    * Calculate multiply operation on given BigDecimal firstNumber with given BigDecimal secondNumber
+    *
+    * @param firstNumber  - given first BigDecimal number
+    * @param secondNumber - given second BigDecimal number
+    * @return BigDecimal result of calculation
+    */
+   @Override
+   public BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber) {
 
-        return firstNumber.multiply(secondNumber);
-    }
+      return firstNumber.multiply(secondNumber);
+   }
 
-    @Override
-    public OperationType getType() {
-        return OperationType.MULTIPLY;
-    }
+   /**
+    * Getter for multiply operation type
+    *
+    * @return operation type of multiply
+    */
+   @Override
+   public OperationType getType() {
+      return OperationType.MULTIPLY;
+   }
 
 
 }

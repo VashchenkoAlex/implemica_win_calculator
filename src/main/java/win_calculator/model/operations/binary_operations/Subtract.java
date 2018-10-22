@@ -9,22 +9,28 @@ import java.math.BigDecimal;
  */
 public class Subtract implements BinaryOperation {
 
-    /**
-     * Overridden method from {@link BinaryOperation}
-     * Calculate subtract operation on given BigDecimal firstNumber with given BigDecimal secondNumber
-     * @param firstNumber - given first BigDecimal number
-     * @param secondNumber - given second BigDecimal number
-     * @return BigDecimal result of calculation
-     */
-    @Override
-    public BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber){
+   /**
+    * Overridden method from {@link BinaryOperation}
+    * Calculate subtract operation on given BigDecimal firstNumber with given BigDecimal secondNumber
+    *
+    * @param firstNumber  - given first BigDecimal number
+    * @param secondNumber - given second BigDecimal number
+    * @return BigDecimal result of calculation
+    */
+   @Override
+   public BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber) {
 
-        return firstNumber.subtract(secondNumber);
-    }
+      return firstNumber.subtract(secondNumber);
+   }
 
-    @Override
-    public OperationType getType() {
-        return OperationType.SUBTRACT;
-    }
+   /**
+    * Getter for subtract operation type
+    *
+    * @return operation type of subtract
+    */
+   @Override
+   public OperationType getType() {
+      return OperationType.SUBTRACT;
+   }
 
 }

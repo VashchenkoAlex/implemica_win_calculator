@@ -99,9 +99,9 @@ class OperationProcessor {
 
       boolean done;
       if (historyNotEmpty() && isHistoryContainingExtraPercentNegate()) {
-
          LinkedList<Operation> operations = new LinkedList<>(history.getOperations());
          OperationType type;
+
          for (int i = operations.size() - 1; i > 0; i--) {
             type = operations.getLast().getType();
 
@@ -140,6 +140,7 @@ class OperationProcessor {
    BigDecimal processNegate(Operation negate, BigDecimal inputtedNumber, BigDecimal responseNumber) {
 
       BigDecimal result;
+
       if (inputtedNumber == null && lastOperationNotNumberAndNotNegate()) {
          result = checkResponseAndProceed(responseNumber);
          resetLastBinaryResult();
@@ -236,6 +237,7 @@ class OperationProcessor {
          addNumberToHistory(inputtedNumber);
          setLastNumber(inputtedNumber);
          resultNum = inputtedNumber;
+
       } else if (responseNumber != null) {
          resultNum = responseNumber;
 
@@ -297,7 +299,7 @@ class OperationProcessor {
     */
    private BigDecimal selectNumberForBinaryOperation(BigDecimal inputtedNumber, BigDecimal responseNumber) {
 
-      BigDecimal result = responseNumber;
+      BigDecimal result = responseNumber; //...
       if (inputtedNumber != null) {
          addNumberToHistory(inputtedNumber);
          setLastNumber(inputtedNumber);
@@ -345,6 +347,7 @@ class OperationProcessor {
       enterRepeated = false;
       lastExtraResult = null;
       lastInputtedNumber = null;
+
       return null;
    }
 
@@ -361,7 +364,7 @@ class OperationProcessor {
     */
    BigDecimal processEnter(BigDecimal inputtedNumber, BigDecimal responseNumber) throws OperationException {
 
-      BigDecimal result = setVariablesBeforeEqual(inputtedNumber, responseNumber);
+      BigDecimal result = setVariablesBeforeEqual(inputtedNumber, responseNumber); //...
 
       initVariables();
       if (mOperationBefore || enterForOperationRepeated) {
@@ -423,7 +426,7 @@ class OperationProcessor {
     */
    private boolean isaBinaryResultHasToBeStored() {
 
-      return !enterRepeated && isBinaryResultNotNull() &&
+      return !enterRepeated && isBinaryResultNotNull() &&   //...
               (isBinaryOperation(lastOperationType) || MEMORY == lastOperationType);
    }
 
@@ -444,7 +447,6 @@ class OperationProcessor {
       if (CLEAR_MEMORY.equals(memoryOperationType)) {
          memory = new Memory();
       } else {
-
          responseNumber = selectNumberForMemoryOperation(inputtedNumber, responseNumber);
          BigDecimal result = doMemoryOperation(operation, responseNumber);
 
@@ -472,14 +474,19 @@ class OperationProcessor {
 
       if (selectedNumber != null) {
          lastInputtedNumber = inputtedNumber;
+
       } else if (isExtraResultNotNull()) {
          selectedNumber = lastExtraResult;
+
       } else if (operationResult != null){
          selectedNumber = operationResult;
+
       } else if (lastNumber != null){
          selectedNumber = lastNumber;
+
       } else {
          selectedNumber = BigDecimal.ZERO;
+
       }
 
       return selectedNumber;
@@ -533,6 +540,7 @@ class OperationProcessor {
          addNumberToHistory(BigDecimal.ZERO);
          setLastNumber(inputtedNumber);
          resetLastBinaryResult();
+
       } else {
          addZeroToHistory();
       }
@@ -636,7 +644,7 @@ class OperationProcessor {
       boolean result;
 
       if (lastOperationType != null) {
-         result = NUMBER != lastOperationType && NEGATE != lastOperationType;
+         result = (NUMBER != lastOperationType) && (NEGATE != lastOperationType);
       } else {
          result = true;
       }
@@ -707,10 +715,13 @@ class OperationProcessor {
 
          if (isBinaryResultNotNull()) {
             firstNumber = lastBinaryResult;
+
          } else if (mOperationBefore && NUMBER != lastOperationType) {
             firstNumber = lastNumber;
+
          } else {
             firstNumber = previousNumber;
+
          }
 
       } else if (isBinaryResultNotNull()) {
@@ -718,15 +729,19 @@ class OperationProcessor {
 
          if (PERCENT == lastOperationType) {
             secondNumber = lastNumber;
+
          } else if (isExtraOperation(lastOperationType) && isExtraResultNotNull()) {
             secondNumber = lastExtraResult;
+
          } else {
             secondNumber = lastBinaryResult;
+
          }
 
       } else if (NEGATE == lastOperationType) {
          firstNumber = previousNumber;
          secondNumber = lastNumber;
+
       } else if (isLastNumberNotNull()) {
          firstNumber = lastNumber;
 
@@ -831,6 +846,7 @@ class OperationProcessor {
    private BigDecimal selectFirstArgumentForBinaryOperation() {
 
       BigDecimal firstArg;
+
       if (previousNumber == null) {
 
          if (operationResult == null) {
@@ -856,20 +872,16 @@ class OperationProcessor {
     * Initializes variables for binary operation
     */
    private void initVariables() {
-
       if (isExtraResultNotNull()) {
-
          if (lastOperationNotNumberAndNotNegate()) {
             lastNumber = lastExtraResult;
          } else if (isBinaryResultNotNull() || NUMBER == lastOperationType) {
             operationResult = lastExtraResult;
          }
-
       }
 
       if (isBinaryResultNotNull()) {
          operationResult = lastBinaryResult;
-
       }
    }
 
@@ -905,14 +917,19 @@ class OperationProcessor {
 
       if (ADD_TO_MEMORY.equals(type)) {
          memory.addToStoredNumber(number);
+
       } else if (CLEAR_MEMORY.equals(type)) {
          memory.clear();
+
       } else if (STORE.equals(type)) {
          memory.storeNumber(number);
+
       } else if (RECALL.equals(type)) {
          storedNumber = memory.getStoredNumber();
+
       } else if (SUBTRACT_FROM_MEMORY.equals(type)) {
          memory.subtractFromStoredNumber(number);
+
       }
 
       return storedNumber;
@@ -976,9 +993,40 @@ class OperationProcessor {
 
       if (enterRepeated && NEGATE != lastOperationType) {
          history.addOperation(convertedNumber);
+
       } else if (!enterRepeated && NEGATE == lastOperationType) {
          history.changeLastNumber(convertedNumber);
+
       }
+
    }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
