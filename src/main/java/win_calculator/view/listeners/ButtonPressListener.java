@@ -37,7 +37,6 @@ public class ButtonPressListener {
     * @return initialized HashMap
     */
    private static HashMap<String, String> createButtonsMap() {
-
       HashMap<String, String> map = new HashMap<>();
       map.put("0", "#zeroBtn");
       map.put("1", "#oneBtn");
@@ -69,21 +68,22 @@ public class ButtonPressListener {
       map.put("O", "#memoryRecallBtn");
       map.put("P", "#memoryAddBtn");
       map.put("S", "#memorySubtractBtn");
+
       return map;
    }
 
    /**
-    * Initializes map for buttons accepts combinated key presses
+    * Initializes map for buttons accepts combined key presses
     *
     * @return initialized HashMap
     */
    private static HashMap<String, String> createComboMap() {
-
       HashMap<String, String> map = new HashMap<>();
       map.put("2", "#sqrtBtn");
       map.put("5", "#percentBtn");
       map.put("8", "#multiplyBtn");
       map.put("Equals", "#addBtn");
+
       return map;
    }
 
@@ -97,7 +97,6 @@ public class ButtonPressListener {
 
          String name = event.getCode().getName();
          Button button;
-
          if (SHIFT_STR.equals(name)) {
             shiftPressed = true;
          } else {

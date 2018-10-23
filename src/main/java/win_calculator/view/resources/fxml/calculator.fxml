@@ -283,7 +283,7 @@
                                         </GridPane.margin>
                                     </Button>
                                     <Button fx:id="comaBtn" styleClass="actionButton" text="," GridPane.columnIndex="2"
-                                            GridPane.rowIndex="5" onAction="#comaBtnClick" maxHeight="Infinity"
+                                            GridPane.rowIndex="5" onAction="#commaBtnClick" maxHeight="Infinity"
                                             maxWidth="Infinity">
                                         <GridPane.margin>
                                             <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>

@@ -315,7 +315,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void dropMenu() {
-
       ListView<MenuListOption> menuListView = prepareMenuListView();
       ObservableList<Node> menuNodes = dropDownContainer.getChildren();
       menuNodes.add(prepareBackground());
@@ -331,7 +330,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void closeBtn() {
-
       WindowContainer.getInstance().close();
    }
 
@@ -340,7 +338,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void hideBtn() {
-
       windowContainer.hide();
    }
 
@@ -349,7 +346,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void fullScreenBtnClick() {
-
       windowContainer.fullScreen();
    }
 
@@ -358,7 +354,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void historyBtn() {
-
       ObservableList<Node> menuNodes = dropDownContainer.getChildren();
       menuNodes.add(prepareBackground());
       menuNodes.add(prepareDropDownLabel(DROPPED_HISTORY_TEXT, DROPPED_HISTORY_ID));
@@ -369,7 +364,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void clearEnteredBtnClick() {
-
       handleOperation(new ClearEntered());
    }
 
@@ -378,7 +372,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void clearBtnClick() {
-
       handleOperation(new Clear());
    }
 
@@ -387,7 +380,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void backspaceBtnClick() {
-
       handleOperation(new BaskSpace());
    }
 
@@ -396,7 +388,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void oneBtnClick() {
-
       handleDigit(new NumberSymbol(ONE));
    }
 
@@ -405,7 +396,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void twoBtnClick() {
-
       handleDigit(new NumberSymbol(TWO));
    }
 
@@ -414,7 +404,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void threeBtnClick() {
-
       handleDigit(new NumberSymbol(THREE));
    }
 
@@ -423,7 +412,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void fourBtnClick() {
-
       handleDigit(new NumberSymbol(FOUR));
    }
 
@@ -432,7 +420,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void fiveBtnClick() {
-
       handleDigit(new NumberSymbol(FIVE));
    }
 
@@ -441,7 +428,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void sixBtnClick() {
-
       handleDigit(new NumberSymbol(SIX));
    }
 
@@ -450,7 +436,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void sevenBtnClick() {
-
       handleDigit(new NumberSymbol(SEVEN));
    }
 
@@ -459,7 +444,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void eightBtnClick() {
-
       handleDigit(new NumberSymbol(EIGHT));
    }
 
@@ -468,7 +452,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void nineBtnClick() {
-
       handleDigit(new NumberSymbol(NINE));
    }
 
@@ -477,7 +460,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void zeroBtnClick() {
-
       handleDigit(new NumberSymbol(ZERO));
    }
 
@@ -485,10 +467,9 @@ public class FXMLView implements Initializable {
     * Adds coma to the display field
     */
    @FXML
-   private void comaBtnClick() {
-
+   private void commaBtnClick() {
       handleDigit(new NumberSymbol(SEPARATOR));
-      displayContainer.addComa();
+      displayContainer.addComma();
    }
 
    /**
@@ -496,7 +477,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void divideBtnClick() {
-
       handleOperation(new Divide());
    }
 
@@ -505,7 +485,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void multiplyBtnClick() {
-
       handleOperation(new Multiply());
    }
 
@@ -514,7 +493,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void subtractBtnClick() {
-
       handleOperation(new Subtract());
    }
 
@@ -523,7 +501,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void addBtnClick() {
-
       handleOperation(new Add());
    }
 
@@ -532,7 +509,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void equalsBtnClick() {
-
       handleOperation(new Equal());
    }
 
@@ -541,7 +517,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void percentBtnClick() {
-
       handleOperation(new Percent());
    }
 
@@ -550,7 +525,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void sqrtBtnClick() {
-
       handleOperation(new Sqrt());
    }
 
@@ -559,7 +533,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void sqrBtnClick() {
-
       handleOperation(new Sqr());
    }
 
@@ -568,7 +541,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void fractionBtnOneClick() {
-
       handleOperation(new Fraction());
    }
 
@@ -577,7 +549,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void negateBtnClick() {
-
       handleOperation(new Negate());
    }
 
@@ -586,7 +557,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void clearMemoryBtnClick() {
-
       handleOperation(new MemoryOperation(CLEAR_MEMORY));
       setDisableMemoryButtons(true);
    }
@@ -596,7 +566,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void memoryRecallBtnClick() {
-
       handleOperation(new MemoryOperation(RECALL));
    }
 
@@ -605,7 +574,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void memoryAddBtnClick() {
-
       handleOperation(new MemoryOperation(ADD_TO_MEMORY));
       setDisableMemoryButtons(false);
    }
@@ -615,7 +583,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void memorySubtractBtnClick() {
-
       handleOperation(new MemoryOperation(SUBTRACT_FROM_MEMORY));
       setDisableMemoryButtons(false);
    }
@@ -625,7 +592,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void memoryStoreBtnClick() {
-
       handleOperation(new MemoryOperation(STORE));
       setDisableMemoryButtons(false);
    }
@@ -635,7 +601,6 @@ public class FXMLView implements Initializable {
     */
    @FXML
    private void memoryShowBtnClick() {
-
       ObservableList<Node> menuNodes = dropDownContainer.getChildren();
       menuNodes.add(prepareBackground());
       String[] response = calcController.handleOperation(new MemoryOperation(RECALL));
@@ -644,7 +609,6 @@ public class FXMLView implements Initializable {
 
    @Override
    public void initialize(URL location, ResourceBundle resources) {
-
       setDragButton();
       setDisableMemoryButtons(true);
       setSizeMainTableColumns();
@@ -658,7 +622,6 @@ public class FXMLView implements Initializable {
     * Sets up rows relations at buttons table
     */
    private void setSizeMainTableColumns() {
-
       ObservableList<RowConstraints> rows = mainTable.getRowConstraints();
       rows.get(0).setPercentHeight(5);
       rows.get(1).setPercentHeight(5);
@@ -674,7 +637,6 @@ public class FXMLView implements Initializable {
     * @param numberSymbol - given numberSymbol
     */
    private void handleDigit(NumberSymbol numberSymbol) {
-
       String[] response = calcController.handleDigit(numberSymbol);
       displayContainer.sendDigitToDisplay(response[0], wasDigitLast);
       handleDataFromResponse(response);
@@ -688,7 +650,6 @@ public class FXMLView implements Initializable {
     * @param operation - given operation
     */
    private void handleOperation(Operation operation) {
-
       String[] response = calcController.handleOperation(operation);
       displayContainer.setDisplayedText(response[0]);
       handleDataFromResponse(response);
@@ -701,22 +662,16 @@ public class FXMLView implements Initializable {
     * @param response - given response
     */
    private void handleDataFromResponse(String[] response) {
-
       setDisableOperationButtons(false);
       OperationType lastOperationType = calcController.getLastOperationType();
-
       if (isNotNumber(response[0])) {
          setDisableOperationButtons(true);
          historyContainer.setHistoryText(response[1]);
-
       } else if (CLEAR == lastOperationType || EQUAL == lastOperationType) {
          historyContainer.clear();
-
       } else {
          historyContainer.setHistoryText(response[1]);
-
       }
-
    }
 
    /**
@@ -725,7 +680,6 @@ public class FXMLView implements Initializable {
     * @param val - given boolean value
     */
    private void setDisableMemoryButtons(boolean val) {
-
       memoryRecallBtn.setDisable(val);
       clearAllMemoryBtn.setDisable(val);
       memoryShowBtn.setDisable(val);
@@ -737,7 +691,6 @@ public class FXMLView implements Initializable {
     * @param value - given boolean value
     */
    private void setDisableOperationButtons(boolean value) {
-
       memoryAddBtn.setDisable(value);
       memorySubtractBtn.setDisable(value);
       memoryStoreBtn.setDisable(value);
@@ -759,14 +712,13 @@ public class FXMLView implements Initializable {
     * @return - initialized ListView<MenuListOption> for menu
     */
    private ListView<MenuListOption> prepareMenuListView() {
-
       List<MenuListOption> listOptions = Arrays.asList(CALCULATOR, STANDARD, SCIENTIFIC, PROGRAMMER,
               DATE_CALCULATION, CONVERTER, CURRENCY, VOLUME, LENGTH,
               WEIGHT_AND_MASS, TEMPERATURE, ENERGY, AREA,
               SPEED, TIME, POWER, DATA, PRESSURE, ANGLE);
+
       ObservableList<MenuListOption> listOpt = FXCollections.observableList(listOptions);
       ListView<MenuListOption> menuList = new ListView<>(listOpt);
-
       menuList.setId(DROPPED_LIST_ID);
       menuList.setCellFactory(new Callback<ListView<MenuListOption>, ListCell<MenuListOption>>() {
 
@@ -775,9 +727,7 @@ public class FXMLView implements Initializable {
             return new ListCell<MenuListOption>() {
                @Override
                protected void updateItem(MenuListOption item, boolean empty) {
-
                   super.updateItem(item, empty);
-
                   if (empty) {
                      setText("");
                      setGraphic(null);
@@ -792,11 +742,9 @@ public class FXMLView implements Initializable {
                      }
 
                   }
-
                }
             };
          }
-
       });
 
       menuList.setPrefHeight(rootPane.getScene().getHeight() - MENU_LIST_HEIGHT_DIFFERENCE);
@@ -813,7 +761,6 @@ public class FXMLView implements Initializable {
     * @param button       - given button for ListView
     */
    private void setEmergentList(ListView<MenuListOption> menuListView, Button button) {
-
       Timeline timeline = new Timeline(new KeyFrame(Duration.millis(2), new EventHandler<ActionEvent>() {
          private double i = 1;
 
@@ -843,7 +790,6 @@ public class FXMLView implements Initializable {
     * @return menu button
     */
    private Button prepareMenuBtn() {
-
       Button menuBtn = new Button(MENU_BTN_SYMBOL);
       menuBtn.setId(PRESSED_MENU_BTN_ID);
       menuBtn.setPrefSize(MENU_BTN_SIZE, MENU_BTN_SIZE);
@@ -860,7 +806,6 @@ public class FXMLView implements Initializable {
     * @return About button
     */
    private Button prepareAboutBtn() {
-
       Button aboutBtn = new Button(ABOUT_BTN_SYMBOL + ABOUT_BTN_TEXT);
       aboutBtn.setId(ABOUT_BTN_ID);
       aboutBtn.setPrefSize(MENU_LIST_WIDTH, ABOUT_BTN_HEIGHT);
@@ -877,10 +822,8 @@ public class FXMLView implements Initializable {
     * @return transparent background pane
     */
    private Pane prepareBackground() {
-
       double height = rootPane.getHeight();
       double width = rootPane.getWidth();
-
       Pane pane = new Pane();
       pane.setPrefSize(width, height);
       pane.setOpacity(BACKGROUND_OPACITY);
@@ -893,9 +836,7 @@ public class FXMLView implements Initializable {
     * Removes children from dropDownContainer
     */
    private void hideDropDown() {
-
       ObservableList<Node> nodes = dropDownContainer.getChildren();
-
       for (int i = nodes.size() - 1; i >= 0; i--) {
          nodes.remove(i);
       }
@@ -905,7 +846,6 @@ public class FXMLView implements Initializable {
     * Initializes drag button behavior
     */
    private void setDragButton() {
-
       dragBtn.setOnMousePressed(event -> {
          xOffset = event.getSceneX();
          yOffset = event.getSceneY();
@@ -934,11 +874,9 @@ public class FXMLView implements Initializable {
     * @return true if location is not correct
     */
    private boolean checkOnOverScreen(MouseEvent event) {
-
       double x = event.getScreenY();
       double y = event.getScreenX();
       boolean result = false;
-
       if (x < 1 || y < 1) {
          result = true;
       }
@@ -954,12 +892,11 @@ public class FXMLView implements Initializable {
     * @return initialized label
     */
    private Label prepareDropDownLabel(String text, String id) {
-
       Label label = new Label(text);
       label.setId(id);
-      AnchorPane.setBottomAnchor(label, 0.0);
+      AnchorPane.setBottomAnchor(label, 0d);
       AnchorPane.setLeftAnchor(label, MENU_LIST_LEFT_ANCHOR);
-      label.setPrefSize(rootPane.getWidth() - 4, mainButtonsGrid.getHeight());
+      label.setPrefSize(rootPane.getWidth() - STEP, mainButtonsGrid.getHeight());
 
       return label;
    }

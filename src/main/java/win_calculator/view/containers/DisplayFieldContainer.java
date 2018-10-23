@@ -4,6 +4,8 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import java.util.regex.Pattern;
+
 import static win_calculator.controller.utils.ControllerUtils.isComaAbsent;
 
 /**
@@ -15,15 +17,6 @@ public class DisplayFieldContainer {
     * Constant: String represent of symbol coma
     */
    private static final String COMA = ",";
-   /**
-    * Constant of String pattern for converting BigDecimal number to String for
-    * display label
-    */
-   private static final String DISPLAY_PATTERN = "#############,###.################";
-   /**
-    * Constant: String represent of digit zero
-    */
-   private static final String ZERO = "0";
    /**
     * Constant: int value of max possible digits at the display label
     */
@@ -37,13 +30,13 @@ public class DisplayFieldContainer {
     */
    private static final String DISPLAY_TEXT_ID = ".text";
    /**
-    * Constant: match first zero presents regular expression
+    * Constant: match first zero presents pattern
     */
-   private static final String FIRST_ZERO_STR = "0,";
+   private static final Pattern FIRST_ZERO_PATTERN = Pattern.compile("0,");
    /**
-    * Constant: match space or coma presents regular expression
+    * Constant: match space or coma presents pattern
     */
-   private static final String SPACE_OR_COMA_REGEX = "[ ,]";
+   private static final Pattern SPACE_OR_COMA_PATTERN = Pattern.compile("[ ,]");
 
    /**
     * Instance of display label
@@ -61,7 +54,6 @@ public class DisplayFieldContainer {
     * @param string - given string for display
     */
    public void setDisplayedText(String string) {
-
       display.setText(string);
       fixFontSize();
    }
@@ -69,10 +61,8 @@ public class DisplayFieldContainer {
    /**
     * Adds coma to the current string at display label
     */
-   public void addComa() {
-
+   public void addComma() {
       String text = display.getText();
-
       if (!text.isEmpty() && isComaAbsent(text)) {
          setDisplayedText(text + COMA);
       }
@@ -82,12 +72,12 @@ public class DisplayFieldContainer {
     * Changes font of display label text depends on correct displaying
     */
    private void fixFontSize() {
-
-      display.setFont(new Font(display.getFont().getName(), DEFAULT_FONT_SIZE));
+      String fontName = display.getFont().getName();
+      display.setFont(new Font(fontName, DEFAULT_FONT_SIZE));
       display.layout();
 
       while (isOverrun()) {
-         display.setFont(new Font(display.getFont().getName(), display.getFont().getSize() - 1));
+         display.setFont(new Font(fontName, display.getFont().getSize() - 1));
          display.layout();
       }
    }
@@ -98,7 +88,6 @@ public class DisplayFieldContainer {
     * @return true if displayed text equals contained text
     */
    private boolean isOverrun() {
-
       String shownText = ((Text) display.lookup(DISPLAY_TEXT_ID)).getText();
 
       return !display.getText().equals(shownText);
@@ -109,11 +98,11 @@ public class DisplayFieldContainer {
     *
     * @return true if it is not
     */
+   //fixed to Pattern
    private boolean isNotMax() {
-
       String displayedText = display.getText();
-      displayedText = displayedText.replace(FIRST_ZERO_STR, "");
-      displayedText = displayedText.replaceAll(SPACE_OR_COMA_REGEX, "");
+      displayedText = FIRST_ZERO_PATTERN.matcher(displayedText).replaceFirst("");
+      displayedText = SPACE_OR_COMA_PATTERN.matcher(displayedText).replaceAll("");
 
       return displayedText.length() < MAX_DIGITS;
    }

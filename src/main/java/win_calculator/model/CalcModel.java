@@ -105,5 +105,11 @@ public class CalcModel {
       operationProcessor.rejectLastNumberWithExtraOperations();
    }
 
-
+   /**
+    * Getter for response number
+    * @return BigDecimal response number
+    */
+   public BigDecimal getResponseNumber() {
+      return responseNumber;
+   }
 }

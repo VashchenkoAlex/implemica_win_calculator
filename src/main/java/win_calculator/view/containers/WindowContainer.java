@@ -46,7 +46,6 @@ public class WindowContainer {
     * @param fullScreen - given Full screen button
     */
    public void setFullScreenBtn(Button fullScreen) {
-
       this.fullScreenBtn = fullScreen;
    }
 
@@ -54,7 +53,6 @@ public class WindowContainer {
     * Closes the app
     */
    public void close() {
-
       Platform.exit();
    }
 
@@ -62,7 +60,6 @@ public class WindowContainer {
     * Hides current window
     */
    public void hide() {
-
       stage.setIconified(true);
    }
 
@@ -70,7 +67,6 @@ public class WindowContainer {
     * Changes maximized status of current window
     */
    public void fullScreen() {
-
       if (stage.isMaximized()) {
          stage.setMaximized(false);
          fullScreenBtn.setText(FULL_SCREEN_SYMBOL);
@@ -81,7 +77,6 @@ public class WindowContainer {
    }
 
    public static WindowContainer getInstance() {
-
       return instance;
    }
 }

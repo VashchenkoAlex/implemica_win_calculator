@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 
 import static win_calculator.controller.utils.ControllerUtils.convertNumberToString;
 import static win_calculator.controller.utils.ControllerUtils.convertHistoryToString;
-import static win_calculator.controller.utils.ControllerUtils.isNotNumber;
 import static win_calculator.model.exceptions.ExceptionType.*;
 import static win_calculator.model.operations.memory_operations.MemoryOperationType.STORE;
 import static win_calculator.model.operations.OperationType.*;
@@ -71,14 +70,6 @@ public class CalcController {
    private NumberBuilder numberBuilder = new NumberBuilder();
 
    /**
-    * Stores String text for display label
-    */
-   private String displayText;
-   /**
-    * Stores String text for history label
-    */
-   private String historyText;
-   /**
     * Stores {@link OperationType} of last operation
     */
    private OperationType lastOperationType;
@@ -96,16 +87,16 @@ public class CalcController {
     * @return String[] response with text for display and history labels
     */
    public String[] handleOperation(Operation operation) {
+      String displayText;
       try {
-         selectAndProcessOperationByType(operation);
+         displayText = selectAndProcessOperationByType(operation);
       } catch (OperationException e) {
          displayText = selectMessageForException(e.getType());
          wasException = true;
       }
-
       OperationType type = operation.getType();
-      setHistoryText(isOperationTypeResettingOverflow(type));
-      setLastOperationType(type);
+      String historyText = getHistoryText(isOperationTypeResettingOverflow(type));
+      lastOperationType = type;
 
       return new String[]{displayText, historyText};
    }
@@ -114,21 +105,24 @@ public class CalcController {
     * Method checks operation type and select method for handling
     *
     * @param operation - operation for calculations
+    * @return String for display label text
     * @throws OperationException from the {@link CalcModel}
     */
-   private void selectAndProcessOperationByType(Operation operation) throws OperationException {
+   private String selectAndProcessOperationByType(Operation operation) throws OperationException {
       OperationType type = operation.getType();
-
+      String displayText;
       if (CLEAR_ENTERED == type) {
-         handleClearEntered(operation);
+         displayText = handleClearEntered(operation);
       } else if (BACKSPACE == type) {
-         handleBackSpace();
+         displayText = handleBackSpace();
       } else if (NEGATE == type && numberBuilder.containsNumber()) {
-         handleNegate();
+         displayText = handleNegate();
       } else {
          BigDecimal operationResult = doOperationWithModel(operation);
          displayText = convertNumberToString(operationResult, DISPLAY_PATTERN);
       }
+
+      return displayText;
    }
 
    /**
@@ -140,18 +134,16 @@ public class CalcController {
     * @return String[] response with text for display and history labels
     */
    public String[] handleDigit(NumberSymbol numberSymbol) {
-      if (displayText != null && isNotNumber(displayText)) {
-         historyText = "";
+      if (wasException) {
          numberBuilder.clean();
       }
 
       if (isExtraOperation(lastOperationType)) {
          model.clearLastExtra();
-         historyText = convertHistoryToString(model.getHistory());
       }
 
-      displayText = numberBuilder.addDigit(numberSymbol);
-      setHistoryText(true);
+      String displayText = numberBuilder.addDigit(numberSymbol);
+      String historyText = getHistoryText(true);
       lastOperationType = null;
 
       return new String[]{displayText, historyText};
@@ -172,24 +164,30 @@ public class CalcController {
     * transfers operation to the {@link CalcModel}
     *
     * @param operation - operation for calculations
+    * @return String for display label text
     * @throws OperationException from the {@link CalcModel}
     */
-   private void handleClearEntered(Operation operation) throws OperationException {
-      displayText = ZERO;
+   private String handleClearEntered(Operation operation) throws OperationException {
       numberBuilder.clean();
       model.calculate(operation);
+      return ZERO;
    }
 
    /**
-    * Verifies possibility for backspace
-    * and sets up display label text depends on result
+    * Verifies possibility for backspace and proceed it
+    *
+    * @return String for display label text depends on result
     */
-   private void handleBackSpace() {
+   private String handleBackSpace() {
+      String displayText;
       if (isBackSpacePossible()) {
          displayText = numberBuilder.doBackSpace();
-      } else if (displayText == null || isNotNumber(displayText)) {
+      } else if (wasException) {
          displayText = ZERO;
+      } else {
+         displayText = convertNumberToString(model.getResponseNumber(), DISPLAY_PATTERN);
       }
+      return displayText;
    }
 
    /**
@@ -205,9 +203,11 @@ public class CalcController {
 
    /**
     * Calls method negate() at {@link NumberBuilder} and saves result to the display label text
+    *
+    * @return String for display label text
     */
-   private void handleNegate() {
-      displayText = numberBuilder.negate(MEMORY == lastOperationType);
+   private String handleNegate() {
+      return numberBuilder.negate(MEMORY == lastOperationType);
    }
 
    /**
@@ -239,11 +239,6 @@ public class CalcController {
 
       } else if (NEGATE != type) {
          numberBuilder.clean();
-
-         if (EQUAL == type) {
-            historyText = "";
-         }
-
       }
 
       return calculationResult;
@@ -273,26 +268,19 @@ public class CalcController {
 
    /**
     * Method get history from {@link CalcModel} and converts it to String
-    * Sets up history label text
     *
     * @param isResettingOverflow - given flag for resetting history after overflow exception
+    * @return String representation of history
     */
-   private void setHistoryText(boolean isResettingOverflow) {
+   private String getHistoryText(boolean isResettingOverflow) {
+      String historyText;
       if (wasException && isResettingOverflow) {
          historyText = "";
          wasException = false;
       } else {
          historyText = convertHistoryToString(model.getHistory());
       }
-   }
-
-   /**
-    * Setter of last operation type
-    *
-    * @param type - type of {@link Operation}
-    */
-   private void setLastOperationType(OperationType type) {
-      lastOperationType = type;
+      return historyText;
    }
 
    /**

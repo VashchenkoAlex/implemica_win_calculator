@@ -35,7 +35,6 @@ public class HistoryFieldContainer {
     * @param scroll       - given history scroll
     */
    public void setHistoryField(Label historyField, ScrollPane scroll) {
-
       this.history = historyField;
       scroll.setFitToHeight(true);
       scroll.setFitToWidth(true);
@@ -48,7 +47,6 @@ public class HistoryFieldContainer {
     * @param text - given string
     */
    public void setHistoryText(String text) {
-
       history.setText(text);
       showScroll();
    }
@@ -57,13 +55,10 @@ public class HistoryFieldContainer {
     * Shows scroll of history label if displayed text at history label is overrun
     */
    private void showScroll() {
-
       history.layout();
-
       if (isShownTextOverrun()) {
          scroll.setFitToWidth(false);
       }
-
       scroll.layout();
       history.layout();
    }
@@ -73,7 +68,6 @@ public class HistoryFieldContainer {
     * @return boolean verification result
     */
    private boolean isShownTextOverrun() {
-
       String shownText = ((Text) history.lookup(HISTORY_TEXT_ID)).getText();
 
       return shownText.contains(OVERRUN_SYMBOL);
@@ -83,7 +77,6 @@ public class HistoryFieldContainer {
     * Cleans history label and hide scroll
     */
    public void clear() {
-
       scroll.setFitToWidth(true);
       scroll.layout();
       setHistoryText("");
