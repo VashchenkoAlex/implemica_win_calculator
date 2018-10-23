@@ -3,9 +3,7 @@ package win_calculator.view.containers;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import win_calculator.controller.entities.NumberSymbol;
 
-import static win_calculator.controller.utils.ControllerUtils.addCapacity;
 import static win_calculator.controller.utils.ControllerUtils.isComaAbsent;
 
 /**
@@ -17,6 +15,11 @@ public class DisplayFieldContainer {
     * Constant: String represent of symbol coma
     */
    private static final String COMA = ",";
+   /**
+    * Constant of String pattern for converting BigDecimal number to String for
+    * display label
+    */
+   private static final String DISPLAY_PATTERN = "#############,###.################";
    /**
     * Constant: String represent of digit zero
     */
@@ -64,22 +67,13 @@ public class DisplayFieldContainer {
    }
 
    /**
-    * Adds zero to the current string at display label
-    * Adds capacity if it's necessary
-    */
-   private void addZero() {
-
-      setDisplayedText(addCapacity(display.getText() + ZERO));
-   }
-
-   /**
     * Adds coma to the current string at display label
     */
    public void addComa() {
 
       String text = display.getText();
 
-      if (!"".equals(text) && isComaAbsent(text)) { //...
+      if (!text.isEmpty() && isComaAbsent(text)) {
          setDisplayedText(text + COMA);
       }
    }
@@ -125,26 +119,15 @@ public class DisplayFieldContainer {
    }
 
    /**
-    * Adds given number to display label text in depends on previous operation and current numberSymbol value
+    * Adds given number to display label text in depends on previous operation
     *
-    * @param numberSymbol   - given numberSymbol
     * @param number         - given string value of number
     * @param wasDigitBefore - was digit entered before
     */
-   public void sendDigitToDisplay(NumberSymbol numberSymbol, String number, boolean wasDigitBefore) {
-
-      if (isNotMax()) {
-
-         if (ZERO.equals(numberSymbol.getSymbol()) && wasDigitBefore) {
-            addZero();
-         } else {
-            setDisplayedText(number);
-         }
-
-      } else if (!wasDigitBefore) {
+   public void sendDigitToDisplay(String number, boolean wasDigitBefore) {
+      if (isNotMax() || !wasDigitBefore) {
          setDisplayedText(number);
       }
-
    }
 }
 

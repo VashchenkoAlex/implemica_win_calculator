@@ -41,7 +41,6 @@ public class CalcModel {
     * @param number - given BigDecimal number
     */
    public void calculate(BigDecimal number) {
-
       inputtedNumber = number;
    }
 
@@ -64,23 +63,17 @@ public class CalcModel {
          responseNumber = operationProcessor.processBinaryOperation(operation, inputtedNumber, responseNumber);
       } else if (EQUAL.equals(type)) {
          responseNumber = operationProcessor.processEnter(inputtedNumber, responseNumber);
-
       } else if (isExtraOperation(type)) {
          responseNumber = operationProcessor.processExtraOperation(operation, inputtedNumber, responseNumber);
-
       } else if (NEGATE.equals(type)) {
          responseNumber = operationProcessor.processNegate(operation, inputtedNumber, responseNumber);
-
       } else if (PERCENT.equals(type)) {
          responseNumber = operationProcessor.processPercent(operation, inputtedNumber);
-
       } else if (CLEAR.equals(type)) {
          responseNumber = operationProcessor.processClear();
-
       } else if (CLEAR_ENTERED.equals(type)) {
          operationProcessor.processClearEntered();
          responseNumber = null;
-
       } else if (MEMORY.equals(type)) {
          BigDecimal result = operationProcessor.processMemory((MemoryOperation) operation, inputtedNumber);
 
@@ -92,7 +85,7 @@ public class CalcModel {
 
       checkOnOverflow(responseNumber);
 
-      return roundNumber(responseNumber);
+      return responseNumber;
    }
 
    /**
@@ -101,7 +94,6 @@ public class CalcModel {
     * @return LinkedList<Operation> of current history
     */
    public LinkedList<Operation> getHistory() {
-
       return operationProcessor.getHistory();
    }
 
@@ -110,7 +102,6 @@ public class CalcModel {
     * last number and extra operations on it at history
     */
    public void clearLastExtra() {
-
       operationProcessor.rejectLastNumberWithExtraOperations();
    }
 

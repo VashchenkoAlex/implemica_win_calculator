@@ -28,7 +28,6 @@ public class Fraction implements ExtraOperation {
     */
    @Override
    public BigDecimal calculate(BigDecimal number) throws OperationException {
-
       try {
          return BigDecimal.ONE.divide(number, SCALE, RoundingMode.HALF_UP);
       } catch (ArithmeticException e) {
@@ -43,7 +42,6 @@ public class Fraction implements ExtraOperation {
     */
    @Override
    public OperationType getType() {
-
       return OperationType.FRACTION;
    }
 

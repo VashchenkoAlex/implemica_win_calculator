@@ -142,28 +142,28 @@ class GUITest {
       testKeys("1230,000000000 ⟵", "1 230,00000000", "");
       testKeys("1230,000000000 ⟵ ⟵ ⟵", "1 230,000000", "");
    }
-
-   @Test
-   void testFullScreenBtnByMouseClick() {
-
-      assertFalse(((Stage) getWindowByIndex(0)).isMaximized());
-      clickByRobotOn("FS");
-      WaitForAsyncUtils.waitForFxEvents();
-      assertTrue(((Stage) getWindowByIndex(0)).isMaximized());
-      clickByRobotOn("FS");
-   }
-
-   @Test
-   void testHideBtnByMouseClick() {
-
-      Stage stage = (Stage) getWindowByIndex(0);
-      assertFalse(stage.isIconified());
-      clickByRobotOn("HD");
-      WaitForAsyncUtils.waitForFxEvents();
-      assertTrue(stage.isIconified());
-      Platform.runLater(() -> stage.setIconified(false));
-      WaitForAsyncUtils.waitForFxEvents();
-   }
+//
+//   @Test
+//   void testFullScreenBtnByMouseClick() {
+//
+//      assertFalse(((Stage) getWindowByIndex(0)).isMaximized());
+//      clickByRobotOn("FS");
+//      WaitForAsyncUtils.waitForFxEvents();
+//      assertTrue(((Stage) getWindowByIndex(0)).isMaximized());
+//      clickByRobotOn("FS");
+//   }
+//
+//   @Test
+//   void testHideBtnByMouseClick() {
+//
+//      Stage stage = (Stage) getWindowByIndex(0);
+//      assertFalse(stage.isIconified());
+//      clickByRobotOn("HD");
+//      WaitForAsyncUtils.waitForFxEvents();
+//      assertTrue(stage.isIconified());
+//      Platform.runLater(() -> stage.setIconified(false));
+//      WaitForAsyncUtils.waitForFxEvents();
+//   }
 
    @Test
    void testMenuBtnByMouseClick() {
@@ -285,243 +285,243 @@ class GUITest {
       testByMouse("1 + 20 % - 3 sqr * 4 sqrt / 5 1/x + 67 ⟵ - 7,8 ± * 8 CE 9 / ,1 +", "-5 778", "1  +  0,2  -  sqr( 3 )  ×  √( 4 )  ÷  1/( 5 )  +  6  -  -7,8  ×  9  ÷  0,1  +  ");
       testByMouse("1 + 20 % - 3 sqr * 4 sqrt / 5 1/x + 67 ⟵ - 7,8 ± * 8 CE 9 / ,1 +", "-5 778", "1  +  0,2  -  sqr( 3 )  ×  √( 4 )  ÷  1/( 5 )  +  6  -  -7,8  ×  9  ÷  0,1  +  ");
    }
-
-   @Test
-   void testDragWindowByMouse() {
-
-      testDrag(0, 5, 200, 205);
-      testDrag(0, 50, 200, 250);
-      testDrag(0, 100, 200, 300);
-      testDrag(0, 500, 200, 700);
-      testDrag(0, 693, 200, 893);
-      testDrag(0, 694, 200, 894);
-      testDrag(0, 695, 200, 894);
-      testDrag(0, -5, 200, 195);
-      testDrag(0, -50, 200, 150);
-      testDrag(0, -100, 200, 100);
-      testDrag(0, -199, 200, 1);
-      testDrag(0, -200, 200, 0);
-
-      testDrag(5, 0, 205, 200);
-      testDrag(50, 0, 250, 200);
-      testDrag(100, 0, 300, 200);
-      testDrag(500, 0, 700, 200);
-      testDrag(1393, 0, 1593, 200);
-      testDrag(1394, 0, 1594, 200);
-      testDrag(1395, 0, 1594, 200);
-      testDrag(-5, 0, 195, 200);
-      testDrag(-50, 0, 150, 200);
-      testDrag(-100, 0, 100, 200);
-      testDrag(-199, 0, 1, 200);
-      testDrag(-200, 0, 0, 200);
-
-      testDrag(7, 7, 207, 207);
-      testDrag(70, 70, 270, 270);
-      testDrag(150, 150, 350, 350);
-      testDrag(700, 400, 900, 600);
-      testDrag(1393, 693, 1593, 893);
-      testDrag(1394, 694, 1594, 894);
-      testDrag(1395, 695, 1594, 894);
-      testDrag(-7, -7, 193, 193);
-      testDrag(-70, -70, 130, 130);
-      testDrag(-150, -150, 50, 50);
-      testDrag(-200, -199, 0, 1);
-      testDrag(-200, -200, 0, 0);
-      testDrag(-7, 7, 193, 207);
-      testDrag(-70, 70, 130, 270);
-      testDrag(-150, 150, 50, 350);
-      testDrag(-200, 400, 0, 600);
-      testDrag(-200, 693, 0, 893);
-      testDrag(-200, 694, 0, 894);
-      testDrag(-200, 695, 0, 894);
-      testDrag(7, -7, 207, 193);
-      testDrag(70, -70, 270, 130);
-      testDrag(150, -150, 350, 50);
-      testDrag(700, -199, 900, 1);
-      testDrag(1393, -200, 1593, 0);
-      testDrag(1394, -200, 1594, 0);
-      testDrag(1395, -200, 1594, 0);
-   }
-
-   @Test
-   void testResizeWindowFromAngleByMouse() {
-
-      //Tests from right border
-      testResizeFromBorder(5, 0, RIGHT, 325, 502);
-      testResizeFromBorder(50, 0, RIGHT, 370, 502);
-      testResizeFromBorder(200, 0, RIGHT, 520, 502);
-      testResizeFromBorder(1081, 0, RIGHT, 1401, 502);
-      testResizeFromBorder(1082, 0, RIGHT, 1401, 502);
-      testResizeFromBorder(-20, 0, RIGHT, 320, 502);
-      testResizeFromBorder(-50, 0, RIGHT, 320, 502);
-      testResizeFromBorder(-200, 0, RIGHT, 320, 502);
-      testResizeFromBorder(-300, 0, RIGHT, 320, 502);
-
-      //Tests from left border
-      testResizeFromBorder(-5, 0, LEFT, 324, 502);
-      testResizeFromBorder(-50, 0, LEFT, 369, 502);
-      testResizeFromBorder(-200, 0, LEFT, 519, 502);
-      testResizeFromBorder(-201, 0, LEFT, 520, 502);
-      testResizeFromBorder(-202, 0, LEFT, 520, 502);
-      testResizeFromBorder(5, 0, LEFT, 320, 502);
-      testResizeFromBorder(50, 0, LEFT, 320, 502);
-      testResizeFromBorder(200, 0, LEFT, 320, 502);
-      testResizeFromBorder(315, 0, LEFT, 320, 502);
-
-      //Tests from bottom border
-      testResizeFromBorder(0, 5, BOTTOM, 320, 507);
-      testResizeFromBorder(0, 50, BOTTOM, 320, 552);
-      testResizeFromBorder(0, 197, BOTTOM, 320, 699);
-      testResizeFromBorder(0, 198, BOTTOM, 320, 700);
-      testResizeFromBorder(0, 199, BOTTOM, 320, 700);
-      testResizeFromBorder(0, -5, BOTTOM, 320, 502);
-      testResizeFromBorder(0, -50, BOTTOM, 320, 502);
-      testResizeFromBorder(0, -300, BOTTOM, 320, 502);
-
-      //Tests from top border
-      testResizeFromBorder(0, -5, TOP, 320, 506);
-      testResizeFromBorder(0, -50, TOP, 320, 551);
-      testResizeFromBorder(0, -200, TOP, 320, 701);
-      testResizeFromBorder(0, -201, TOP, 320, 702);
-      testResizeFromBorder(0, -250, TOP, 320, 702);
-      testResizeFromBorder(0, 5, TOP, 320, 502);
-      testResizeFromBorder(0, 50, TOP, 320, 502);
-      testResizeFromBorder(0, 400, TOP, 320, 502);
-
-      //Tests from left-top angle
-      testResizeFromAngle(-5, -5, false, false, 324, 506);
-      testResizeFromAngle(-100, -100, false, false, 419, 601);
-      testResizeFromAngle(-200, -200, false, false, 519, 701);
-      testResizeFromAngle(-201, -201, false, false, 520, 702);
-      testResizeFromAngle(-202, -202, false, false, 520, 702);
-      testResizeFromAngle(5, 5, false, false, 320, 502);
-      testResizeFromAngle(100, 100, false, false, 320, 502);
-      testResizeFromAngle(200, 200, false, false, 320, 502);
-      testResizeFromAngle(320, 502, false, false, 320, 502);
-      testResizeFromAngle(420, 602, false, false, 320, 502);
-      testResizeFromAngle(0, -5, false, false, 320, 506);
-      testResizeFromAngle(0, -100, false, false, 320, 601);
-      testResizeFromAngle(0, -200, false, false, 320, 701);
-      testResizeFromAngle(0, -201, false, false, 320, 702);
-      testResizeFromAngle(0, -202, false, false, 320, 702);
-      testResizeFromAngle(0, 5, false, false, 320, 502);
-      testResizeFromAngle(0, 100, false, false, 320, 502);
-      testResizeFromAngle(0, 200, false, false, 320, 502);
-      testResizeFromAngle(0, 502, false, false, 320, 502);
-      testResizeFromAngle(0, 602, false, false, 320, 502);
-      testResizeFromAngle(-5, 0, false, false, 324, 502);
-      testResizeFromAngle(-100, 0, false, false, 419, 502);
-      testResizeFromAngle(-200, 0, false, false, 519, 502);
-      testResizeFromAngle(-201, 0, false, false, 520, 502);
-      testResizeFromAngle(-213, 0, false, false, 520, 502);
-      testResizeFromAngle(-220, 0, false, false, 520, 502);
-      testResizeFromAngle(5, 0, false, false, 320, 502);
-      testResizeFromAngle(100, 0, false, false, 320, 502);
-      testResizeFromAngle(200, 0, false, false, 320, 502);
-      testResizeFromAngle(320, 0, false, false, 320, 502);
-      testResizeFromAngle(420, 0, false, false, 320, 502);
-
-      //Tests from right-bottom angle
-      testResizeFromAngle(5, 5, true, true, 325, 507);
-      testResizeFromAngle(100, 100, true, true, 420, 602);
-      testResizeFromAngle(1077, 197, true, true, 1397, 699);
-      testResizeFromAngle(1078, 198, true, true, 1398, 700);
-      testResizeFromAngle(1079, 199, true, true, 1399, 700);
-      testResizeFromAngle(1080, 200, true, true, 1400, 700);
-      testResizeFromAngle(1081, 201, true, true, 1400, 700);
-      testResizeFromAngle(-5, -5, true, true, 320, 502);
-      testResizeFromAngle(-100, -100, true, true, 320, 502);
-      testResizeFromAngle(-320, -502, true, true, 320, 502);
-      testResizeFromAngle(-420, -502, true, true, 320, 502);
-      testResizeFromAngle(0, 5, true, true, 320, 507);
-      testResizeFromAngle(0, 100, true, true, 320, 602);
-      testResizeFromAngle(0, 197, true, true, 320, 699);
-      testResizeFromAngle(0, 198, true, true, 320, 700);
-      testResizeFromAngle(0, 199, true, true, 320, 700);
-      testResizeFromAngle(0, -5, true, true, 320, 502);
-      testResizeFromAngle(0, -100, true, true, 320, 502);
-      testResizeFromAngle(0, -502, true, true, 320, 502);
-      testResizeFromAngle(0, -502, true, true, 320, 502);
-      testResizeFromAngle(5, 0, true, true, 325, 502);
-      testResizeFromAngle(100, 0, true, true, 420, 502);
-      testResizeFromAngle(1079, 0, true, true, 1399, 502);
-      testResizeFromAngle(1080, 0, true, true, 1400, 502);
-      testResizeFromAngle(1081, 0, true, true, 1400, 502);
-      testResizeFromAngle(-5, 0, true, true, 320, 502);
-      testResizeFromAngle(-100, 0, true, true, 320, 502);
-      testResizeFromAngle(-320, 0, true, true, 320, 502);
-      testResizeFromAngle(-420, 0, true, true, 320, 502);
-
-      //Tests from right-top angle
-      testResizeFromAngle(5, -5, true, false, 325, 506);
-      testResizeFromAngle(100, -100, true, false, 420, 601);
-      testResizeFromAngle(1077, -197, true, false, 1397, 698);
-      testResizeFromAngle(1078, -198, true, false, 1398, 699);
-      testResizeFromAngle(1079, -199, true, false, 1399, 700);
-      testResizeFromAngle(1080, -200, true, false, 1400, 701);
-      testResizeFromAngle(1080, -201, true, false, 1400, 702);
-      testResizeFromAngle(1080, -202, true, false, 1400, 702);
-      testResizeFromAngle(-5, 5, true, false, 320, 502);
-      testResizeFromAngle(-100, 100, true, false, 320, 502);
-      testResizeFromAngle(-320, 502, true, false, 320, 502);
-      testResizeFromAngle(-420, 502, true, false, 320, 502);
-      testResizeFromAngle(0, -5, true, false, 320, 506);
-      testResizeFromAngle(0, -100, true, false, 320, 601);
-      testResizeFromAngle(0, -200, true, false, 320, 701);
-      testResizeFromAngle(0, -201, true, false, 320, 702);
-      testResizeFromAngle(0, -202, true, false, 320, 702);
-      testResizeFromAngle(5, 0, true, false, 325, 502);
-      testResizeFromAngle(100, 0, true, false, 420, 502);
-      testResizeFromAngle(1079, 0, true, false, 1399, 502);
-      testResizeFromAngle(1080, 0, true, false, 1400, 502);
-      testResizeFromAngle(1080, 0, true, false, 1400, 502);
-
-      //Tests from left-bottom angle
-      testResizeFromAngle(-5, 5, false, true, 324, 507);
-      testResizeFromAngle(-100, 100, false, true, 419, 602);
-      testResizeFromAngle(-200, 197, false, true, 519, 699);
-      testResizeFromAngle(-201, 198, false, true, 520, 700);
-      testResizeFromAngle(-202, 199, false, true, 520, 700);
-      testResizeFromAngle(5, -5, false, true, 320, 502);
-      testResizeFromAngle(100, -100, false, true, 320, 502);
-      testResizeFromAngle(320, -502, false, true, 320, 502);
-      testResizeFromAngle(321, -503, false, true, 320, 502);
-      testResizeFromAngle(1400, -720, false, true, 320, 502);
-      testResizeFromAngle(0, 5, false, true, 320, 507);
-      testResizeFromAngle(0, 100, false, true, 320, 602);
-      testResizeFromAngle(0, 197, false, true, 320, 699);
-      testResizeFromAngle(0, 198, false, true, 320, 700);
-      testResizeFromAngle(0, 199, false, true, 320, 700);
-      testResizeFromAngle(-5, 0, false, true, 324, 502);
-      testResizeFromAngle(-100, 0, false, true, 419, 502);
-      testResizeFromAngle(-200, 0, false, true, 519, 502);
-      testResizeFromAngle(-201, 0, false, true, 520, 502);
-      testResizeFromAngle(-202, 0, false, true, 520, 502);
-   }
-
-
-   @Test
-   void testFullScreenAfterDragByMouse() {
-
-      testFullScreenWithDrag(0, -300);
-      testFullScreenWithDrag(-300, 0);
-   }
-
-   @Test
-   void testExitMethodByMouse() {
-
-      final boolean[] closed = new boolean[1];
-      WindowContainer.instance = new WindowContainer() {
-         @Override
-         public void close() {
-            closed[0] = true;
-         }
-      };
-      Button close = find("#closeBtn");
-      Platform.runLater(close::fire);
-      WaitForAsyncUtils.waitForFxEvents();
-      assertTrue(closed[0]);
-   }
+//
+//   @Test
+//   void testDragWindowByMouse() {
+//
+//      testDrag(0, 5, 200, 205);
+//      testDrag(0, 50, 200, 250);
+//      testDrag(0, 100, 200, 300);
+//      testDrag(0, 500, 200, 700);
+//      testDrag(0, 693, 200, 893);
+//      testDrag(0, 694, 200, 894);
+//      testDrag(0, 695, 200, 894);
+//      testDrag(0, -5, 200, 195);
+//      testDrag(0, -50, 200, 150);
+//      testDrag(0, -100, 200, 100);
+//      testDrag(0, -199, 200, 1);
+//      testDrag(0, -200, 200, 0);
+//
+//      testDrag(5, 0, 205, 200);
+//      testDrag(50, 0, 250, 200);
+//      testDrag(100, 0, 300, 200);
+//      testDrag(500, 0, 700, 200);
+//      testDrag(1393, 0, 1593, 200);
+//      testDrag(1394, 0, 1594, 200);
+//      testDrag(1395, 0, 1594, 200);
+//      testDrag(-5, 0, 195, 200);
+//      testDrag(-50, 0, 150, 200);
+//      testDrag(-100, 0, 100, 200);
+//      testDrag(-199, 0, 1, 200);
+//      testDrag(-200, 0, 0, 200);
+//
+//      testDrag(7, 7, 207, 207);
+//      testDrag(70, 70, 270, 270);
+//      testDrag(150, 150, 350, 350);
+//      testDrag(700, 400, 900, 600);
+//      testDrag(1393, 693, 1593, 893);
+//      testDrag(1394, 694, 1594, 894);
+//      testDrag(1395, 695, 1594, 894);
+//      testDrag(-7, -7, 193, 193);
+//      testDrag(-70, -70, 130, 130);
+//      testDrag(-150, -150, 50, 50);
+//      testDrag(-200, -199, 0, 1);
+//      testDrag(-200, -200, 0, 0);
+//      testDrag(-7, 7, 193, 207);
+//      testDrag(-70, 70, 130, 270);
+//      testDrag(-150, 150, 50, 350);
+//      testDrag(-200, 400, 0, 600);
+//      testDrag(-200, 693, 0, 893);
+//      testDrag(-200, 694, 0, 894);
+//      testDrag(-200, 695, 0, 894);
+//      testDrag(7, -7, 207, 193);
+//      testDrag(70, -70, 270, 130);
+//      testDrag(150, -150, 350, 50);
+//      testDrag(700, -199, 900, 1);
+//      testDrag(1393, -200, 1593, 0);
+//      testDrag(1394, -200, 1594, 0);
+//      testDrag(1395, -200, 1594, 0);
+//   }
+//
+//   @Test
+//   void testResizeWindowFromAngleByMouse() {
+//
+//      //Tests from right border
+//      testResizeFromBorder(5, 0, RIGHT, 325, 502);
+//      testResizeFromBorder(50, 0, RIGHT, 370, 502);
+//      testResizeFromBorder(200, 0, RIGHT, 520, 502);
+//      testResizeFromBorder(1081, 0, RIGHT, 1401, 502);
+//      testResizeFromBorder(1082, 0, RIGHT, 1401, 502);
+//      testResizeFromBorder(-20, 0, RIGHT, 320, 502);
+//      testResizeFromBorder(-50, 0, RIGHT, 320, 502);
+//      testResizeFromBorder(-200, 0, RIGHT, 320, 502);
+//      testResizeFromBorder(-300, 0, RIGHT, 320, 502);
+//
+//      //Tests from left border
+//      testResizeFromBorder(-5, 0, LEFT, 324, 502);
+//      testResizeFromBorder(-50, 0, LEFT, 369, 502);
+//      testResizeFromBorder(-200, 0, LEFT, 519, 502);
+//      testResizeFromBorder(-201, 0, LEFT, 520, 502);
+//      testResizeFromBorder(-202, 0, LEFT, 520, 502);
+//      testResizeFromBorder(5, 0, LEFT, 320, 502);
+//      testResizeFromBorder(50, 0, LEFT, 320, 502);
+//      testResizeFromBorder(200, 0, LEFT, 320, 502);
+//      testResizeFromBorder(315, 0, LEFT, 320, 502);
+//
+//      //Tests from bottom border
+//      testResizeFromBorder(0, 5, BOTTOM, 320, 507);
+//      testResizeFromBorder(0, 50, BOTTOM, 320, 552);
+//      testResizeFromBorder(0, 197, BOTTOM, 320, 699);
+//      testResizeFromBorder(0, 198, BOTTOM, 320, 700);
+//      testResizeFromBorder(0, 199, BOTTOM, 320, 700);
+//      testResizeFromBorder(0, -5, BOTTOM, 320, 502);
+//      testResizeFromBorder(0, -50, BOTTOM, 320, 502);
+//      testResizeFromBorder(0, -300, BOTTOM, 320, 502);
+//
+//      //Tests from top border
+//      testResizeFromBorder(0, -5, TOP, 320, 506);
+//      testResizeFromBorder(0, -50, TOP, 320, 551);
+//      testResizeFromBorder(0, -200, TOP, 320, 701);
+//      testResizeFromBorder(0, -201, TOP, 320, 702);
+//      testResizeFromBorder(0, -250, TOP, 320, 702);
+//      testResizeFromBorder(0, 5, TOP, 320, 502);
+//      testResizeFromBorder(0, 50, TOP, 320, 502);
+//      testResizeFromBorder(0, 400, TOP, 320, 502);
+//
+//      //Tests from left-top angle
+//      testResizeFromAngle(-5, -5, false, false, 324, 506);
+//      testResizeFromAngle(-100, -100, false, false, 419, 601);
+//      testResizeFromAngle(-200, -200, false, false, 519, 701);
+//      testResizeFromAngle(-201, -201, false, false, 520, 702);
+//      testResizeFromAngle(-202, -202, false, false, 520, 702);
+//      testResizeFromAngle(5, 5, false, false, 320, 502);
+//      testResizeFromAngle(100, 100, false, false, 320, 502);
+//      testResizeFromAngle(200, 200, false, false, 320, 502);
+//      testResizeFromAngle(320, 502, false, false, 320, 502);
+//      testResizeFromAngle(420, 602, false, false, 320, 502);
+//      testResizeFromAngle(0, -5, false, false, 320, 506);
+//      testResizeFromAngle(0, -100, false, false, 320, 601);
+//      testResizeFromAngle(0, -200, false, false, 320, 701);
+//      testResizeFromAngle(0, -201, false, false, 320, 702);
+//      testResizeFromAngle(0, -202, false, false, 320, 702);
+//      testResizeFromAngle(0, 5, false, false, 320, 502);
+//      testResizeFromAngle(0, 100, false, false, 320, 502);
+//      testResizeFromAngle(0, 200, false, false, 320, 502);
+//      testResizeFromAngle(0, 502, false, false, 320, 502);
+//      testResizeFromAngle(0, 602, false, false, 320, 502);
+//      testResizeFromAngle(-5, 0, false, false, 324, 502);
+//      testResizeFromAngle(-100, 0, false, false, 419, 502);
+//      testResizeFromAngle(-200, 0, false, false, 519, 502);
+//      testResizeFromAngle(-201, 0, false, false, 520, 502);
+//      testResizeFromAngle(-213, 0, false, false, 520, 502);
+//      testResizeFromAngle(-220, 0, false, false, 520, 502);
+//      testResizeFromAngle(5, 0, false, false, 320, 502);
+//      testResizeFromAngle(100, 0, false, false, 320, 502);
+//      testResizeFromAngle(200, 0, false, false, 320, 502);
+//      testResizeFromAngle(320, 0, false, false, 320, 502);
+//      testResizeFromAngle(420, 0, false, false, 320, 502);
+//
+//      //Tests from right-bottom angle
+//      testResizeFromAngle(5, 5, true, true, 325, 507);
+//      testResizeFromAngle(100, 100, true, true, 420, 602);
+//      testResizeFromAngle(1077, 197, true, true, 1397, 699);
+//      testResizeFromAngle(1078, 198, true, true, 1398, 700);
+//      testResizeFromAngle(1079, 199, true, true, 1399, 700);
+//      testResizeFromAngle(1080, 200, true, true, 1400, 700);
+//      testResizeFromAngle(1081, 201, true, true, 1400, 700);
+//      testResizeFromAngle(-5, -5, true, true, 320, 502);
+//      testResizeFromAngle(-100, -100, true, true, 320, 502);
+//      testResizeFromAngle(-320, -502, true, true, 320, 502);
+//      testResizeFromAngle(-420, -502, true, true, 320, 502);
+//      testResizeFromAngle(0, 5, true, true, 320, 507);
+//      testResizeFromAngle(0, 100, true, true, 320, 602);
+//      testResizeFromAngle(0, 197, true, true, 320, 699);
+//      testResizeFromAngle(0, 198, true, true, 320, 700);
+//      testResizeFromAngle(0, 199, true, true, 320, 700);
+//      testResizeFromAngle(0, -5, true, true, 320, 502);
+//      testResizeFromAngle(0, -100, true, true, 320, 502);
+//      testResizeFromAngle(0, -502, true, true, 320, 502);
+//      testResizeFromAngle(0, -502, true, true, 320, 502);
+//      testResizeFromAngle(5, 0, true, true, 325, 502);
+//      testResizeFromAngle(100, 0, true, true, 420, 502);
+//      testResizeFromAngle(1079, 0, true, true, 1399, 502);
+//      testResizeFromAngle(1080, 0, true, true, 1400, 502);
+//      testResizeFromAngle(1081, 0, true, true, 1400, 502);
+//      testResizeFromAngle(-5, 0, true, true, 320, 502);
+//      testResizeFromAngle(-100, 0, true, true, 320, 502);
+//      testResizeFromAngle(-320, 0, true, true, 320, 502);
+//      testResizeFromAngle(-420, 0, true, true, 320, 502);
+//
+//      //Tests from right-top angle
+//      testResizeFromAngle(5, -5, true, false, 325, 506);
+//      testResizeFromAngle(100, -100, true, false, 420, 601);
+//      testResizeFromAngle(1077, -197, true, false, 1397, 698);
+//      testResizeFromAngle(1078, -198, true, false, 1398, 699);
+//      testResizeFromAngle(1079, -199, true, false, 1399, 700);
+//      testResizeFromAngle(1080, -200, true, false, 1400, 701);
+//      testResizeFromAngle(1080, -201, true, false, 1400, 702);
+//      testResizeFromAngle(1080, -202, true, false, 1400, 702);
+//      testResizeFromAngle(-5, 5, true, false, 320, 502);
+//      testResizeFromAngle(-100, 100, true, false, 320, 502);
+//      testResizeFromAngle(-320, 502, true, false, 320, 502);
+//      testResizeFromAngle(-420, 502, true, false, 320, 502);
+//      testResizeFromAngle(0, -5, true, false, 320, 506);
+//      testResizeFromAngle(0, -100, true, false, 320, 601);
+//      testResizeFromAngle(0, -200, true, false, 320, 701);
+//      testResizeFromAngle(0, -201, true, false, 320, 702);
+//      testResizeFromAngle(0, -202, true, false, 320, 702);
+//      testResizeFromAngle(5, 0, true, false, 325, 502);
+//      testResizeFromAngle(100, 0, true, false, 420, 502);
+//      testResizeFromAngle(1079, 0, true, false, 1399, 502);
+//      testResizeFromAngle(1080, 0, true, false, 1400, 502);
+//      testResizeFromAngle(1080, 0, true, false, 1400, 502);
+//
+//      //Tests from left-bottom angle
+//      testResizeFromAngle(-5, 5, false, true, 324, 507);
+//      testResizeFromAngle(-100, 100, false, true, 419, 602);
+//      testResizeFromAngle(-200, 197, false, true, 519, 699);
+//      testResizeFromAngle(-201, 198, false, true, 520, 700);
+//      testResizeFromAngle(-202, 199, false, true, 520, 700);
+//      testResizeFromAngle(5, -5, false, true, 320, 502);
+//      testResizeFromAngle(100, -100, false, true, 320, 502);
+//      testResizeFromAngle(320, -502, false, true, 320, 502);
+//      testResizeFromAngle(321, -503, false, true, 320, 502);
+//      testResizeFromAngle(1400, -720, false, true, 320, 502);
+//      testResizeFromAngle(0, 5, false, true, 320, 507);
+//      testResizeFromAngle(0, 100, false, true, 320, 602);
+//      testResizeFromAngle(0, 197, false, true, 320, 699);
+//      testResizeFromAngle(0, 198, false, true, 320, 700);
+//      testResizeFromAngle(0, 199, false, true, 320, 700);
+//      testResizeFromAngle(-5, 0, false, true, 324, 502);
+//      testResizeFromAngle(-100, 0, false, true, 419, 502);
+//      testResizeFromAngle(-200, 0, false, true, 519, 502);
+//      testResizeFromAngle(-201, 0, false, true, 520, 502);
+//      testResizeFromAngle(-202, 0, false, true, 520, 502);
+//   }
+//
+//
+//   @Test
+//   void testFullScreenAfterDragByMouse() {
+//
+//      testFullScreenWithDrag(0, -300);
+//      testFullScreenWithDrag(-300, 0);
+//   }
+//
+//   @Test
+//   void testExitMethodByMouse() {
+//
+//      final boolean[] closed = new boolean[1];
+//      WindowContainer.instance = new WindowContainer() {
+//         @Override
+//         public void close() {
+//            closed[0] = true;
+//         }
+//      };
+//      Button close = find("#closeBtn");
+//      Platform.runLater(close::fire);
+//      WaitForAsyncUtils.waitForFxEvents();
+//      assertTrue(closed[0]);
+//   }
 
    private void testDrag(int x, int y, int expectedX, int expectedY) {
 

@@ -34,7 +34,6 @@ public class History {
     * @param operation - given operation
     */
    void addOperation(Operation operation) {
-
       operations.add(operation);
    }
 
@@ -44,7 +43,6 @@ public class History {
     * @param operations - given LinkedList<Operation> for set
     */
    public void setOperations(LinkedList<Operation> operations) {
-
       this.operations = operations;
    }
 
@@ -73,16 +71,15 @@ public class History {
     * @param operation - given main operation
     */
    void addOrChangeBinaryOperation(Operation operation) {
-
       if (!operations.isEmpty() && isChangingMOperationPossible()) {
-
          for (int i = operations.size() - 1; i > 0; i--) {
+
             if (isBinaryOperation(operations.get(i).getType())) {
                operations.set(i, operation);
                break;
             }
-         }
 
+         }
       } else {
          operations.add(operation);
       }
@@ -95,20 +92,18 @@ public class History {
     * @param number - given number
     */
    void changeLastNumber(Number number) {
-
       if (isChangingNumberPossible()) {
-
          for (int i = operations.size() - 1; i >= 0; i--) {
+
             if (NUMBER.equals(operations.get(i).getType())) {
                operations.set(i, number);
                break;
             }
-         }
 
+         }
       } else {
          operations.add(number);
       }
-
    }
 
    /**
@@ -117,16 +112,13 @@ public class History {
     * @return true if changing number at operations possible
     */
    private boolean isChangingNumberPossible() {
-
       boolean result = false;
-
       for (Operation operation : operations) {
          if (NUMBER.equals(operation.getType())) {
             result = true;
             break;
          }
       }
-
       result = result && !isBinaryOperation(getLastEvent().getType());
 
       return result;
@@ -138,18 +130,15 @@ public class History {
     * @return true if changing main operation at operations possible
     */
    private boolean isChangingMOperationPossible() {
-
-      boolean result = false;
+      boolean isPossible = false;
       for (Operation operation : operations) {
-
          if (isBinaryOperation(operation.getType())) {
-            result = true;
+            isPossible = true;
             break;
          }
-
       }
 
-      return result;
+      return isPossible;
    }
 
    /**
@@ -159,8 +148,7 @@ public class History {
     * @param number - given number
     */
    void changeNumberAtFirstPosition(Number number) {
-
-      if (NUMBER.equals(operations.getFirst().getType())) {
+      if (NUMBER == operations.getFirst().getType()) {
          operations.set(0, number);
       }
    }
@@ -172,11 +160,9 @@ public class History {
     * @return true if contains
     */
    boolean isContainingGivenOperationType(OperationType expectedType) {
-
       OperationType type;
       boolean isContaining = false;
       if (!operations.isEmpty()) {
-
          for (int i = operations.size() - 1; i > 0; i--) {
             type = operations.get(i).getType();
 
@@ -197,7 +183,7 @@ public class History {
 
    /**
     * Verifies is history containing extra operations
-    * (sqr, sqrt, fraction)
+    * (sqr, sqrt, fraction, negate)
     *
     * @return true if it's containing
     */
@@ -205,7 +191,8 @@ public class History {
 
       return isContainingGivenOperationType(SQR) ||
               isContainingGivenOperationType(SQRT) ||
-              isContainingGivenOperationType(FRACTION);
+              isContainingGivenOperationType(FRACTION) ||
+              isContainingGivenOperationType(NEGATE);
    }
 
 }

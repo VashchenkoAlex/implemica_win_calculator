@@ -1,8 +1,6 @@
 package win_calculator.model;
 
 import java.math.BigDecimal;
-import java.util.LinkedList;
-
 /**
  * Memory container class
  * Stores list of saved BigDecimal number
@@ -11,58 +9,41 @@ import java.util.LinkedList;
  */
 public class Memory {
    /**
-    * List of saved BigDecimal numbers at memory
+    * Saved BigDecimal number at memory
     */
-   private LinkedList<BigDecimal> storedNumbers; // оставить только 1 число
+   private BigDecimal storedNumber;
 
    /**
-    * Constructs instance of {@link Memory} with empty list
-    */
-   Memory() {
-      storedNumbers = new LinkedList<>();
-   }
-
-   /**
-    * Getter for the last stored number
+    * Getter for the stored number
     *
-    * @return last BigDecimal stored number
+    * @return BigDecimal stored number
     */
    BigDecimal getStoredNumber() {
-      return storedNumbers.getLast();
+      return storedNumber;
    }
 
    /**
-    * Adds given BigDecimal number to the last stored number at the list
-    * and stores result in the list
+    * Adds given BigDecimal number to the stored number at the memory
     *
     * @param number - given BigDecimal number
     */
    void addToStoredNumber(BigDecimal number) {
-
-      if (storedNumbers.isEmpty()) {
-         storedNumbers.add(BigDecimal.ZERO);
+      if (storedNumber == null) {
+         storedNumber = BigDecimal.ZERO;
       }
-
-      BigDecimal result = storedNumbers.getLast().add(number);
-      storedNumbers.removeLast();
-      storedNumbers.add(result);
+      storedNumber = storedNumber.add(number);
    }
 
    /**
-    * Subtract given BigDecimal number from the last stored number at the list
-    * and stores result in the list
+    * Subtract given BigDecimal number from the stored number at the memory
     *
     * @param number - given BigDecimal number
     */
    void subtractFromStoredNumber(BigDecimal number) {
-
-      if (storedNumbers.isEmpty()) {
-         storedNumbers.add(BigDecimal.ZERO);
+      if (storedNumber == null) {
+         storedNumber = BigDecimal.ZERO;
       }
-
-      BigDecimal result = storedNumbers.getLast().subtract(number);
-      storedNumbers.removeLast();
-      storedNumbers.add(result);
+      storedNumber = storedNumber.subtract(number);
    }
 
    /**
@@ -71,14 +52,14 @@ public class Memory {
     * @param number - given BigDecimal number
     */
    void storeNumber(BigDecimal number) {
-      storedNumbers.add(number);
+      storedNumber = number;
    }
 
    /**
-    * Clear list of stored numbers
+    * Clear stored number
     */
    public void clear() {
-      storedNumbers = new LinkedList<>();
+      storedNumber = null;
    }
 }
 

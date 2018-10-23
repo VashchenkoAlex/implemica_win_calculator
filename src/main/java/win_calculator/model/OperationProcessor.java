@@ -96,7 +96,6 @@ class OperationProcessor {
     * @return true if rejection was successful
     */
    boolean rejectLastNumberWithExtraOperations() {
-
       boolean done;
       if (historyNotEmpty() && isHistoryContainingExtraPercentNegate()) {
          LinkedList<Operation> operations = new LinkedList<>(history.getOperations());
@@ -138,16 +137,13 @@ class OperationProcessor {
     * @return BigDecimal result of calculations
     */
    BigDecimal processNegate(Operation negate, BigDecimal inputtedNumber, BigDecimal responseNumber) {
-
       BigDecimal result;
-
       if (inputtedNumber == null && lastOperationNotNumberAndNotNegate()) {
          result = checkResponseAndProceed(responseNumber);
          resetLastBinaryResult();
       } else {
          result = lastNumber;
       }
-
       result = ((Negate) negate).calculate(result);
       addOperationToHistory(negate);
       lastNumber = result;
@@ -161,7 +157,6 @@ class OperationProcessor {
     * @return BigDecimal number for operation
     */
    private BigDecimal checkResponseAndProceed(BigDecimal responseNumber) {
-
       BigDecimal result;
       if (responseNumber != null) {
          result = responseNumber;
@@ -196,7 +191,6 @@ class OperationProcessor {
     * @return LinkedList<Operation> of operations from the history
     */
    LinkedList<Operation> getHistory() {
-
       return history.getOperations();
    }
 
@@ -212,7 +206,6 @@ class OperationProcessor {
     * @return BigDecimal result of calculations
     */
    BigDecimal processExtraOperation(Operation operation, BigDecimal inputtedNumber, BigDecimal responseNumber) throws OperationException {
-
       BigDecimal result = prepareNumberForExtraOperation(inputtedNumber, responseNumber);
       addOperationToHistory(operation);
       result = ((ExtraOperation) operation).calculate(result);
@@ -230,14 +223,12 @@ class OperationProcessor {
     * @return selected number
     */
    private BigDecimal prepareNumberForExtraOperation(BigDecimal inputtedNumber, BigDecimal responseNumber) {
-
       BigDecimal resultNum;
       if (inputtedNumber != null) {
          lastInputtedNumber = inputtedNumber;
          addNumberToHistory(inputtedNumber);
          setLastNumber(inputtedNumber);
          resultNum = inputtedNumber;
-
       } else if (responseNumber != null) {
          resultNum = responseNumber;
 
@@ -260,7 +251,6 @@ class OperationProcessor {
     * @return boolean verification result
     */
    private boolean isResponseNumberHasProceed() {
-
       return isBinaryOperation(lastOperationType) ||
               (enterRepeated && !isExtraOperation(lastOperationType) && NEGATE != lastOperationType);
    }
@@ -277,16 +267,14 @@ class OperationProcessor {
     * @return BigDecimal result of calculations
     */
    BigDecimal processBinaryOperation(Operation operation, BigDecimal inputtedNumber, BigDecimal responseNumber) throws OperationException {
-
       BigDecimal result = selectNumberForBinaryOperation(inputtedNumber, responseNumber);
       doBinaryOperation(operation);
-
       if (operationResult != null) {
          result = operationResult;
       }
-
       enterRepeated = false;
       resetLastExtraResult();
+
       return result;
    }
 
@@ -297,9 +285,9 @@ class OperationProcessor {
     * @param responseNumber - given last response BigDecimal number
     * @return selected BigDecimal number
     */
+   //fixed
    private BigDecimal selectNumberForBinaryOperation(BigDecimal inputtedNumber, BigDecimal responseNumber) {
-
-      BigDecimal result = responseNumber; //...
+      BigDecimal result;
       if (inputtedNumber != null) {
          addNumberToHistory(inputtedNumber);
          setLastNumber(inputtedNumber);
@@ -315,14 +303,15 @@ class OperationProcessor {
          }
 
       } else if (responseNumber != null) {
+         result = responseNumber;
 
          if (!history.isContainingExtraOperation()) {
             changeLastNumberAtEvents(result);
          }
 
       } else {
-         addZeroToHistory();
          result = BigDecimal.ZERO;
+         addZeroToHistory();
       }
 
       return result;
@@ -336,7 +325,6 @@ class OperationProcessor {
     * @return null
     */
    BigDecimal processClear() {
-
       lastNumber = null;
       resetPreviousNumber();
       resetOperationResult();
@@ -363,9 +351,7 @@ class OperationProcessor {
     * @return BigDecimal result of calculations
     */
    BigDecimal processEnter(BigDecimal inputtedNumber, BigDecimal responseNumber) throws OperationException {
-
-      BigDecimal result = setVariablesBeforeEqual(inputtedNumber, responseNumber); //...
-
+      setVariablesBeforeEqual(inputtedNumber); //...
       initVariables();
       if (mOperationBefore || enterForOperationRepeated) {
          doCalculation();
@@ -374,34 +360,34 @@ class OperationProcessor {
       } else {
          resetOperationResult();
       }
-
-      if (operationResult != null) {
-         result = operationResult;
-      }
-
       resetPreviousNumber();
       enterRepeated = true;
       resetLastExtraResult();
       lastOperationType = OperationType.CLEAR;
       resetHistory();
+
+      BigDecimal result;
+      if (operationResult != null) {
+         result = operationResult;
+      } else if (inputtedNumber!=null){
+         result = inputtedNumber;
+      } else {
+         result = responseNumber;
+      }
+
       return result;
    }
 
    /**
-    * Verifies given inputted and last response numbers and global fields
-    * Select response number for equal if binary operation will be impossible
+    * Verifies given inputted number and global fields
     * Sets global variables
     * @param inputtedNumber - given inputted BigDecimal number
-    * @param responseNumber - given last response BigDecimal number
     * @return selected BigDecimal number
     */
-   private BigDecimal setVariablesBeforeEqual(BigDecimal inputtedNumber, BigDecimal responseNumber) {
-
-      BigDecimal result = responseNumber;
+   private void setVariablesBeforeEqual(BigDecimal inputtedNumber) {
       if (inputtedNumber != null) {
          resetLastBinaryResult();
          setLastNumber(inputtedNumber);
-         result = inputtedNumber;
          lastInputtedNumber = inputtedNumber;
       } else {
 
@@ -417,7 +403,6 @@ class OperationProcessor {
             setLastNumber(lastBinaryResult);
          }
       }
-      return result;
    }
 
    /**
@@ -425,9 +410,9 @@ class OperationProcessor {
     * @return boolean verification result
     */
    private boolean isaBinaryResultHasToBeStored() {
+      boolean isLastOperationAllows = isBinaryOperation(lastOperationType) || MEMORY == lastOperationType;
 
-      return !enterRepeated && isBinaryResultNotNull() &&   //...
-              (isBinaryOperation(lastOperationType) || MEMORY == lastOperationType);
+      return !enterRepeated && isBinaryResultNotNull() && isLastOperationAllows;
    }
 
    /**
@@ -688,14 +673,12 @@ class OperationProcessor {
    }
 
    /**
-    * Verifies is operations at history contains {@link Negate} or {@link Percent} or {@link Negate}
+    * Verifies is operations at history contains extra operations or {@link Percent}
     *
     * @return boolean result of verifying
     */
    private boolean isHistoryContainingExtraPercentNegate() {
-
       return  history.isContainingExtraOperation() ||
-              history.isContainingGivenOperationType(NEGATE) ||
               history.isContainingGivenOperationType(PERCENT);
    }
 
@@ -706,10 +689,8 @@ class OperationProcessor {
     * @return BigDecimal[] of selected numbers
     */
    private BigDecimal[] selectNumbersForPercent(BigDecimal number) {
-
       BigDecimal firstNumber;
       BigDecimal secondNumber;
-
       if (number != null) {
          secondNumber = number;
 
@@ -729,13 +710,10 @@ class OperationProcessor {
 
          if (PERCENT == lastOperationType) {
             secondNumber = lastNumber;
-
          } else if (isExtraOperation(lastOperationType) && isExtraResultNotNull()) {
             secondNumber = lastExtraResult;
-
          } else {
             secondNumber = lastBinaryResult;
-
          }
 
       } else if (NEGATE == lastOperationType) {
@@ -833,7 +811,6 @@ class OperationProcessor {
     * @throws OperationException from calculate() method at {@link BinaryOperation}
     */
    private void doCalculation() throws OperationException {
-
       BigDecimal firstArg = selectFirstArgumentForBinaryOperation();
       lastBinaryResult = lastBinaryOperation.calculate(firstArg, lastNumber);
       operationResult = lastBinaryResult;
@@ -844,9 +821,7 @@ class OperationProcessor {
     * @return selected BigDecimal number
     */
    private BigDecimal selectFirstArgumentForBinaryOperation() {
-
       BigDecimal firstArg;
-
       if (previousNumber == null) {
 
          if (operationResult == null) {

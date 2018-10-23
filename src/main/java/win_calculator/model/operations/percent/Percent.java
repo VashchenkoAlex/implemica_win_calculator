@@ -23,7 +23,6 @@ public class Percent implements Operation {
     * @return BigDecimal result of operation
     */
    public BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber) {
-
       return firstNumber.multiply(secondNumber.multiply(PERCENT));
    }
 
@@ -34,7 +33,6 @@ public class Percent implements Operation {
     */
    @Override
    public OperationType getType() {
-
       return OperationType.PERCENT;
    }
 

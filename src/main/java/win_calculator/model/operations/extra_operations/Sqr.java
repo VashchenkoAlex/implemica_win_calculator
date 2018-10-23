@@ -23,7 +23,6 @@ public class Sqr implements ExtraOperation {
     */
    @Override
    public BigDecimal calculate(BigDecimal number) {
-
       return number.pow(POW);
    }
 
@@ -34,7 +33,6 @@ public class Sqr implements ExtraOperation {
     */
    @Override
    public OperationType getType() {
-
       return OperationType.SQR;
    }
 

@@ -31,7 +31,6 @@ public class Divide implements BinaryOperation {
     */
    @Override
    public BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber) throws OperationException {
-
       if (firstNumber.equals(BigDecimal.ZERO) && secondNumber.equals(BigDecimal.ZERO)) {
          throw new OperationException(ZERO_DIVIDE_BY_ZERO);
       }

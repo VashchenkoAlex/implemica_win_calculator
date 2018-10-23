@@ -18,7 +18,6 @@ public class Negate implements ExtraOperation {
     */
    @Override
    public BigDecimal calculate(BigDecimal number) {
-
       return number.negate();
    }
 

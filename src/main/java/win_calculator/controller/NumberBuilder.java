@@ -80,11 +80,9 @@ public class NumberBuilder {
     * @return BigDecimal number
     */
    public BigDecimal getNumber() {
-
       if (number == null) {
          prepareNumber();
       }
-
       return number;
    }
 
@@ -95,11 +93,9 @@ public class NumberBuilder {
     * @return String of current numberSymbol's chain
     */
    String addDigit(NumberSymbol numberSymbol) {
-
       if (isNotMaxDigits()) {
          add(numberSymbol);
       }
-
       return convertNumberToString();
    }
 
@@ -125,7 +121,6 @@ public class NumberBuilder {
     * @return String value of current digit's chain
     */
    String doBackSpace() {
-
       if (isChainEmpty() && isPreviousChainNotEmpty()) {
          digitsChain = previousChain;
       }
@@ -140,6 +135,7 @@ public class NumberBuilder {
 
    /**
     * Converts current digit's chain to the BigDecimal
+    *
     * @return BigDecimal converting result
     */
    private BigDecimal getBigDecimalNumberFromChain() {
@@ -164,7 +160,6 @@ public class NumberBuilder {
     */
    String negate(boolean wasMemoryOperation) {
       changeIsPositive();
-
       if (!wasMemoryOperation) {
          prepareNumber();
       }
@@ -178,7 +173,6 @@ public class NumberBuilder {
     * @return true if {@link NumberBuilder} contains number
     */
    boolean containsNumber() {
-
       return !isChainEmpty() || isPreviousChainNotEmpty() || number != null;
    }
 
@@ -189,15 +183,13 @@ public class NumberBuilder {
     */
    private void add(NumberSymbol numberSymbol) {
       String symbol = numberSymbol.getSymbol();
-
       if (COMMA.equals(symbol)) {
-         addComa(numberSymbol);
+         addComma(numberSymbol);
       } else if (ZERO.equals(symbol)) {
          addZero(numberSymbol);
       } else {
          addDigitToChain(numberSymbol);
       }
-
       number = getBigDecimalNumberFromChain();
    }
 
@@ -209,7 +201,6 @@ public class NumberBuilder {
     */
    private BigDecimal setSign(BigDecimal value) {
       BigDecimal changedValue;
-
       if (!positive && value.compareTo(BigDecimal.ZERO) > 0) {
          changedValue = value.negate();
       } else {
@@ -225,27 +216,24 @@ public class NumberBuilder {
     * @param numberSymbol - current {@link NumberSymbol}
     */
    private void addDigitToChain(NumberSymbol numberSymbol) {
-
       if (isChainJustZero()) {
          digitsChain.removeLast();
       }
-
       digitsChain.add(numberSymbol);
    }
 
    /**
-    * Method adds coma to the current digit's chain with zero if it's necessary
+    * Method adds comma to the current digit's chain with zero if it's necessary
     *
-    * @param coma - {@link NumberSymbol} coma
+    * @param comma - {@link NumberSymbol} coma
     */
-   private void addComa(NumberSymbol coma) {
-
+   private void addComma(NumberSymbol comma) {
       if (isChainEmpty()) {
          digitsChain.add(new NumberSymbol(Symbol.ZERO));
       }
 
       if (!chainContainsComma(digitsChain)) {
-         digitsChain.add(coma);
+         digitsChain.add(comma);
       }
    }
 
@@ -255,7 +243,6 @@ public class NumberBuilder {
     * @param zero - {@link NumberSymbol} zero
     */
    private void addZero(NumberSymbol zero) {
-
       if (!isChainJustZero()) {
          digitsChain.add(zero);
       }
@@ -263,6 +250,7 @@ public class NumberBuilder {
 
    /**
     * Verifies is current digit's chain contains just zero
+    *
     * @return boolean verification result
     */
    private boolean isChainJustZero() {
@@ -273,11 +261,10 @@ public class NumberBuilder {
     * Method reject last digit from the digit's chain
     * and adds zero if it's necessary
     */
+   //fixed
    private void cutLastDigit() {
-
       digitsChain.removeLast();
-
-      if (digitsChain.size() < 1) { //...
+      if (digitsChain.isEmpty()) {
          digitsChain.add(new NumberSymbol(Symbol.ZERO));
       }
    }
@@ -288,6 +275,7 @@ public class NumberBuilder {
     * @param digitsChain - given chain of digits
     * @return String represents of given digit's chain
     */
+   //fixed
    private String buildStringFromChain(LinkedList<NumberSymbol> digitsChain) {
       StringBuilder builder = new StringBuilder();
       digitsChain.forEach(numberSymbol -> builder.append(numberSymbol.getSymbol()));
@@ -301,7 +289,6 @@ public class NumberBuilder {
     * @return true if previous digit's chain not empty
     */
    private boolean isPreviousChainNotEmpty() {
-
       return previousChain != null && !previousChain.isEmpty();
    }
 
@@ -311,14 +298,12 @@ public class NumberBuilder {
     * @return true if current digit's chain is not full
     */
    private boolean isNotMaxDigits() {
-
       int digitsCount = digitsChain.size();
-
       if (!isChainEmpty() && ZERO.equals(digitsChain.get(0).getSymbol())) {
          digitsCount--;
       }
 
-      if (chainContainsComma(digitsChain)){
+      if (chainContainsComma(digitsChain)) {
          digitsCount--;
       }
 
@@ -343,7 +328,6 @@ public class NumberBuilder {
     * Method verifies flags and sets up BigDecimal number
     */
    private void prepareNumber() {
-
       if (isChainEmpty() && isPreviousChainNotEmpty()) {
          digitsChain = previousChain;
          number = setSign(getBigDecimalNumberFromChain());
@@ -362,15 +346,16 @@ public class NumberBuilder {
 
    /**
     * Method converts stored number to String
-    * and formats is for display label
+    * and formats it for display label
     *
     * @return String value of stored number chain
     */
+   //fixed
    private String convertNumberToString() {
       LinkedList<NumberSymbol> chain = selectChainForConverting();
       DecimalFormat format = new DecimalFormat(DISPLAY_PATTERN);
       BigDecimal number;
-      if (chain!=null){
+      if (chain != null) {
 
          if (chainContainsComma(chain)) {
             format.setDecimalSeparatorAlwaysShown(true);
@@ -398,12 +383,14 @@ public class NumberBuilder {
     * @param chain - given LinkedList<NumberSymbol> chain
     * @return true if contains
     */
+   //fixed
    private boolean chainContainsComma(LinkedList<NumberSymbol> chain) {
       return chain.stream().anyMatch(numberSymbol -> COMMA.equals(numberSymbol.getSymbol()));
    }
 
    /**
     * Counts digits at fractional part of number at given digit's chain
+    *
     * @param chain - given digit's chain
     * @return int count of digits at fractional part
     */
@@ -411,7 +398,6 @@ public class NumberBuilder {
       int wholeCounter = 0;
       for (NumberSymbol symbol : chain) {
          wholeCounter++;
-
          if (COMMA.equals(symbol.getSymbol())) {
             break;
          }

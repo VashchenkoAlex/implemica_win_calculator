@@ -30,7 +30,6 @@ public class Sqrt implements ExtraOperation {
     */
    @Override
    public BigDecimal calculate(BigDecimal number) throws OperationException {
-
       BigDecimal calculationResult;
       if (number.compareTo(BigDecimal.ZERO) == 0 || number.compareTo(BigDecimal.ONE) == 0) {
          calculationResult = number;
@@ -62,7 +61,6 @@ public class Sqrt implements ExtraOperation {
     */
    @Override
    public OperationType getType() {
-
       return OperationType.SQRT;
    }
 

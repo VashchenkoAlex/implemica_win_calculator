@@ -19,7 +19,6 @@ public class Subtract implements BinaryOperation {
     */
    @Override
    public BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber) {
-
       return firstNumber.subtract(secondNumber);
    }
 

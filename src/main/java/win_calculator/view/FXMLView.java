@@ -676,7 +676,7 @@ public class FXMLView implements Initializable {
    private void handleDigit(NumberSymbol numberSymbol) {
 
       String[] response = calcController.handleDigit(numberSymbol);
-      displayContainer.sendDigitToDisplay(numberSymbol, response[0], wasDigitLast);
+      displayContainer.sendDigitToDisplay(response[0], wasDigitLast);
       handleDataFromResponse(response);
       wasDigitLast = true;
    }
