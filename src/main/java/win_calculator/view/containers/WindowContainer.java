@@ -18,6 +18,15 @@ public class WindowContainer {
     * Constant: minimize screen symbol at full screen button
     */
    private static final String MINIMIZE_SCREEN_SYMBOL = "\uE923";
+
+   /**
+    * Constant: window x coordinate by default
+    */
+   private static final double defaultX = 200;
+   /**
+    * Constant: window y coordinate by default
+    */
+   private static final double defaultY = 200;
    /**
     * Instance of current class, using for exit() method test
     */
@@ -68,9 +77,13 @@ public class WindowContainer {
     */
    public void fullScreen() {
       if (stage.isMaximized()) {
+         stage.setY(defaultY);
+         stage.setX(defaultX);
          stage.setMaximized(false);
          fullScreenBtn.setText(FULL_SCREEN_SYMBOL);
       } else {
+         stage.setX(0);
+         stage.setY(0);
          stage.setMaximized(true);
          fullScreenBtn.setText(MINIMIZE_SCREEN_SYMBOL);
       }

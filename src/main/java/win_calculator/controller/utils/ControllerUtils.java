@@ -18,6 +18,7 @@ import static win_calculator.model.operations.OperationType.*;
 /**
  * Abstract class with utils for converting data to String
  * Changing strings for different needs
+ * Verifying strings for different needs
  */
 public abstract class ControllerUtils {
 
@@ -141,7 +142,6 @@ public abstract class ControllerUtils {
     * @param string - given String
     * @return true if given String is not number
     */
-   //fixed
    public static boolean isNotNumber(String string) {
       return IS_TEXT_PATTERN.matcher(string).matches();
    }
@@ -180,7 +180,6 @@ public abstract class ControllerUtils {
     * @param pattern     - String pattern for {@link DecimalFormat}
     * @return String of given number
     */
-   //fixed
    public static String convertNumberToString(BigDecimal givenNumber, String pattern) {
       String stringRepresentation;
       if (givenNumber != null) {
@@ -246,7 +245,6 @@ public abstract class ControllerUtils {
     * @param number - given number
     * @return separator for {@link DecimalFormat}
     */
-   //fixed
    private static String selectSeparator(BigDecimal number) {
       String separator;
       if (number.precision() == 1) {
@@ -270,7 +268,6 @@ public abstract class ControllerUtils {
     * @param pattern - given pattern
     * @return prepared String pattern
     */
-   // fixed
    private static String preparePattern(BigDecimal number, String pattern) {
       String currentPattern;
       if (isPatternHasToBeChanged(number)) {
@@ -289,7 +286,6 @@ public abstract class ControllerUtils {
     * @param number - given BigDecimal number
     * @return boolean verification result
     */
-   // fixed
    private static boolean isPatternHasToBeChanged(BigDecimal number) {
       boolean isNumberBigger = number.abs().compareTo(MAX_NUMBER_WITHOUT_EXPONENT) > 0;
       BigDecimal borderValue = MIN_NUMBER_WITHOUT_EXPONENT.movePointRight(number.precision() - 1);
@@ -304,7 +300,6 @@ public abstract class ControllerUtils {
     * @param number - given BigDecimal number
     * @return boolean verification result
     */
-   //fixed
    private static boolean isNumberFractional(BigDecimal number) {
       BigDecimal numberAbs = number.abs();
 
@@ -318,7 +313,6 @@ public abstract class ControllerUtils {
     * @param number - given BigDecimal number
     * @return correct Integer scale for given number
     */
-   // fixed
    private static int selectScale(BigDecimal number) {
       int scale;
       if (isNumberFractional(number)) {
@@ -343,7 +337,6 @@ public abstract class ControllerUtils {
     * @param number - given BigDecimal number
     * @return truncated String pattern
     */
-   // fixed
    private static String truncatePattern(BigDecimal number) {
       int precision = number.precision();
       int index = INTEGER_AND_DECIMAL_PART.length() - MAX_FRACTIONAL_PART + precision;
@@ -358,7 +351,6 @@ public abstract class ControllerUtils {
     * @param number - given BigDecimal number
     * @return true if given BigDecimal number has correct exponent
     */
-   // fixed
    private static boolean correctExponent(BigDecimal number) {
       int exponent = getExponent(number);
       boolean isBiggerMinExponent = exponent > MIN_EXPONENT;
@@ -373,7 +365,6 @@ public abstract class ControllerUtils {
     * @param number - given BigDecimal number
     * @return int exponent value for given BigDecimal number
     */
-   //fixed
    private static int getExponent(BigDecimal number) {
       return Math.abs(number.precision() - number.scale() - 1);
    }
@@ -386,7 +377,6 @@ public abstract class ControllerUtils {
     * <p>
     * was taken from https://stackoverflow.com/a/23773083
     */
-   //fixed
    private static int getWholeLength(BigDecimal givenNumber) {
       BigInteger number = givenNumber.abs().toBigInteger();
       double factor = Math.log(2) / Math.log(10);
@@ -416,7 +406,6 @@ public abstract class ControllerUtils {
     * @param symbol     - given symbol of extra operation
     * @return given String with symbol
     */
-   // fixed
    private static String addExtraOperationToString(String currentStr, String symbol) {
       String resultStr;
       if (currentStr.contains(OPERATION_SEPARATOR)) {
@@ -427,10 +416,8 @@ public abstract class ControllerUtils {
             resultStr = currentStr + symbol;
          }
 
-      } else if (!currentStr.isEmpty()) {
-         resultStr = symbol + currentStr;
       } else {
-         resultStr = "";
+         resultStr = symbol + currentStr;
       }
 
       return resultStr + BRACKET;
@@ -443,9 +430,8 @@ public abstract class ControllerUtils {
     * @param symbol - given symbol
     * @return - redistributed string
     */
-   //fixed
    private static String redistributeOperations(String string, String symbol) {
-      int lastSeparatorIndex = string.lastIndexOf("  ");
+      int lastSeparatorIndex = string.lastIndexOf(OPERATION_SEPARATOR);
       String beginPart = string.substring(0, lastSeparatorIndex);
       String endPart = string.substring(lastSeparatorIndex + OPERATION_SEPARATOR.length());
 

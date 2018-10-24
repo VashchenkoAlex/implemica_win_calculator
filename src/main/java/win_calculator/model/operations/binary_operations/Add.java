@@ -19,7 +19,6 @@ public class Add implements BinaryOperation {
     */
    @Override
    public BigDecimal calculate(BigDecimal firstNumber, BigDecimal secondNumber) {
-
       return firstNumber.add(secondNumber);
    }
 

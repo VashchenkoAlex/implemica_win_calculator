@@ -57,24 +57,23 @@ public class CalcModel {
     *                            {@link OperationProcessor} throws {@link OperationException}
     */
    public BigDecimal calculate(Operation operation) throws OperationException {
-
       OperationType type = operation.getType();
       if (isBinaryOperation(type)){
          responseNumber = operationProcessor.processBinaryOperation(operation, inputtedNumber, responseNumber);
-      } else if (EQUAL.equals(type)) {
+      } else if (EQUAL == type) {
          responseNumber = operationProcessor.processEnter(inputtedNumber, responseNumber);
       } else if (isExtraOperation(type)) {
          responseNumber = operationProcessor.processExtraOperation(operation, inputtedNumber, responseNumber);
-      } else if (NEGATE.equals(type)) {
+      } else if (NEGATE == type) {
          responseNumber = operationProcessor.processNegate(operation, inputtedNumber, responseNumber);
-      } else if (PERCENT.equals(type)) {
+      } else if (PERCENT == type) {
          responseNumber = operationProcessor.processPercent(operation, inputtedNumber);
-      } else if (CLEAR.equals(type)) {
+      } else if (CLEAR == type) {
          responseNumber = operationProcessor.processClear();
-      } else if (CLEAR_ENTERED.equals(type)) {
+      } else if (CLEAR_ENTERED == type) {
          operationProcessor.processClearEntered();
          responseNumber = null;
-      } else if (MEMORY.equals(type)) {
+      } else if (MEMORY == type) {
          BigDecimal result = operationProcessor.processMemory((MemoryOperation) operation, inputtedNumber);
 
          if (result != null) {
@@ -82,7 +81,6 @@ public class CalcModel {
          }
 
       }
-
       checkOnOverflow(responseNumber);
 
       return responseNumber;

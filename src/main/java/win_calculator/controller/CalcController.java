@@ -252,17 +252,16 @@ public class CalcController {
     */
    private String selectMessageForException(ExceptionType type) {
       String message;
-      if (OVERFLOW.equals(type)) {
+      if (OVERFLOW == type) {
          message = OVERFLOW_MSG;
-      } else if (DIVIDE_BY_ZERO.equals(type)) {
+      } else if (DIVIDE_BY_ZERO == type) {
          message = DIVIDE_BY_ZERO_MSG;
       } else if (ZERO_DIVIDE_BY_ZERO == type) {
          message = ZERO_DIVIDE_BY_ZERO_MSG;
-      } else if (NEGATIVE_VALUE_FOR_SQRT == type) {
-         message = NEGATIVE_VALUE_FOR_SQRT_MSG;
       } else {
-         message = "";
+         message = NEGATIVE_VALUE_FOR_SQRT_MSG;
       }
+
       return message;
    }
 

@@ -75,18 +75,6 @@ public class NumberBuilder {
    }
 
    /**
-    * Getter for BigDecimal representation of number
-    *
-    * @return BigDecimal number
-    */
-   public BigDecimal getNumber() {
-      if (number == null) {
-         prepareNumber();
-      }
-      return number;
-   }
-
-   /**
     * Method add {@link NumberSymbol} to the current numberSymbol's chain
     *
     * @param numberSymbol - current {@link NumberSymbol}
@@ -121,10 +109,6 @@ public class NumberBuilder {
     * @return String value of current digit's chain
     */
    String doBackSpace() {
-      if (isChainEmpty() && isPreviousChainNotEmpty()) {
-         digitsChain = previousChain;
-      }
-
       if (!isChainEmpty()) {
          cutLastDigit();
          number = setSign(getBigDecimalNumberFromChain());
@@ -211,14 +195,11 @@ public class NumberBuilder {
    }
 
    /**
-    * Method adds {@link NumberSymbol} to the current numberSymbol's chain
+    * Method adds {@link NumberSymbol} to the current digit's chain
     *
     * @param numberSymbol - current {@link NumberSymbol}
     */
    private void addDigitToChain(NumberSymbol numberSymbol) {
-      if (isChainJustZero()) {
-         digitsChain.removeLast();
-      }
       digitsChain.add(numberSymbol);
    }
 
@@ -261,7 +242,6 @@ public class NumberBuilder {
     * Method reject last digit from the digit's chain
     * and adds zero if it's necessary
     */
-   //fixed
    private void cutLastDigit() {
       digitsChain.removeLast();
       if (digitsChain.isEmpty()) {
@@ -275,7 +255,6 @@ public class NumberBuilder {
     * @param digitsChain - given chain of digits
     * @return String represents of given digit's chain
     */
-   //fixed
    private String buildStringFromChain(LinkedList<NumberSymbol> digitsChain) {
       StringBuilder builder = new StringBuilder();
       digitsChain.forEach(numberSymbol -> builder.append(numberSymbol.getSymbol()));
@@ -350,7 +329,6 @@ public class NumberBuilder {
     *
     * @return String value of stored number chain
     */
-   //fixed
    private String convertNumberToString() {
       LinkedList<NumberSymbol> chain = selectChainForConverting();
       DecimalFormat format = new DecimalFormat(DISPLAY_PATTERN);
@@ -383,7 +361,6 @@ public class NumberBuilder {
     * @param chain - given LinkedList<NumberSymbol> chain
     * @return true if contains
     */
-   //fixed
    private boolean chainContainsComma(LinkedList<NumberSymbol> chain) {
       return chain.stream().anyMatch(numberSymbol -> COMMA.equals(numberSymbol.getSymbol()));
    }

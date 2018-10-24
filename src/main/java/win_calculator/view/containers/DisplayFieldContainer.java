@@ -98,7 +98,6 @@ public class DisplayFieldContainer {
     *
     * @return true if it is not
     */
-   //fixed to Pattern
    private boolean isNotMax() {
       String displayedText = display.getText();
       displayedText = FIRST_ZERO_PATTERN.matcher(displayedText).replaceFirst("");

@@ -3,15 +3,15 @@ package win_calculator.model;
 import java.math.BigDecimal;
 /**
  * Memory container class
- * Stores list of saved BigDecimal number
+ * Stores BigDecimal number
  * Provides operation methods for memory operations:
- * store, add, subtract, recall and clear
+ * store, add, subtract and recall
  */
-public class Memory {
+class Memory {
    /**
     * Saved BigDecimal number at memory
     */
-   private BigDecimal storedNumber;
+   private BigDecimal storedNumber = BigDecimal.ZERO;
 
    /**
     * Getter for the stored number
@@ -28,9 +28,6 @@ public class Memory {
     * @param number - given BigDecimal number
     */
    void addToStoredNumber(BigDecimal number) {
-      if (storedNumber == null) {
-         storedNumber = BigDecimal.ZERO;
-      }
       storedNumber = storedNumber.add(number);
    }
 
@@ -40,9 +37,6 @@ public class Memory {
     * @param number - given BigDecimal number
     */
    void subtractFromStoredNumber(BigDecimal number) {
-      if (storedNumber == null) {
-         storedNumber = BigDecimal.ZERO;
-      }
       storedNumber = storedNumber.subtract(number);
    }
 
@@ -55,12 +49,6 @@ public class Memory {
       storedNumber = number;
    }
 
-   /**
-    * Clear stored number
-    */
-   public void clear() {
-      storedNumber = null;
-   }
 }
 
 

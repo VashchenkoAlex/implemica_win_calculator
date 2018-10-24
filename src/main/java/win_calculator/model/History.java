@@ -56,15 +56,6 @@ public class History {
    }
 
    /**
-    * Getter for last operation at history
-    *
-    * @return last operation at history
-    */
-   private Operation getLastEvent() {
-      return operations.getLast();
-   }
-
-   /**
     * Adds given operation to the end if it's possible, else
     * changes last main operation at operations list to the given
     *
@@ -83,45 +74,6 @@ public class History {
       } else {
          operations.add(operation);
       }
-   }
-
-   /**
-    * Changes last number at operations to the given if it's possible,
-    * else adds given umber to the end of operations
-    *
-    * @param number - given number
-    */
-   void changeLastNumber(Number number) {
-      if (isChangingNumberPossible()) {
-         for (int i = operations.size() - 1; i >= 0; i--) {
-
-            if (NUMBER.equals(operations.get(i).getType())) {
-               operations.set(i, number);
-               break;
-            }
-
-         }
-      } else {
-         operations.add(number);
-      }
-   }
-
-   /**
-    * Verifies is changing number at operations possible
-    *
-    * @return true if changing number at operations possible
-    */
-   private boolean isChangingNumberPossible() {
-      boolean result = false;
-      for (Operation operation : operations) {
-         if (NUMBER.equals(operation.getType())) {
-            result = true;
-            break;
-         }
-      }
-      result = result && !isBinaryOperation(getLastEvent().getType());
-
-      return result;
    }
 
    /**
@@ -166,7 +118,7 @@ public class History {
          for (int i = operations.size() - 1; i > 0; i--) {
             type = operations.get(i).getType();
 
-            if (expectedType.equals(type)) {
+            if (expectedType == type) {
                isContaining = true;
                break;
             }
